@@ -1,0 +1,148 @@
+@import "tailwindcss";
+@import "maplibre-gl/dist/maplibre-gl.css";
+
+/* ==========================================================
+   Design tokens — mirrors the published design system
+   (observatory console: graphite ground, brass accent,
+   diverging thermal scale reserved strictly for temperature).
+   ========================================================== */
+:root {
+  --ground: #12151a;
+  --surface: #1b2028;
+  --surface-raised: #222937;
+  --surface-sunken: #0d0f13;
+
+  --border: rgba(237, 239, 242, 0.1);
+  --border-strong: rgba(237, 239, 242, 0.2);
+
+  --text-primary: #edeff2;
+  --text-secondary: #9aa3ad;
+  --text-tertiary: #5b6472;
+
+  --accent: #c9a24a;
+  --accent-strong: #e2bc63;
+  --accent-dim: rgba(201, 162, 74, 0.14);
+  --accent-border: rgba(201, 162, 74, 0.4);
+  --accent-ink: #1a1300;
+
+  --thermal-cold-deep: #1f4e96;
+  --thermal-cold: #3e7fd9;
+  --thermal-neutral: #6b7280;
+  --thermal-hot: #c6483a;
+  --thermal-hot-deep: #8c2a20;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+}
+
+@theme inline {
+  --color-ground: var(--ground);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-hairline: #edeff2;
+  --color-paper: var(--text-primary);
+  --color-ash: var(--text-secondary);
+  --color-slate: var(--text-tertiary);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-thermal-cold-deep: var(--thermal-cold-deep);
+  --color-thermal-cold: var(--thermal-cold);
+  --color-thermal-neutral: var(--thermal-neutral);
+  --color-thermal-hot: var(--thermal-hot);
+  --color-thermal-hot-deep: var(--thermal-hot-deep);
+
+  --font-sans: var(--font-public-sans);
+  --font-display: var(--font-archivo);
+  --font-mono: var(--font-plex-mono);
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--ground);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: var(--accent-dim);
+  color: var(--accent-strong);
+}
+
+.font-variant-tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* MapLibre's default controls are styled for a light basemap — restyle
+   the chrome (not the icons' meaning) to sit on our dark instrument
+   surface instead. */
+.maplibregl-ctrl-group {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: none !important;
+  border-radius: var(--radius-sm) !important;
+  overflow: hidden;
+}
+.maplibregl-ctrl-group button {
+  background: transparent !important;
+}
+.maplibregl-ctrl-group button:hover {
+  background: var(--surface-raised) !important;
+}
+.maplibregl-ctrl-group button + button {
+  border-top: 1px solid var(--border) !important;
+}
+.maplibregl-ctrl-icon {
+  filter: invert(1) brightness(1.7);
+}
+.maplibregl-ctrl-attrib {
+  background: rgba(13, 15, 19, 0.7) !important;
+  color: var(--text-tertiary) !important;
+  border-radius: var(--radius-sm) 0 0 0 !important;
+  font-family: var(--font-mono);
+  font-size: 10.5px !important;
+}
+.maplibregl-ctrl-attrib a {
+  color: var(--text-secondary) !important;
+}
+.maplibregl-ctrl-attrib-button {
+  filter: invert(1) brightness(1.7);
+}
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
