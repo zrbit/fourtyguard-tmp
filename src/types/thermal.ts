@@ -24,6 +24,14 @@ export type Evidence = {
   targetValue: number | string;
   comparisonValue?: number | string;
   difference?: number;
+  /**
+   * Whether this evidence's difference, as measured, pushes the block
+   * warmer or cooler — NOT the raw sign of `difference`. More tree canopy
+   * is a positive difference but a cooling effect; the UI must color by
+   * this field, never by re-deriving from the sign, or the thermal hue
+   * ends up backwards for every metric where "more" doesn't mean "hotter."
+   */
+  warmingEffect?: "warmer" | "cooler" | "neutral";
   unit?: string;
   source: string;
   provenance: Provenance;

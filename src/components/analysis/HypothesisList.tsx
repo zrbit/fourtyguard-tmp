@@ -70,7 +70,13 @@ export function HypothesisList({
                         <Stat
                           label="Difference"
                           value={`${formatSigned(e.difference, 0)}${e.unit ?? ""}`}
-                          tone={e.difference > 0 ? "hot" : e.difference < 0 ? "cold" : "neutral"}
+                          tone={
+                            e.warmingEffect === "warmer"
+                              ? "hot"
+                              : e.warmingEffect === "cooler"
+                                ? "cold"
+                                : "neutral"
+                          }
                         />
                       )}
                     </div>

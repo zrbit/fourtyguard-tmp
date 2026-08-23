@@ -6,12 +6,13 @@ import type { ThermalAnalysis } from "@/types/thermal";
 
 type Message = { role: "user" | "agent"; text: string };
 
-const CHIPS = [
-  "What's the strongest evidence?",
-  "Is this persistent?",
-  "What's uncertain?",
-  "What could cool it?",
-] as const;
+const BASE_CHIPS = ["What's the strongest evidence?", "Is this persistent?", "What's uncertain?"] as const;
+
+// This chip only makes sense in one direction — asking "what could cool it"
+// about a block that's already cooler than its neighbors is backwards.
+function fourthChip(analysis: ThermalAnalysis): string {
+  return analysis.anomaly > 0 ? "What could cool it?" : "What's keeping it cool?";
+}
 
 function scriptedAnswer(question: string, analysis: ThermalAnalysis): string {
   const top = analysis.hypotheses[0];
@@ -30,6 +31,10 @@ function scriptedAnswer(question: string, analysis: ThermalAnalysis): string {
       return analysis.limitations.join(" ");
     case "What could cool it?":
       return "Intervention simulation (tree canopy, cool roofs, reflective pavement) is planned for a later phase — this build only reasons about the current state, it doesn't model changes to it.";
+    case "What's keeping it cool?":
+      return top
+        ? `${top.title} is the strongest factor: ${top.explanation}`
+        : "No single factor stood out enough to explain the difference confidently.";
     default:
       return "Open-ended chat connects to the full reasoning agent in Phase 5 — for now, try one of the suggested questions above.";
   }
@@ -79,7 +84,7 @@ export function ChatDock({ analysis, blockLabel }: { analysis: ThermalAnalysis; 
       )}
 
       <div className="mb-3 flex flex-wrap gap-2">
-        {CHIPS.map((c) => (
+        {[...BASE_CHIPS, fourthChip(analysis)].map((c) => (
           <button
             key={c}
             type="button"

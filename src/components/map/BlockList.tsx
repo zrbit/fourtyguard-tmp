@@ -18,7 +18,12 @@ export function BlockList({
 }) {
   return (
     <div
-      className="pointer-events-auto absolute right-4 bottom-4 z-10 flex max-w-[calc(100%-2rem)] gap-2 overflow-x-auto rounded-md border p-2 backdrop-blur-sm"
+      // Below `lg` the analysis panel becomes a bottom sheet docked at
+      // inset-x-0 bottom-0 — anchoring this to bottom-4 there would put it
+      // directly underneath that sheet. Sit just above the sheet's collapsed
+      // ("peek") height on small screens instead; lg+ reverts to bottom-4
+      // since the panel is docked beside the map there, not below it.
+      className="pointer-events-auto absolute right-4 bottom-[calc(42dvh+12px)] z-10 flex max-w-[calc(100%-2rem)] gap-2 overflow-x-auto rounded-md border p-2 backdrop-blur-sm lg:bottom-4"
       style={{ borderColor: "var(--border)", background: "rgba(13,15,19,0.72)" }}
       role="group"
       aria-label="Select a block"

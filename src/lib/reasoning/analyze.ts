@@ -41,6 +41,19 @@ function comparativePhrase(diff: number, risingLabel: string, fallingLabel: stri
   return diff >= 0 ? risingLabel : fallingLabel;
 }
 
+/**
+ * Does this evidence's difference, as measured, push the block warmer or
+ * cooler? Deliberately separate from the raw sign of `diff` — for metrics
+ * like tree canopy or wind, a *positive* difference (more of it) is a
+ * *cooling* effect. Getting this backwards would color evidence with the
+ * wrong thermal hue.
+ */
+function warmingEffect(diff: number, biggerIsWarmer: boolean): "warmer" | "cooler" | "neutral" {
+  const s = sign(diff);
+  if (s === 0) return "neutral";
+  return (biggerIsWarmer ? s > 0 : s < 0) ? "warmer" : "cooler";
+}
+
 export function analyzeBlock(m: BlockMetrics): ThermalAnalysis {
   const anomaly = round(m.temperature - m.nearbyAverage, 1);
   const below = m.distribution.filter((v) => v < m.temperature).length;
@@ -62,6 +75,7 @@ export function analyzeBlock(m: BlockMetrics): ThermalAnalysis {
       targetValue: m.surfaceTemperature,
       comparisonValue: m.nearbySurfaceTemperature,
       difference: surfaceDiff,
+      warmingEffect: warmingEffect(surfaceDiff, true),
       unit: "°F",
       source: "Satellite thermal band (simulated)",
       provenance: "demo",
@@ -76,6 +90,7 @@ export function analyzeBlock(m: BlockMetrics): ThermalAnalysis {
       targetValue: m.imperviousSurfacePct,
       comparisonValue: m.nearbyImperviousSurfacePct,
       difference: imperviousDiff,
+      warmingEffect: warmingEffect(imperviousDiff, true),
       unit: "%",
       source: "Land-cover classification (demo)",
       provenance: "demo",
@@ -90,6 +105,7 @@ export function analyzeBlock(m: BlockMetrics): ThermalAnalysis {
       targetValue: m.treeCanopyPct,
       comparisonValue: m.nearbyTreeCanopyPct,
       difference: canopyDiff,
+      warmingEffect: warmingEffect(canopyDiff, false),
       unit: "%",
       source: "Land-cover classification (demo)",
       provenance: "demo",
@@ -104,6 +120,7 @@ export function analyzeBlock(m: BlockMetrics): ThermalAnalysis {
       targetValue: m.windMph,
       comparisonValue: m.nearbyWindMph,
       difference: windDiff,
+      warmingEffect: warmingEffect(windDiff, false),
       unit: "mph",
       source: "Environmental parameters (demo)",
       provenance: "demo",
@@ -118,6 +135,7 @@ export function analyzeBlock(m: BlockMetrics): ThermalAnalysis {
       targetValue: round(m.buildingDensity * 100, 0),
       comparisonValue: round(m.nearbyBuildingDensity * 100, 0),
       difference: densityDiff,
+      warmingEffect: warmingEffect(densityDiff, true),
       unit: "% lot coverage",
       source: "Building footprint model (demo)",
       provenance: "demo",
@@ -132,6 +150,7 @@ export function analyzeBlock(m: BlockMetrics): ThermalAnalysis {
       targetValue: m.historicalAnomaly,
       comparisonValue: anomaly,
       difference: historyGap,
+      warmingEffect: "neutral",
       unit: "°F",
       source: "Historical persistence model (demo)",
       provenance: "modelled",
@@ -149,6 +168,11 @@ export function analyzeBlock(m: BlockMetrics): ThermalAnalysis {
   const candidates: {
     id: string;
     title: string;
+    /** Mechanism explanation, matched to the factual direction in `title` —
+     *  same split as comparativePhrase() so the two never contradict each
+     *  other (e.g. title "Strong local wind" must not pair with an
+     *  explanation written for weak wind). */
+    explanation: string;
     evidenceIds: string[];
     diff: number;
     biggerIsWarmer: boolean;
@@ -161,6 +185,11 @@ export function analyzeBlock(m: BlockMetrics): ThermalAnalysis {
     {
       id: "h-impervious",
       title: comparativePhrase(imperviousDiff, "High impervious surface", "Low impervious surface"),
+      explanation: comparativePhrase(
+        imperviousDiff,
+        "Asphalt, concrete, and rooftop absorb and re-radiate solar heat far more readily than vegetated or permeable ground — and this block has notably more of it than its neighbors.",
+        "This block has less paved, heat-absorbing surface than its neighbors, reducing how much solar heat the ground here retains and re-radiates.",
+      ),
       evidenceIds: ["e-impervious", "e-surface"],
       diff: imperviousDiff,
       biggerIsWarmer: true,
@@ -171,6 +200,11 @@ export function analyzeBlock(m: BlockMetrics): ThermalAnalysis {
     {
       id: "h-canopy",
       title: comparativePhrase(canopyDiff, "High tree canopy", "Low tree canopy"),
+      explanation: comparativePhrase(
+        canopyDiff,
+        "Tree canopy shades surfaces directly and cools the air through evapotranspiration — this block has notably more coverage than its neighbors.",
+        "Tree canopy shades surfaces and cools the air through evapotranspiration; this block has less of it than its neighbors, removing both effects.",
+      ),
       evidenceIds: ["e-canopy", "e-surface"],
       diff: canopyDiff,
       biggerIsWarmer: false,
@@ -181,6 +215,11 @@ export function analyzeBlock(m: BlockMetrics): ThermalAnalysis {
     {
       id: "h-wind",
       title: comparativePhrase(windDiff, "Strong local wind", "Weak local wind"),
+      explanation: comparativePhrase(
+        windDiff,
+        "Higher wind speed increases convective heat loss, helping this block shed heat that would otherwise stay trapped near warm surfaces.",
+        "Lower wind speed reduces convective heat loss, letting hot surfaces stay hot instead of mixing with cooler surrounding air.",
+      ),
       evidenceIds: ["e-wind"],
       diff: windDiff,
       biggerIsWarmer: false,
@@ -191,6 +230,11 @@ export function analyzeBlock(m: BlockMetrics): ThermalAnalysis {
     {
       id: "h-density",
       title: comparativePhrase(densityDiff, "Dense urban form / low sky exposure", "Open urban form / high sky exposure"),
+      explanation: comparativePhrase(
+        densityDiff,
+        "Denser massing narrows sky-view factor and traps re-radiated heat between surfaces overnight (urban-canyon effect).",
+        "A more open layout keeps sky-view factor higher here, letting heat radiate away more freely overnight instead of being trapped between surfaces.",
+      ),
       evidenceIds: ["e-density"],
       diff: densityDiff,
       biggerIsWarmer: true,
@@ -212,7 +256,7 @@ export function analyzeBlock(m: BlockMetrics): ThermalAnalysis {
       title: c.title,
       confidence,
       evidenceIds: c.evidenceIds,
-      explanation: primary.explanation,
+      explanation: c.explanation,
       counterEvidence: consistent
         ? undefined
         : [
