@@ -10,8 +10,8 @@ import type { City } from "@/types/thermal";
 // see lib/mock-data/blocks.ts) but stay disabled until their own Phase 2
 // pass lands, rather than pretending they're interactive.
 const CITIES: { name: City; enabled: boolean }[] = [
-  { name: "New York City", enabled: false },
-  { name: "Chicago", enabled: false },
+  { name: "New York City", enabled: true },
+  { name: "Chicago", enabled: true },
   { name: "Los Angeles", enabled: true },
 ];
 
@@ -68,7 +68,7 @@ export function TopBar({
           <Search className="h-3.5 w-3.5" aria-hidden />
           <span>Search {city}…</span>
         </div>
-        <ProvenanceTag provenance="demo" />
+        <ProvenanceTag provenance="live" />
       </div>
     </header>
   );

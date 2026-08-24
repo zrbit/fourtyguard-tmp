@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Thermal Reasoning Agent
 
-## Getting Started
+A hackathon prototype for FortyGuard that answers a more useful question than “where is it hot?”:
 
-First, run the development server:
+> Why is this block hotter or cooler than comparable blocks nearby?
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+The app is an evidence-first urban heat investigator. It combines a map-led analysis interface with ranked hypotheses, an explicit uncertainty/critic pass, block comparison, contextual follow-up questions, and an optional live FortyGuard evidence check.
+
+## What works now
+
+- Generate a live 100 m FortyGuard heatmap in Los Angeles, Chicago, or New York City.
+- Click a returned live thermal tile and inspect its anomaly against the live AOI mean.
+- Run a server-side **live evidence check** using FortyGuard environmental parameters and satellite segmentation.
+
+There is no demo-data fallback in the product flow. If a live request fails, the UI shows the API error and offers a retry. The API key remains server-side.
+
+## Run locally
+
+Requires Node.js 20.9+ (Node 22 is recommended).
+
+```powershell
+npm.cmd ci
+npm.cmd run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+On Windows where PowerShell blocks `npm.ps1`, use `npm.cmd` as shown above. A production check is:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```powershell
+cmd.exe /d /c "npm run build"
+```
 
-## Learn More
+## FortyGuard configuration
 
-To learn more about Next.js, take a look at the following resources:
+Create `.env` in the project root:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```dotenv
+FORTYGUARD_API_KEY=your_key_here
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The hackathon-provided `api_key=...` name is also supported for convenience. Do not prefix either variable with `NEXT_PUBLIC_`, commit `.env`, or put the key in client-side code.
 
-## Deploy on Vercel
+The live check submits a roughly 1 km² AOI around the selected US block (well below the documented Premium 50 mi² limit), then polls only from server-side route handlers:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `POST /api/fortyguard/investigate` submits heatmap, environmental, and satellite jobs.
+- `GET /api/fortyguard/status` retrieves a compact job status.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+No raw Base64 imagery, signed URLs, activity payloads, or API keys are logged or sent to the browser. The UI only receives job state; this is deliberate while the prototype’s polished hero map continues to use its labelled demo layer.
+
+## Product decisions
+
+- **Evidence is not causation.** The app calls conclusions hypotheses and shows limitations/counter-evidence.
+- **Live and demo are distinct.** The demo map stays functional offline. Live API work is explicitly a validation layer until the returned GeoJSON is rendered as a live layer.
+- **A small control area is intentional.** Local comparison is more useful for explaining a block anomaly than city-wide weather alone.
+- **No database is required for the hackathon build.** Route handlers are the backend-for-frontend and cache nothing by default.
+
+## API reference used
+
+The integration follows the official FortyGuard asynchronous job pattern: submit a request with an `api-key` header, receive an `activity_id`, then poll `/v1/status/{activity_id}` until a terminal status. The request shapes follow the official [heatmap documentation](https://docs-api.fortyguard.com/docs/create-heatmap), [environmental parameters](https://docs-api.fortyguard.com/docs/environmental-parameters), [satellite segmentation](https://docs-api.fortyguard.com/docs/satellite-view-segmentation), and [known limitations](https://docs-api.fortyguard.com/docs/limitations).
+
+## Next demo upgrade
+
+Render completed `map_data` GeoJSON directly as a MapLibre layer and derive the selected-tile anomaly from `stats_data`. That changes the thermal layer from demo to live while retaining the current independent reasoning/critic presentation.

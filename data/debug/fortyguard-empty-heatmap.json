@@ -1,0 +1,14 @@
+{
+  "activity_id": "a9ffd2ff-7967-4264-9e86-849a52cb5415",
+  "result": {
+    "stats": {
+      "activity_id": "a9ffd2ff-7967-4264-9e86-849a52cb5415",
+      "n_cells": 0
+    },
+    "mapData": {
+      "type": "FeatureCollection",
+      "features": []
+    }
+  },
+  "diagnosis": "The reduced AOI completed successfully but contained zero generated grid cells. Preserve this fixture to prevent regressions in empty-result handling."
+}

@@ -1,92 +1,80 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
-import { ChevronUp } from "lucide-react";
+import { AlertTriangle, Radio, RefreshCw } from "lucide-react";
 import { TopBar } from "@/components/layout/TopBar";
-import { AnalysisPanel } from "@/components/analysis/AnalysisPanel";
-import { blocksForCity, DEMO_BLOCKS } from "@/lib/mock-data/blocks";
-import type { City } from "@/types/thermal";
+import type { BlockMetrics, City } from "@/types/thermal";
+import { formatSigned, thermalColor } from "@/lib/utils";
+import { LiveInvestigation } from "@/components/analysis/LiveInvestigation";
+import { InterventionSimulator } from "@/components/analysis/InterventionSimulator";
 
-// maplibre-gl touches `window` at module scope — it can only ever run in
-// the browser, so it's excluded from the server render entirely.
-const MapView = dynamic(() => import("@/components/map/MapView"), {
-  ssr: false,
-  loading: () => (
-    <div className="flex flex-1 items-center justify-center" style={{ background: "var(--surface-sunken)" }}>
-      <span className="font-mono text-xs tracking-wider text-slate uppercase">Loading map…</span>
-    </div>
-  ),
-});
+const MapView = dynamic(() => import("@/components/map/MapView"), { ssr: false });
+const LiveMapLoading = dynamic(() => import("@/components/map/LiveMapLoading"), { ssr: false });
+type Feature = { geometry?: { coordinates?: unknown }; properties?: Record<string, unknown> };
 
-const DEFAULT_CITY: City = "Los Angeles";
-const DEFAULT_BLOCK_ID = "la-029";
+function walk(value: unknown, out: number[][]) { if (Array.isArray(value) && typeof value[0] === "number" && typeof value[1] === "number") out.push(value as number[]); else if (Array.isArray(value)) value.forEach(item => walk(item, out)); }
+function featureList(value: unknown, depth = 0): Feature[] {
+  if (depth > 6 || value == null) return [];
+  if (typeof value === "string") { try { return featureList(JSON.parse(value), depth + 1); } catch { return []; } }
+  if (Array.isArray(value)) {
+    if (value.some(item => typeof item === "object" && item !== null && "geometry" in item)) return value as Feature[];
+    return value.flatMap(item => featureList(item, depth + 1));
+  }
+  if (typeof value !== "object") return [];
+  const object = value as Record<string, unknown>;
+  if (Array.isArray(object.features)) return object.features as Feature[];
+  return Object.values(object).flatMap(item => featureList(item, depth + 1));
+}
+function temperatureValue(value: unknown, path = "", depth = 0): number | null {
+  if (depth > 5 || value == null) return null;
+  if (typeof value === "number" || (typeof value === "string" && value.trim() !== "" && Number.isFinite(Number(value)))) {
+    const number = Number(value);
+    return /temp|tcm|value|heat|celsius|\bdn\b/i.test(path) && number > -80 && number < 90 ? number : null;
+  }
+  if (typeof value !== "object") return null;
+  for (const [key, child] of Object.entries(value as Record<string, unknown>)) { const found = temperatureValue(child, `${path}.${key}`, depth + 1); if (found !== null) return found; }
+  const fallback = Object.entries(value as Record<string, unknown>).filter(([key, child]) => !/id|index|row|col|lat|lon|year|count/i.test(key) && (typeof child === "number" || (typeof child === "string" && Number.isFinite(Number(child))))).map(([, child]) => Number(child)).find(number => number > -80 && number < 90);
+  return fallback ?? null;
+}
+function blocksFromHeatmap(mapData: unknown, city: City): BlockMetrics[] {
+  const raw = featureList(mapData);
+  const tiles = raw.map((feature, index) => {
+    const properties = feature.properties ?? {};
+    const candidate = temperatureValue(properties);
+    const points: number[][] = []; walk(feature.geometry?.coordinates, points);
+    if (candidate === null || !points.length) return null;
+    const celsius = candidate; const lng = points.reduce((sum, point) => sum + point[0], 0) / points.length; const lat = points.reduce((sum, point) => sum + point[1], 0) / points.length;
+    return { index, celsius, lat, lng };
+  }).filter((tile): tile is { index: number; celsius: number; lat: number; lng: number } => tile !== null);
+  const mean = tiles.reduce((sum, tile) => sum + tile.celsius * 9 / 5 + 32, 0) / Math.max(tiles.length, 1);
+  const distribution = tiles.map(tile => Math.round((tile.celsius * 9 / 5 + 32) * 10) / 10);
+  return tiles.map(tile => { const temperature = Math.round((tile.celsius * 9 / 5 + 32) * 10) / 10; return { id: `live-${tile.index}`, city, neighborhood: "Live FortyGuard tile", lat: tile.lat, lng: tile.lng, temperature, nearbyAverage: Math.round(mean * 10) / 10, surfaceTemperature: temperature, nearbySurfaceTemperature: temperature, treeCanopyPct: 0, nearbyTreeCanopyPct: 0, imperviousSurfacePct: 0, nearbyImperviousSurfacePct: 0, buildingDensity: 0, nearbyBuildingDensity: 0, windMph: 0, nearbyWindMph: 0, historicalAnomaly: 0, nearbyBlockCount: Math.max(tiles.length - 1, 0), distribution }; });
+}
 
 export default function Home() {
-  const [city, setCity] = useState<City>(DEFAULT_CITY);
-  const [selectedId, setSelectedId] = useState<string>(DEFAULT_BLOCK_ID);
-  const [sheetExpanded, setSheetExpanded] = useState(false);
-
-  const cityBlocks = useMemo(() => blocksForCity(city), [city]);
-  const block = useMemo(
-    () => DEMO_BLOCKS.find((b) => b.id === selectedId) ?? cityBlocks[0],
-    [selectedId, cityBlocks],
-  );
-
-  function handleCityChange(next: City) {
-    setCity(next);
-    const first = blocksForCity(next)[0];
-    if (first) setSelectedId(first.id);
+  const [city, setCity] = useState<City>("Los Angeles"); const [blocks, setBlocks] = useState<BlockMetrics[]>([]); const [selectedId, setSelectedId] = useState(""); const [error, setError] = useState<string | null>(null); const [loading, setLoading] = useState(true); const [loadStatus, setLoadStatus] = useState("Submitting live heatmap…"); const [investigate, setInvestigate] = useState(false);
+  async function load() {
+    setLoading(true); setLoadStatus("Loading cached live heatmap…"); setError(null); setBlocks([]); setInvestigate(false);
+    const cacheKey = `fortyguard-live-heatmap-v1:${city}`;
+    const jobKey = `fortyguard-live-job-v1:${city}`;
+    try { const cached = window.localStorage.getItem(cacheKey); if (cached) { const live = blocksFromHeatmap(cached, city); if (live.length) { setBlocks(live); setSelectedId(live[0].id); return; } } } catch { /* Storage is an optional performance optimization. */ }
+    setLoadStatus("Submitting live heatmap…");
+    try {
+      let activityId = window.localStorage.getItem(jobKey);
+      let resumed = Boolean(activityId);
+      if (!activityId) { const submit = await fetch("/api/fortyguard/heatmap", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ city }) }); const job = await submit.json(); if (!submit.ok || job.error) throw new Error(job.error ?? "Heatmap submission failed."); activityId = String(job.activityId); resumed = Boolean(job.reused); window.localStorage.setItem(jobKey, activityId); }
+      if (!activityId) throw new Error("Heatmap submission did not return an activity ID.");
+      setLoadStatus(resumed ? "Resuming existing FortyGuard job…" : "FortyGuard is processing live tiles…");
+      // FortyGuard's Quickstart recommends bounded polling at five-second
+      // intervals. This allows ten minutes for a queued asynchronous job while
+      // avoiding unnecessary status traffic.
+      for (let attempt = 0; attempt < 120; attempt += 1) { await new Promise(resolve => setTimeout(resolve, 5000)); const response = await fetch(`/api/fortyguard/status?kind=heatmap&activityId=${encodeURIComponent(activityId)}`); const state = await response.json(); if (!response.ok || state.error) throw new Error(state.error ?? "Status check failed."); if (state.status === "Completed") { const live = blocksFromHeatmap(state.result?.mapData, city); if (!live.length) { window.localStorage.removeItem(jobKey); window.localStorage.removeItem(cacheKey); setLoadStatus("Empty result detected; submitting restored larger area…"); const retry = await fetch("/api/fortyguard/heatmap", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ city }) }); const replacement = await retry.json(); if (!retry.ok || replacement.error) throw new Error(replacement.error ?? "Larger heatmap submission failed."); activityId = String(replacement.activityId); window.localStorage.setItem(jobKey, activityId); attempt = 0; continue; } try { window.localStorage.setItem(cacheKey, JSON.stringify(state.result?.mapData)); } catch { /* Rendering remains available even if storage is full. */ } window.localStorage.removeItem(jobKey); setLoadStatus(`Rendering ${live.length} live tiles…`); await new Promise(resolve => setTimeout(resolve, 250)); setBlocks(live); setSelectedId(live[0].id); return; } if (state.status === "Failed") { window.localStorage.removeItem(jobKey); throw new Error("FortyGuard heatmap generation failed."); } }
+      throw new Error("FortyGuard is still processing this heatmap after 10 minutes. Retry shortly; do not refresh while a scan is active.");
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "Unable to load live data."); } finally { setLoading(false); }
   }
-
-  function handleSelect(id: string) {
-    setSelectedId(id);
-    setSheetExpanded(true);
-  }
-
-  return (
-    <div className="flex h-dvh flex-col">
-      <TopBar city={city} onCityChange={handleCityChange} />
-
-      <main className="relative flex min-h-0 flex-1 flex-col lg:flex-row">
-        <MapView blocks={cityBlocks} selectedId={block.id} onSelect={handleSelect} />
-
-        {/* Desktop: docked panel */}
-        <div
-          className="hidden w-[400px] flex-none border-l lg:block xl:w-[420px]"
-          style={{ borderColor: "var(--border)", background: "var(--ground)" }}
-        >
-          <AnalysisPanel key={block.id} block={block} cityBlocks={cityBlocks} />
-        </div>
-
-        {/* Mobile / tablet: bottom sheet */}
-        <div
-          className="absolute inset-x-0 bottom-0 z-10 flex flex-col overflow-hidden rounded-t-lg border-t transition-[max-height] duration-200 ease-out lg:hidden"
-          style={{
-            borderColor: "var(--border)",
-            background: "var(--ground)",
-            maxHeight: sheetExpanded ? "82dvh" : "42dvh",
-            boxShadow: "0 -8px 24px rgba(0,0,0,0.35)",
-          }}
-        >
-          <button
-            type="button"
-            onClick={() => setSheetExpanded((v) => !v)}
-            className="flex flex-none cursor-pointer items-center justify-center gap-1.5 py-2.5"
-            aria-expanded={sheetExpanded}
-            aria-label={sheetExpanded ? "Collapse panel" : "Expand panel"}
-          >
-            <span className="h-1 w-9 rounded-full" style={{ background: "var(--border-strong)" }} />
-            <ChevronUp
-              className="h-3 w-3 text-slate transition-transform duration-200"
-              style={{ transform: sheetExpanded ? "rotate(180deg)" : "none" }}
-            />
-          </button>
-          <div className="min-h-0 flex-1">
-            <AnalysisPanel key={block.id} block={block} cityBlocks={cityBlocks} />
-          </div>
-        </div>
-      </main>
-    </div>
-  );
+  useEffect(() => { void load(); }, [city]);
+  const block = useMemo(() => blocks.find(item => item.id === selectedId) ?? blocks[0], [blocks, selectedId]);
+  const anomaly = block ? block.temperature - block.nearbyAverage : 0;
+  return <div className="flex h-dvh flex-col"><TopBar city={city} onCityChange={setCity} /><main className="flex min-h-0 flex-1">{loading ? <LiveMapLoading city={city} status={loadStatus} /> : error ? <div className="flex flex-1 flex-col items-center justify-center gap-4 p-6 text-center"><AlertTriangle className="h-7 w-7 text-thermal-hot" /><p className="max-w-md text-sm text-ash">{error}</p><button type="button" onClick={() => void load()} className="flex items-center gap-2 rounded border px-3 py-2 text-xs text-accent-strong" style={{ borderColor: "var(--accent-border)" }}><RefreshCw className="h-3.5 w-3.5" />Retry live scan</button></div> : block ? <><MapView blocks={blocks} selectedId={block.id} onSelect={setSelectedId} /><aside className="hidden w-[420px] flex-none overflow-y-auto border-l lg:block" style={{ borderColor: "var(--border)", background: "var(--ground)" }}><div className="p-5"><div className="flex items-center justify-between font-mono text-[11px] tracking-wider text-slate uppercase"><span>Live thermal tile</span><span className="flex items-center gap-1 text-accent-strong"><Radio className="h-3 w-3" />Live</span></div><div className="mt-5 flex items-end gap-2 font-mono"><span className="text-4xl font-semibold">{block.temperature}</span><span className="pb-1 text-lg text-ash">°F</span></div><p className="mt-2 font-mono text-[13px]" style={{ color: thermalColor(anomaly) }}>{formatSigned(anomaly)}°F vs live AOI mean</p><p className="mt-4 text-[12px] leading-relaxed text-slate">This temperature tile is returned from FortyGuard’s live 100 m heatmap. No demo thermal data is used.</p>{!investigate && <button type="button" onClick={() => setInvestigate(true)} className="mt-5 w-full rounded-lg py-2.5 text-sm font-bold" style={{ background: "var(--accent)", color: "var(--accent-ink)" }}>Investigate with live evidence</button>}</div>{investigate && <LiveInvestigation block={block} />}<InterventionSimulator block={block} /></aside></> : null}</main></div>;
 }

@@ -53,9 +53,9 @@
   --color-thermal-hot: var(--thermal-hot);
   --color-thermal-hot-deep: var(--thermal-hot-deep);
 
-  --font-sans: var(--font-public-sans);
-  --font-display: var(--font-archivo);
-  --font-mono: var(--font-plex-mono);
+  --font-sans: Arial, Helvetica, sans-serif;
+  --font-display: Georgia, "Times New Roman", serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 
   --radius-sm: 4px;
   --radius-md: 6px;

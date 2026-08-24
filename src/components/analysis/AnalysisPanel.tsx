@@ -7,6 +7,7 @@ import { InvestigationTimeline } from "@/components/analysis/InvestigationTimeli
 import { HypothesisList } from "@/components/analysis/HypothesisList";
 import { CompareTable } from "@/components/analysis/CompareTable";
 import { ChatDock } from "@/components/agent/ChatDock";
+import { LiveInvestigation } from "@/components/analysis/LiveInvestigation";
 import { ProvenanceTag } from "@/components/ui/ProvenanceTag";
 import { analyzeBlock } from "@/lib/reasoning/analyze";
 import { cn, formatSigned, thermalColor, thermalTone } from "@/lib/utils";
@@ -155,6 +156,8 @@ export function AnalysisPanel({
                 </div>
                 <HypothesisList hypotheses={analysis.hypotheses} evidence={analysis.evidence} />
               </div>
+
+              <LiveInvestigation block={block} />
 
               <div className="border-t p-5" style={{ borderColor: "var(--border)" }}>
                 <h2 className="mb-3 font-display text-[13px] font-bold text-ash uppercase tracking-wide">
