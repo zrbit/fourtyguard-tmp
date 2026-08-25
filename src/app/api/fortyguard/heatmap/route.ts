@@ -18,7 +18,11 @@ export async function POST(request: Request) {
   const existing = activeJob(city);
   if (existing) return Response.json({ activityId: existing.activityId, reused: true, result: existing.result ?? null });
   const [west, south, east, north] = STUDY_AREAS[city as keyof typeof STUDY_AREAS];
-  const now = new Date();
+  // Ask for the most recent completed model hour. Sending the current minute
+  // can be accepted as a job yet produce zero cells when the hourly raster has
+  // not landed for that timestamp.
+  const now = new Date(Date.now() - 60 * 60 * 1000);
+  now.setUTCMinutes(0, 0, 0);
   try {
     const activityId = await submitJob("/heatmap", {
       polygon_aoi: { type: "FeatureCollection", features: [{ type: "Feature", properties: {}, geometry: { type: "Polygon", coordinates: [[[west, south], [east, south], [east, north], [west, north], [west, south]]] } }] },

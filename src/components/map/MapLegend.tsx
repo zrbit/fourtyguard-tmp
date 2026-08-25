@@ -1,4 +1,4 @@
-export function MapLegend() {
+export function MapLegend({ scale }: { scale: number }) {
   return (
     <div
       // Same bottom-sheet collision as BlockList below lg (see its comment)
@@ -14,9 +14,9 @@ export function MapLegend() {
         }}
       />
       <div className="mt-1.5 flex justify-between font-mono text-[10px] text-slate">
-        <span>−6°F</span>
-        <span>nearby median</span>
-        <span>+6°F</span>
+        <span>−{scale.toFixed(2)}°F</span>
+        <span>nearby mean</span>
+        <span>+{scale.toFixed(2)}°F</span>
       </div>
     </div>
   );

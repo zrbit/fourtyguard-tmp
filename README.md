@@ -9,6 +9,8 @@ The app is an evidence-first urban heat investigator. It combines a map-led anal
 ## What works now
 
 - Generate a live 100 m FortyGuard heatmap in Los Angeles, Chicago, or New York City.
+- Select the strongest local anomaly automatically, or click any heatmap cell to investigate it.
+- Compare every selected cell against its eight geographically nearest live cells, with an AOI percentile, local spread, and confidence-labelled explanation.
 - Click a returned live thermal tile and inspect its anomaly against the live AOI mean.
 - Run a server-side **live evidence check** using FortyGuard environmental parameters and satellite segmentation.
 

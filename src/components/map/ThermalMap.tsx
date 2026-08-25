@@ -48,20 +48,20 @@ const NO_MATCH_FILTER = idFilter("__none__");
 // union that a dynamically-built expression array can't satisfy
 // structurally, so this is intentionally untyped — the shape is a
 // standard `interpolate` expression validated at runtime by MapLibre.
-function thermalColorExpression() {
+function thermalColorExpression(scale: number) {
   return [
     "interpolate",
     ["linear"],
     ["get", "anomaly"],
-    -6,
+    -scale,
     "#1f4e96",
-    -2,
+    -scale * 0.35,
     "#3e7fd9",
     0,
     "#3a4048",
-    2,
+    scale * 0.35,
     "#c6483a",
-    6,
+    scale,
     "#8c2a20",
   ];
 }
@@ -78,6 +78,10 @@ export function ThermalMap({
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MaplibreMap | null>(null);
   const onSelectRef = useRef(onSelect);
+  const anomalyScale = Math.max(
+    0.15,
+    ...blocks.map(block => Math.abs(block.temperature - block.nearbyAverage)),
+  );
   useEffect(() => {
     onSelectRef.current = onSelect;
   }, [onSelect]);
@@ -111,7 +115,7 @@ export function ThermalMap({
         source: FOOTPRINT_SOURCE,
         paint: {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any -- see thermalColorExpression()
-          "fill-color": thermalColorExpression() as any,
+          "fill-color": thermalColorExpression(anomalyScale) as any,
           "fill-opacity": 0.6,
         },
       });
@@ -135,7 +139,7 @@ export function ThermalMap({
         paint: {
           "circle-radius": ["interpolate", ["linear"], ["zoom"], 8, 5, 14, 10],
           // eslint-disable-next-line @typescript-eslint/no-explicit-any -- see thermalColorExpression()
-          "circle-color": thermalColorExpression() as any,
+          "circle-color": thermalColorExpression(anomalyScale) as any,
           "circle-stroke-width": 1.5,
           "circle-stroke-color": "rgba(13,15,19,0.85)",
         },

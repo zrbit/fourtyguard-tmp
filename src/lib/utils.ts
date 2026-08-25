@@ -6,8 +6,9 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatSigned(n: number, digits = 1): string {
-  const v = n.toFixed(digits);
-  return n > 0 ? `+${v}` : v;
+  const rounded = Number(n.toFixed(digits));
+  const value = rounded.toFixed(digits);
+  return rounded > 0 ? `+${value}` : value;
 }
 
 export function round(n: number, digits = 1): number {

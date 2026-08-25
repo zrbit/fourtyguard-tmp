@@ -31,6 +31,9 @@ export async function GET(request: Request) {
     }
     return Response.json({ status, result });
   } catch (error) {
+    // Upstream no longer recognizes this job (or it is otherwise unusable),
+    // so do not keep serving the same broken ID from the durable cache.
+    removeJob(activityId);
     const known = error instanceof FortyGuardError ? error : null;
     return Response.json({ error: known?.message ?? "Unable to check job status." }, { status: known?.status ?? 502 });
   }

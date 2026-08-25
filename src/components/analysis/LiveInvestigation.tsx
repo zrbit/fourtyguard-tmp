@@ -67,7 +67,7 @@ export function LiveInvestigation({ block }: { block: BlockMetrics }) {
         <div>
           <h2 className="font-display text-[15px] font-bold">Validate with FortyGuard</h2>
           <p className="mt-1 text-[12px] leading-relaxed text-slate">
-            Runs a live local heatmap, environmental context, and satellite surface check. The block values above remain clearly marked demo until live map tiles are rendered.
+            Runs a live local heatmap, atmospheric context, and satellite surface check for this selected cell. Temperature analysis above is already live; these jobs test possible causes.
           </p>
         </div>
         <Radio className="mt-0.5 h-4 w-4 shrink-0 text-accent" aria-hidden />

@@ -10,5 +10,5 @@
       "features": []
     }
   },
-  "diagnosis": "The reduced AOI completed successfully but contained zero generated grid cells. Preserve this fixture to prevent regressions in empty-result handling."
+  "diagnosis": "The API completed successfully but contained zero generated grid cells. A later wider-AOI job (2676dd89-2c3f-4c77-87d9-2f090d71e455) also returned n_cells=0, which isolated the likely issue to current-minute temporal alignment rather than polygon size. Requests now use the most recent completed UTC hour."
 }

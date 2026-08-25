@@ -14,10 +14,14 @@ export default function MapView({
   selectedId: string;
   onSelect: (id: string) => void;
 }) {
+  const anomalyScale = Math.max(
+    0.15,
+    ...blocks.map(block => Math.abs(block.temperature - block.nearbyAverage)),
+  );
   return (
     <div className="relative flex flex-1 flex-col" style={{ background: "var(--surface-sunken)" }}>
       <ThermalMap blocks={blocks} selectedId={selectedId} onSelect={onSelect} />
-      <MapLegend />
+      <MapLegend scale={anomalyScale} />
       <BlockList blocks={blocks} selectedId={selectedId} onSelect={onSelect} />
     </div>
   );

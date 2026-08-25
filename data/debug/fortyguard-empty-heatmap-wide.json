@@ -1,0 +1,15 @@
+{
+  "activity_id": "2676dd89-2c3f-4c77-87d9-2f090d71e455",
+  "status": "Completed",
+  "result": {
+    "map_data": {
+      "type": "FeatureCollection",
+      "features": []
+    },
+    "stats_data": {
+      "activity_id": "2676dd89-2c3f-4c77-87d9-2f090d71e455",
+      "n_cells": 0
+    }
+  },
+  "diagnosis": "Wider AOI also produced zero cells when requested at the current minute. Preserved verbatim before switching requests to the most recent completed UTC hour."
+}
