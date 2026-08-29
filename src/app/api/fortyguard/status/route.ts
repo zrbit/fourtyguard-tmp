@@ -11,6 +11,16 @@ function compactResult(kind: string, result: Record<string, unknown> | undefined
     const segmentation = result.segmentation as Record<string, unknown> | undefined;
     return { imageYear: result.image_year ?? null, segments: segmentation?.segments ?? null, processingSeconds: segmentation?.processing_time_seconds ?? null };
   }
+  if (kind === "streetview") {
+    const compactView = (view: unknown) => {
+      if (!view || typeof view !== "object") return null;
+      const data = view as Record<string, unknown>;
+      return { segments: data.segments ?? null, imageDate: data.image_date ?? null };
+    };
+    // Exclude Base64 source/segmented images: the client only needs measured
+    // coverage, and this keeps the response compact and privacy-conscious.
+    return { front: compactView(result.front), back: compactView(result.back) };
+  }
   return null;
 }
 
@@ -23,13 +33,16 @@ export async function GET(request: Request) {
     const body = await jobStatus(activityId);
     const data = body.data ?? {};
     const status = typeof data.status === "string" ? data.status : "Processing";
+    const message = typeof (body as { message?: unknown }).message === "string"
+      ? (body as { message: string }).message
+      : null;
     const result = status === "Completed" ? compactResult(kind, data.result as Record<string, unknown> | undefined) : null;
     if (status === "Completed") {
       const heatmap = result as { mapData?: { features?: unknown[] } } | null;
       if (kind === "heatmap" && (!heatmap?.mapData?.features || heatmap.mapData.features.length === 0)) removeJob(activityId);
       else saveResult(activityId, result);
     }
-    return Response.json({ status, result });
+    return Response.json({ status, result, message });
   } catch (error) {
     // Upstream no longer recognizes this job (or it is otherwise unusable),
     // so do not keep serving the same broken ID from the durable cache.

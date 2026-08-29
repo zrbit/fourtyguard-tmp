@@ -7,23 +7,23 @@
    diverging thermal scale reserved strictly for temperature).
    ========================================================== */
 :root {
-  --ground: #12151a;
-  --surface: #1b2028;
-  --surface-raised: #222937;
-  --surface-sunken: #0d0f13;
+  --ground: #09131c;
+  --surface: #101d29;
+  --surface-raised: #172839;
+  --surface-sunken: #071018;
 
   --border: rgba(237, 239, 242, 0.1);
   --border-strong: rgba(237, 239, 242, 0.2);
 
-  --text-primary: #edeff2;
-  --text-secondary: #9aa3ad;
-  --text-tertiary: #5b6472;
+  --text-primary: #edf4f5;
+  --text-secondary: #a9bbc2;
+  --text-tertiary: #64808a;
 
-  --accent: #c9a24a;
-  --accent-strong: #e2bc63;
-  --accent-dim: rgba(201, 162, 74, 0.14);
-  --accent-border: rgba(201, 162, 74, 0.4);
-  --accent-ink: #1a1300;
+  --accent: #35c6b2;
+  --accent-strong: #73e6d5;
+  --accent-dim: rgba(53, 198, 178, 0.13);
+  --accent-border: rgba(83, 221, 201, 0.42);
+  --accent-ink: #031b19;
 
   --thermal-cold-deep: #1f4e96;
   --thermal-cold: #3e7fd9;

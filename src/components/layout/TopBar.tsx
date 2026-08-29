@@ -30,7 +30,7 @@ export function TopBar({
       <div className="flex items-center gap-2.5">
         <ThermometerIcon className="h-4 w-4 text-accent" />
         <span className="font-display text-sm font-bold tracking-wide">
-          THERMAL
+          HEAT LENS
         </span>
       </div>
 

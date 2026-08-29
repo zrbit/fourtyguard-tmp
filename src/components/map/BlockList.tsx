@@ -16,6 +16,14 @@ export function BlockList({
   selectedId: string;
   onSelect: (id: string) => void;
 }) {
+  const mostUnusual = [...blocks]
+    .sort((a, b) => Math.abs(b.temperature - b.nearbyAverage) - Math.abs(a.temperature - a.nearbyAverage))
+    .slice(0, 8);
+  const selected = blocks.find(block => block.id === selectedId);
+  const choices = selected && !mostUnusual.some(block => block.id === selected.id)
+    ? [selected, ...mostUnusual]
+    : mostUnusual;
+
   return (
     <div
       // Below `lg` the analysis panel becomes a bottom sheet docked at
@@ -23,12 +31,14 @@ export function BlockList({
       // directly underneath that sheet. Sit just above the sheet's collapsed
       // ("peek") height on small screens instead; lg+ reverts to bottom-4
       // since the panel is docked beside the map there, not below it.
-      className="pointer-events-auto absolute right-4 bottom-[calc(42dvh+12px)] z-10 flex max-w-[calc(100%-2rem)] gap-2 overflow-x-auto rounded-md border p-2 backdrop-blur-sm lg:bottom-4"
+      className="pointer-events-auto absolute right-4 bottom-[calc(42dvh+12px)] z-10 max-w-[calc(100%-2rem)] rounded-md border p-2 backdrop-blur-sm lg:hidden"
       style={{ borderColor: "var(--border)", background: "rgba(13,15,19,0.72)" }}
       role="group"
-      aria-label="Select a block"
+      aria-label="Select a notable cell"
     >
-      {blocks.map((b) => {
+      <div className="mb-1 font-mono text-[9px] tracking-wide text-slate uppercase">Most unusual cells</div>
+      <div className="flex flex-wrap gap-1.5">
+      {choices.map((b) => {
         const anomaly = b.temperature - b.nearbyAverage;
         const active = b.id === selectedId;
         return (
@@ -45,7 +55,7 @@ export function BlockList({
               background: active ? "var(--accent-dim)" : "var(--surface)",
             }}
           >
-            <span className="font-mono text-[10px] tracking-wide text-slate uppercase">{b.id}</span>
+            <span className="font-mono text-[10px] tracking-wide text-slate uppercase">{active ? "Selected" : "Cell"}</span>
             <span
               className="font-mono text-[11px] font-semibold"
               style={{ color: thermalColor(anomaly) }}
@@ -55,6 +65,7 @@ export function BlockList({
           </button>
         );
       })}
+      </div>
     </div>
   );
 }
