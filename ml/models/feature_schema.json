@@ -1,0 +1,34 @@
+{
+  "feature_columns": [
+    "imperviousPct",
+    "canopyPct",
+    "buildingDensity",
+    "windMph",
+    "humidity",
+    "cloudCoverPct",
+    "solarIrradiance",
+    "heatIndex",
+    "hourOfDay"
+  ],
+  "monotone_constraints": {
+    "imperviousPct": 1,
+    "canopyPct": -1,
+    "buildingDensity": 1,
+    "windMph": -1,
+    "humidity": 0,
+    "cloudCoverPct": 0,
+    "solarIrradiance": 0,
+    "heatIndex": 0,
+    "hourOfDay": 0
+  },
+  "target": "anomaly",
+  "best_params": {
+    "max_depth": 2,
+    "n_estimators": 100,
+    "learning_rate": 0.05
+  },
+  "cv_mae": 2.95395382544222,
+  "cv_r2": -0.8882177260526765,
+  "n_rows": 34,
+  "n_aois": 17
+}
