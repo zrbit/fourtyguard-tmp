@@ -13,8 +13,8 @@ import {
 } from "@/lib/spatial/blockGeometry";
 import type { BlockMetrics } from "@/types/thermal";
 
-// Free, key-less dark basemap — no account or token required, which matters
-// since demo mode has to run without any credentials. Attribution is
+// Free, key-less CARTO Voyager basemap with light streets, labels, and
+// colorful geographic context. No account or token is needed. Attribution is
 // rendered by MapLibre's built-in AttributionControl per CARTO/OSM terms.
 //
 // Pinned to the maplibre-gl v4 line deliberately: v6.5.0 fetched this
@@ -22,10 +22,7 @@ import type { BlockMetrics } from "@/types/thermal";
 // request afterward (confirmed via devtools — style loaded, source
 // registered, zero .mvt requests, map stayed blank indefinitely). v4 is
 // the long-established, widely-deployed line and renders it correctly.
-const BASEMAP_STYLES = {
-  dark: "https://basemaps.cartocdn.com/gl/dark-matter-nolabels-gl-style/style.json",
-  light: "https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json",
-} as const;
+const BASEMAP_STYLE = "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json";
 
 const FOOTPRINT_SOURCE = "block-footprints";
 const FILL_LAYER = "blocks-fill";
@@ -98,7 +95,7 @@ export function ThermalMap({
 
     const map = new MaplibreMap({
       container: containerRef.current,
-      style: BASEMAP_STYLES[theme],
+      style: BASEMAP_STYLE,
       bounds: boundsOf(blocks),
       fitBoundsOptions: { padding: 80 },
       attributionControl: { compact: true },

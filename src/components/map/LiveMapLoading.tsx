@@ -10,30 +10,23 @@ const CENTERS: Record<City, [number, number]> = {
   Chicago: [-87.631, 41.883],
   "New York City": [-73.987, 40.713],
 };
+const BASEMAP_STYLE = "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json";
 
 export default function LiveMapLoading({ city, status }: { city: City; status: string }) {
   const element = useRef<HTMLDivElement>(null);
   const [elapsed, setElapsed] = useState(0);
-  const [theme, setTheme] = useState<"light" | "dark">("dark");
-  useEffect(() => {
-    const updateTheme = () => setTheme(document.documentElement.dataset.theme === "light" ? "light" : "dark");
-    updateTheme();
-    const observer = new MutationObserver(updateTheme);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-    return () => observer.disconnect();
-  }, []);
   useEffect(() => {
     if (!element.current) return;
     const map = new MaplibreMap({
       container: element.current,
-      style: theme === "light" ? "https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json" : "https://basemaps.cartocdn.com/gl/dark-matter-nolabels-gl-style/style.json",
+      style: BASEMAP_STYLE,
       center: CENTERS[city],
       zoom: 14,
       attributionControl: { compact: true },
     });
     map.addControl(new NavigationControl({ showCompass: false }), "top-right");
     return () => map.remove();
-  }, [city, theme]);
+  }, [city]);
   useEffect(() => {
     const reset = window.setTimeout(() => setElapsed(0), 0);
     const timer = window.setInterval(() => setElapsed(value => value + 1), 1000);

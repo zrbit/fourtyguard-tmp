@@ -15,6 +15,8 @@ It is intentionally not a generic heat-map viewer. It helps a resident, planner,
 5. **Compare history** — chart the same calendar day and UTC hour across the previous three years, with Open-Meteo regional air temperature as context.
 6. **Build an action plan** — combine the local temperature difference, closest control places, and the next 24-hour weather forecast to rank practical shade, surface, and near-term protection actions. It is a transparent screening model, not a guaranteed intervention forecast.
 
+7. **Read the map in context** — CARTO Voyager provides a light, labelled streets basemap beneath the thermal overlays, while the header control lets people choose light or dark application chrome.
+
 Every interpretation is intentionally cautious: temperature locates a signal; it does not prove a cause or a health outcome.
 
 ## Live data
@@ -25,6 +27,7 @@ Every interpretation is intentionally cautious: temperature locates a signal; it
 - **FortyGuard persistence:** continuous time above a selected heat threshold for a compact local AOI.
 - **Open-Meteo Archive:** historical 2 m air temperature context; it is clearly kept separate from FortyGuard block-level thermal data.
 - **Open-Meteo Forecast:** next-24-hour temperature, apparent temperature, and sunlight context for the Action Plan.
+- **CARTO Voyager:** a light, colourful vector basemap with roads, labels, and places for map context; it does not contribute to thermal analysis.
 
 All FortyGuard work follows the asynchronous submit-and-poll pattern. API keys remain server-side; clients receive only compact job state and safe result summaries.
 
