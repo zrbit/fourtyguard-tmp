@@ -13,7 +13,7 @@ It is intentionally not a generic heat-map viewer. It helps a resident, planner,
 3. **Check conditions** — request FortyGuard environmental evidence first; add slower satellite and street imagery only if a visual explanation is needed.
 4. **Check persistence** — test whether local heat stayed above 90°F / 32°C during the latest complete day, instead of trusting one snapshot.
 5. **Compare history** — chart the same calendar day and UTC hour across the previous three years, with Open-Meteo regional air temperature as context.
-6. **Explore options** — use the expandable cooling scenario to discuss tree-canopy and cool-pavement assumptions. It is a screening aid, not a forecast.
+6. **Build an action plan** — combine the local temperature difference, closest control places, and the next 24-hour weather forecast to rank practical shade, surface, and near-term protection actions. It is a transparent screening model, not a guaranteed intervention forecast.
 
 Every interpretation is intentionally cautious: temperature locates a signal; it does not prove a cause or a health outcome.
 
@@ -24,6 +24,7 @@ Every interpretation is intentionally cautious: temperature locates a signal; it
 - **FortyGuard satellite and street-view segmentation:** optional imagery evidence for shade, vegetation, and exposed-surface investigation.
 - **FortyGuard persistence:** continuous time above a selected heat threshold for a compact local AOI.
 - **Open-Meteo Archive:** historical 2 m air temperature context; it is clearly kept separate from FortyGuard block-level thermal data.
+- **Open-Meteo Forecast:** next-24-hour temperature, apparent temperature, and sunlight context for the Action Plan.
 
 All FortyGuard work follows the asynchronous submit-and-poll pattern. API keys remain server-side; clients receive only compact job state and safe result summaries.
 
@@ -60,7 +61,7 @@ The hackathon-provided `api_key=...` is also supported. Never use a `NEXT_PUBLIC
 - The live map is a local comparison tool, not a city-wide health-risk model.
 - Persistence uses the latest completed UTC day, so partial hourly data is not mistaken for a short heat event.
 - Segmentation and environmental results are leads for investigation—not causal proof.
-- The intervention control shows a transparent, hypothetical screening estimate only.
+- The Action Plan is a transparent screening model. It ranks what to inspect or do first; it does not prove a heat cause, calculate a health outcome, or guarantee an intervention benefit.
 - External historical air temperature is regional background context, not a substitute for block-level surface thermal data.
 
 ## API documentation
