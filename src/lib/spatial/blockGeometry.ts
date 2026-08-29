@@ -35,7 +35,7 @@ export function blockToFeature(block: BlockMetrics): BlockFeature {
       id: block.id,
       neighborhood: block.neighborhood,
       temperature: block.temperature,
-      anomaly: Number((block.temperature - block.nearbyAverage).toFixed(1)),
+      anomaly: block.temperature - block.nearbyAverage,
     },
     geometry: {
       type: "Polygon",
@@ -79,7 +79,7 @@ export function blocksToPointFeatureCollection(
         id: block.id,
         neighborhood: block.neighborhood,
         temperature: block.temperature,
-        anomaly: Number((block.temperature - block.nearbyAverage).toFixed(1)),
+        anomaly: block.temperature - block.nearbyAverage,
       },
       geometry: { type: "Point", coordinates: [block.lng, block.lat] },
     })),

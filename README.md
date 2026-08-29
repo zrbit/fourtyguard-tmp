@@ -1,24 +1,35 @@
-# Thermal Reasoning Agent
+# Heat Lens
 
-A hackathon prototype for FortyGuard that answers a more useful question than “where is it hot?”:
+Heat Lens is a FortyGuard hackathon project for answering a practical urban-heat question:
 
-> Why is this block hotter or cooler than comparable blocks nearby?
+> Is this 100 m cell unusually hot, does that heat persist, and what should we investigate next?
 
-The app is an evidence-first urban heat investigator. It combines a map-led analysis interface with ranked hypotheses, an explicit uncertainty/critic pass, block comparison, contextual follow-up questions, and an optional live FortyGuard evidence check.
+It is intentionally not a generic heat-map viewer. It helps a resident, planner, or judge move from a live temperature signal to clear, evidence-labelled follow-up actions.
 
-## What works now
+## The experience
 
-- Generate a live 100 m FortyGuard heatmap in Los Angeles, Chicago, or New York City.
-- Select the strongest local anomaly automatically, or click any heatmap cell to investigate it.
-- Compare every selected cell against its eight geographically nearest live cells, with an AOI percentile, local spread, and confidence-labelled explanation.
-- Click a returned live thermal tile and inspect its anomaly against the live AOI mean.
-- Run a server-side **live evidence check** using FortyGuard environmental parameters and satellite segmentation.
+1. **Choose a place to start** — the Action Brief lists the five places that are warmest compared with their closest neighbours. It is an investigation shortlist, not a danger rating.
+2. **Understand the signal** — choose a live 100 m cell and see its temperature against its eight closest spatial controls and the wider scan.
+3. **Check conditions** — request FortyGuard environmental evidence first; add slower satellite and street imagery only if a visual explanation is needed.
+4. **Check persistence** — test whether local heat stayed above 90°F / 32°C during the latest complete day, instead of trusting one snapshot.
+5. **Compare history** — chart the same calendar day and UTC hour across the previous three years, with Open-Meteo regional air temperature as context.
+6. **Explore options** — use the expandable cooling scenario to discuss tree-canopy and cool-pavement assumptions. It is a screening aid, not a forecast.
 
-There is no demo-data fallback in the product flow. If a live request fails, the UI shows the API error and offers a retry. The API key remains server-side.
+Every interpretation is intentionally cautious: temperature locates a signal; it does not prove a cause or a health outcome.
+
+## Live data
+
+- **FortyGuard heatmaps:** live 100 m thermal cells in Los Angeles, Chicago, and New York City.
+- **FortyGuard environmental parameters:** contextual heat conditions.
+- **FortyGuard satellite and street-view segmentation:** optional imagery evidence for shade, vegetation, and exposed-surface investigation.
+- **FortyGuard persistence:** continuous time above a selected heat threshold for a compact local AOI.
+- **Open-Meteo Archive:** historical 2 m air temperature context; it is clearly kept separate from FortyGuard block-level thermal data.
+
+All FortyGuard work follows the asynchronous submit-and-poll pattern. API keys remain server-side; clients receive only compact job state and safe result summaries.
 
 ## Run locally
 
-Requires Node.js 20.9+ (Node 22 is recommended).
+Requires Node.js 20.9+ (Node 22 recommended).
 
 ```powershell
 npm.cmd ci
@@ -27,13 +38,14 @@ npm.cmd run dev
 
 Open `http://localhost:3000`.
 
-On Windows where PowerShell blocks `npm.ps1`, use `npm.cmd` as shown above. A production check is:
+On Windows, use `npm.cmd` if PowerShell blocks `npm.ps1`. Verify a production build with:
 
 ```powershell
+npm.cmd run lint
 cmd.exe /d /c "npm run build"
 ```
 
-## FortyGuard configuration
+## Configuration
 
 Create `.env` in the project root:
 
@@ -41,26 +53,18 @@ Create `.env` in the project root:
 FORTYGUARD_API_KEY=your_key_here
 ```
 
-The hackathon-provided `api_key=...` name is also supported for convenience. Do not prefix either variable with `NEXT_PUBLIC_`, commit `.env`, or put the key in client-side code.
+The hackathon-provided `api_key=...` is also supported. Never use a `NEXT_PUBLIC_` prefix, commit `.env`, or put the key in browser code.
 
-The live check submits a roughly 1 km² AOI around the selected US block (well below the documented Premium 50 mi² limit), then polls only from server-side route handlers:
+## Data and product guardrails
 
-- `POST /api/fortyguard/investigate` submits heatmap, environmental, and satellite jobs.
-- `GET /api/fortyguard/status` retrieves a compact job status.
+- The live map is a local comparison tool, not a city-wide health-risk model.
+- Persistence uses the latest completed UTC day, so partial hourly data is not mistaken for a short heat event.
+- Segmentation and environmental results are leads for investigation—not causal proof.
+- The intervention control shows a transparent, hypothetical screening estimate only.
+- External historical air temperature is regional background context, not a substitute for block-level surface thermal data.
 
-No raw Base64 imagery, signed URLs, activity payloads, or API keys are logged or sent to the browser. The UI only receives job state; this is deliberate while the prototype’s polished hero map continues to use its labelled demo layer.
+## API documentation
 
-## Product decisions
+The implementation follows the official FortyGuard documentation for [heatmaps](https://docs-api.fortyguard.com/docs/create-heatmap), [environmental parameters](https://docs-api.fortyguard.com/docs/environmental-parameters), [satellite segmentation](https://docs-api.fortyguard.com/docs/satellite-view-segmentation), [street-view segmentation](https://docs-api.fortyguard.com/docs/street-view-segmentation), and [known limitations](https://docs-api.fortyguard.com/docs/limitations).
 
-- **Evidence is not causation.** The app calls conclusions hypotheses and shows limitations/counter-evidence.
-- **Live and demo are distinct.** The demo map stays functional offline. Live API work is explicitly a validation layer until the returned GeoJSON is rendered as a live layer.
-- **A small control area is intentional.** Local comparison is more useful for explaining a block anomaly than city-wide weather alone.
-- **No database is required for the hackathon build.** Route handlers are the backend-for-frontend and cache nothing by default.
-
-## API reference used
-
-The integration follows the official FortyGuard asynchronous job pattern: submit a request with an `api-key` header, receive an `activity_id`, then poll `/v1/status/{activity_id}` until a terminal status. The request shapes follow the official [heatmap documentation](https://docs-api.fortyguard.com/docs/create-heatmap), [environmental parameters](https://docs-api.fortyguard.com/docs/environmental-parameters), [satellite segmentation](https://docs-api.fortyguard.com/docs/satellite-view-segmentation), and [known limitations](https://docs-api.fortyguard.com/docs/limitations).
-
-## Next demo upgrade
-
-Render completed `map_data` GeoJSON directly as a MapLibre layer and derive the selected-tile anomaly from `stats_data`. That changes the thermal layer from demo to live while retaining the current independent reasoning/critic presentation.
+See [COMMIT.md](COMMIT.md) for the feature-level history of the project.
