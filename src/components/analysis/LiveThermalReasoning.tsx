@@ -2,6 +2,7 @@ import { BrainCircuit, CheckCircle2, TriangleAlert } from "lucide-react";
 import type { BlockMetrics } from "@/types/thermal";
 import { formatSigned, thermalColor } from "@/lib/utils";
 import { LiveInvestigation } from "@/components/analysis/LiveInvestigation";
+import { MlAttribution } from "@/components/analysis/MlAttribution";
 
 export function LiveThermalReasoning({
   block,
@@ -79,6 +80,8 @@ export function LiveThermalReasoning({
       </div>
 
       <LiveInvestigation key={block.id} block={block} />
+
+      <MlAttribution key={`ml-${block.id}`} lookup={{ lat: block.lat, lng: block.lng }} active />
     </section>
   );
 }
