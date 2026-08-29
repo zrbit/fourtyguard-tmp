@@ -116,7 +116,7 @@ export function ThermalMap({
         paint: {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any -- see thermalColorExpression()
           "fill-color": thermalColorExpression(anomalyScale) as any,
-          "fill-opacity": 0.6,
+          "fill-opacity": 0.78,
         },
       });
       map.addLayer({
@@ -137,11 +137,10 @@ export function ThermalMap({
         type: "circle",
         source: MARKER_SOURCE,
         paint: {
-          "circle-radius": ["interpolate", ["linear"], ["zoom"], 8, 5, 14, 10],
+          "circle-radius": 1.5,
           // eslint-disable-next-line @typescript-eslint/no-explicit-any -- see thermalColorExpression()
           "circle-color": thermalColorExpression(anomalyScale) as any,
-          "circle-stroke-width": 1.5,
-          "circle-stroke-color": "rgba(13,15,19,0.85)",
+          "circle-stroke-width": 0,
         },
       });
       map.addLayer({
@@ -165,11 +164,15 @@ export function ThermalMap({
           "circle-radius": ["interpolate", ["linear"], ["zoom"], 8, 11, 14, 18],
           "circle-color": "transparent",
           "circle-stroke-width": 2.5,
-          "circle-stroke-color": "#c9a24a",
+          "circle-stroke-color": "#73e6d5",
         },
       });
 
       map.on("click", CIRCLE_LAYER, (e: MapLayerMouseEvent) => {
+        const id = e.features?.[0]?.properties?.id as string | undefined;
+        if (id) onSelectRef.current(id);
+      });
+      map.on("click", FILL_LAYER, (e: MapLayerMouseEvent) => {
         const id = e.features?.[0]?.properties?.id as string | undefined;
         if (id) onSelectRef.current(id);
       });
@@ -182,6 +185,8 @@ export function ThermalMap({
         map.getCanvas().style.cursor = "";
         map.setFilter(HOVER_LAYER, NO_MATCH_FILTER);
       });
+      map.on("mouseenter", FILL_LAYER, () => { map.getCanvas().style.cursor = "pointer"; });
+      map.on("mouseleave", FILL_LAYER, () => { map.getCanvas().style.cursor = ""; });
     });
 
     const resizeObserver = new ResizeObserver(() => map.resize());
