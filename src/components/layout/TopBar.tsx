@@ -1,6 +1,6 @@
 "use client";
 
-import { Search } from "lucide-react";
+import { MapPinned } from "lucide-react";
 import { ThermometerIcon } from "@/components/icons/FactorIcons";
 import { ProvenanceTag } from "@/components/ui/ProvenanceTag";
 import type { City } from "@/types/thermal";
@@ -65,8 +65,8 @@ export function TopBar({
           className="hidden items-center gap-2 rounded-full border px-3 py-1.5 font-mono text-xs text-slate md:flex"
           style={{ borderColor: "var(--border)" }}
         >
-          <Search className="h-3.5 w-3.5" aria-hidden />
-          <span>Search {city}…</span>
+          <MapPinned className="h-3.5 w-3.5" aria-hidden />
+          <span>Viewing {city}</span>
         </div>
         <ProvenanceTag provenance="live" />
       </div>

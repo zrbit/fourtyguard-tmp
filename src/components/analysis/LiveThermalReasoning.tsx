@@ -4,8 +4,9 @@ import { formatSigned } from "@/lib/utils";
 import { LiveInvestigation } from "@/components/analysis/LiveInvestigation";
 import { HistoricalComparison } from "@/components/analysis/HistoricalComparison";
 import { ChronicHeatCheck } from "@/components/analysis/ChronicHeatCheck";
+import { ActionBrief } from "@/components/analysis/ActionBrief";
 
-export function LiveThermalReasoning({ block, allBlocks }: { block: BlockMetrics; allBlocks: BlockMetrics[] }) {
+export function LiveThermalReasoning({ block, allBlocks, onSelect }: { block: BlockMetrics; allBlocks: BlockMetrics[]; onSelect: (id: string) => void }) {
   const anomaly = block.temperature - block.nearbyAverage;
   const temperatures = allBlocks.map(candidate => candidate.temperature);
   const average = temperatures.reduce((sum, value) => sum + value, 0) / temperatures.length;
@@ -20,6 +21,7 @@ export function LiveThermalReasoning({ block, allBlocks }: { block: BlockMetrics
   const nextMove = isHotter ? "Check whether the heat persists, then look for shade or surface clues." : "Compare another time or choose a nearby cell before taking action.";
 
   return <section className="border-t p-5" style={{ borderColor: "var(--border)" }}>
+    <ActionBrief block={block} allBlocks={allBlocks} onSelect={onSelect} />
     <div className="flex items-center justify-between gap-3">
       <h2 className="flex items-center gap-2 text-sm font-bold text-ash"><BrainCircuit className="h-4 w-4 text-accent-strong" />What this signal means</h2>
       <span className="rounded-full border px-2 py-1 font-mono text-[10px] text-accent-strong" style={{ borderColor: "var(--accent-border)" }}>{confidence} confidence</span>
@@ -28,9 +30,9 @@ export function LiveThermalReasoning({ block, allBlocks }: { block: BlockMetrics
     <p className="mt-1 text-[12px] leading-relaxed text-slate">{nextMove}</p>
 
     <div className="mt-4 grid grid-cols-3 gap-2" aria-label="Signal summary">
-      <div className="rounded-md border p-2.5" style={{ borderColor: "var(--accent-border)", background: "var(--accent-dim)" }}><div className="font-mono text-[9px] tracking-wide text-slate uppercase">Local signal</div><div className="mt-1 font-mono text-[15px] text-paper">{formatSigned(anomaly, 2)}°F</div><div className="mt-0.5 text-[10px] text-slate">vs 8 nearby</div></div>
-      <div className="rounded-md border p-2.5" style={{ borderColor: "var(--border-strong)", background: "var(--surface)" }}><div className="font-mono text-[9px] tracking-wide text-slate uppercase">Area rank</div><div className="mt-1 font-mono text-[15px] text-paper">{percentile}th</div><div className="mt-0.5 text-[10px] text-slate">of this scan</div></div>
-      <div className="rounded-md border p-2.5" style={{ borderColor: "var(--border-strong)", background: "var(--surface)" }}><div className="font-mono text-[9px] tracking-wide text-slate uppercase">Next step</div><div className="mt-1 flex items-center gap-1 text-[12px] font-semibold text-paper"><Crosshair className="h-3.5 w-3.5 text-accent-strong" />Validate</div><div className="mt-0.5 text-[10px] text-slate">before action</div></div>
+      <div className="rounded-md border p-2.5" style={{ borderColor: "var(--accent-border)", background: "var(--accent-dim)" }}><div className="font-mono text-[9px] tracking-wide text-slate uppercase">Warmer than nearby</div><div className="mt-1 font-mono text-[15px] text-paper">{formatSigned(anomaly, 2)}°F</div><div className="mt-0.5 text-[10px] text-slate">than 8 close places</div></div>
+      <div className="rounded-md border p-2.5" style={{ borderColor: "var(--border-strong)", background: "var(--surface)" }}><div className="font-mono text-[9px] tracking-wide text-slate uppercase">Stands out more than</div><div className="mt-1 font-mono text-[15px] text-paper">{percentile}%</div><div className="mt-0.5 text-[10px] text-slate">of this small scan</div></div>
+      <div className="rounded-md border p-2.5" style={{ borderColor: "var(--border-strong)", background: "var(--surface)" }}><div className="font-mono text-[9px] tracking-wide text-slate uppercase">What to do next</div><div className="mt-1 flex items-center gap-1 text-[12px] font-semibold text-paper"><Crosshair className="h-3.5 w-3.5 text-accent-strong" />Check it</div><div className="mt-0.5 text-[10px] text-slate">before action</div></div>
     </div>
 
     <details className="mt-3 rounded-md border px-3 py-2.5 text-[11px]" style={{ borderColor: "var(--border)", background: "var(--surface-sunken)" }}>

@@ -8,11 +8,12 @@ It is intentionally not a generic heat-map viewer. It helps a resident, planner,
 
 ## The experience
 
-1. **Understand the signal** — choose a live 100 m cell and see its temperature against its eight closest spatial controls and the wider scan.
-2. **Check conditions** — request FortyGuard environmental evidence first; add slower satellite and street imagery only if a visual explanation is needed.
-3. **Check persistence** — test whether local heat stayed above 90°F / 32°C during the latest complete day, instead of trusting one snapshot.
-4. **Compare history** — chart the same calendar day and UTC hour across the previous three years, with Open-Meteo regional air temperature as context.
-5. **Explore options** — use the expandable cooling scenario to discuss tree-canopy and cool-pavement assumptions. It is a screening aid, not a forecast.
+1. **Choose a place to start** — the Action Brief lists the five places that are warmest compared with their closest neighbours. It is an investigation shortlist, not a danger rating.
+2. **Understand the signal** — choose a live 100 m cell and see its temperature against its eight closest spatial controls and the wider scan.
+3. **Check conditions** — request FortyGuard environmental evidence first; add slower satellite and street imagery only if a visual explanation is needed.
+4. **Check persistence** — test whether local heat stayed above 90°F / 32°C during the latest complete day, instead of trusting one snapshot.
+5. **Compare history** — chart the same calendar day and UTC hour across the previous three years, with Open-Meteo regional air temperature as context.
+6. **Explore options** — use the expandable cooling scenario to discuss tree-canopy and cool-pavement assumptions. It is a screening aid, not a forecast.
 
 Every interpretation is intentionally cautious: temperature locates a signal; it does not prove a cause or a health outcome.
 
