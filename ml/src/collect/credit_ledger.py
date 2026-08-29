@@ -1,10 +1,15 @@
 """Tracks estimated FortyGuard credit spend and hard-stops at a configured cap.
 
-Only Satellite Segmentation's cost is confirmed going in (~14,400/call, per
-project memory). /heatmap and /env_params costs are NOT confirmed -- the
-placeholders below are conservative guesses and MUST be updated (or at least
-sanity-checked) after the pilot call in ml/README.md step 2, before running
-the full batch.
+All three unit costs below are CONFIRMED against the real account via
+POST /v1/system/fetch-api-key-usage (discovered by reading the docs site's
+JS bundle -- not documented on the docs pages themselves): 56 heatmap calls
+cost 236,320 credits (4,220 each), 39 env_params calls cost 113,100 (2,900
+each), 3 satellite calls cost 43,200 (14,400 each, matching what project
+memory already had right). Also confirmed via that same endpoint: credits
+reset once at the end of the Hackathon billing cycle (2026-09-26), NOT
+daily -- there is no "N calls per day" quota on any of these endpoints.
+An earlier version of this pipeline mistakenly built a workaround around
+what was actually just a run of ordinary failures.
 """
 
 from __future__ import annotations
@@ -15,11 +20,11 @@ from pathlib import Path
 
 LEDGER_PATH = Path(__file__).resolve().parents[2] / "data" / "raw" / "_ledger.json"
 
-# kind -> (estimated credits per call, confirmed?)
+# kind -> (credits per call, confirmed?) -- all three confirmed, see module docstring.
 COST_ESTIMATES: dict[str, tuple[int, bool]] = {
-    "satellite": (14_400, True),  # confirmed via project memory
-    "heatmap": (2_000, False),  # UNCONFIRMED placeholder -- verify with the pilot call
-    "env_params": (500, False),  # UNCONFIRMED placeholder -- verify with the pilot call
+    "satellite": (14_400, True),
+    "heatmap": (4_220, True),
+    "env_params": (2_900, True),
 }
 
 

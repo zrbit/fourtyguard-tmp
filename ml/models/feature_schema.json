@@ -25,10 +25,10 @@
   "best_params": {
     "max_depth": 2,
     "n_estimators": 100,
-    "learning_rate": 0.1
+    "learning_rate": 0.05
   },
-  "cv_mae": 1.3388553013935076,
-  "cv_r2": -1.1555898588750881,
+  "cv_mae": 2.95395382544222,
+  "cv_r2": -0.8882177260526765,
   "n_rows": 34,
   "n_aois": 17
 }
