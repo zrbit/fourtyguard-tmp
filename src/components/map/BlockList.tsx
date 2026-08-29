@@ -32,7 +32,7 @@ export function BlockList({
       // ("peek") height on small screens instead; lg+ reverts to bottom-4
       // since the panel is docked beside the map there, not below it.
       className="pointer-events-auto absolute right-4 bottom-[calc(42dvh+12px)] z-10 max-w-[calc(100%-2rem)] rounded-md border p-2 backdrop-blur-sm lg:hidden"
-      style={{ borderColor: "var(--border)", background: "rgba(13,15,19,0.72)" }}
+      style={{ borderColor: "var(--border)", background: "var(--overlay)" }}
       role="group"
       aria-label="Select a notable cell"
     >

@@ -22,7 +22,10 @@ import type { BlockMetrics } from "@/types/thermal";
 // request afterward (confirmed via devtools — style loaded, source
 // registered, zero .mvt requests, map stayed blank indefinitely). v4 is
 // the long-established, widely-deployed line and renders it correctly.
-const BASEMAP_STYLE = "https://basemaps.cartocdn.com/gl/dark-matter-nolabels-gl-style/style.json";
+const BASEMAP_STYLES = {
+  dark: "https://basemaps.cartocdn.com/gl/dark-matter-nolabels-gl-style/style.json",
+  light: "https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json",
+} as const;
 
 const FOOTPRINT_SOURCE = "block-footprints";
 const FILL_LAYER = "blocks-fill";
@@ -70,10 +73,12 @@ export function ThermalMap({
   blocks,
   selectedId,
   onSelect,
+  theme,
 }: {
   blocks: BlockMetrics[];
   selectedId: string;
   onSelect: (id: string) => void;
+  theme: "light" | "dark";
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MaplibreMap | null>(null);
@@ -93,7 +98,7 @@ export function ThermalMap({
 
     const map = new MaplibreMap({
       container: containerRef.current,
-      style: BASEMAP_STYLE,
+      style: BASEMAP_STYLES[theme],
       bounds: boundsOf(blocks),
       fitBoundsOptions: { padding: 80 },
       attributionControl: { compact: true },
@@ -123,7 +128,7 @@ export function ThermalMap({
         id: LINE_LAYER,
         type: "line",
         source: FOOTPRINT_SOURCE,
-        paint: { "line-color": "rgba(237,239,242,0.35)", "line-width": 1 },
+        paint: { "line-color": theme === "light" ? "rgba(16,36,42,0.35)" : "rgba(237,239,242,0.35)", "line-width": 1 },
       });
 
       // Marker circles: fixed screen-space size regardless of zoom — the
@@ -152,7 +157,7 @@ export function ThermalMap({
           "circle-radius": ["interpolate", ["linear"], ["zoom"], 8, 9, 14, 15],
           "circle-color": "transparent",
           "circle-stroke-width": 1.5,
-          "circle-stroke-color": "#edeff2",
+          "circle-stroke-color": theme === "light" ? "#10242a" : "#edeff2",
         },
       });
       map.addLayer({
@@ -198,7 +203,7 @@ export function ThermalMap({
       mapRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [theme]);
 
   // Keep the accent ring in sync with whichever block is selected,
   // including selections made via the keyboard-accessible block list.

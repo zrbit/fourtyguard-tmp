@@ -14,22 +14,30 @@ const CENTERS: Record<City, [number, number]> = {
 export default function LiveMapLoading({ city, status }: { city: City; status: string }) {
   const element = useRef<HTMLDivElement>(null);
   const [elapsed, setElapsed] = useState(0);
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
+  useEffect(() => {
+    const updateTheme = () => setTheme(document.documentElement.dataset.theme === "light" ? "light" : "dark");
+    updateTheme();
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => observer.disconnect();
+  }, []);
   useEffect(() => {
     if (!element.current) return;
     const map = new MaplibreMap({
       container: element.current,
-      style: "https://basemaps.cartocdn.com/gl/dark-matter-nolabels-gl-style/style.json",
+      style: theme === "light" ? "https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json" : "https://basemaps.cartocdn.com/gl/dark-matter-nolabels-gl-style/style.json",
       center: CENTERS[city],
       zoom: 14,
       attributionControl: { compact: true },
     });
     map.addControl(new NavigationControl({ showCompass: false }), "top-right");
     return () => map.remove();
-  }, [city]);
+  }, [city, theme]);
   useEffect(() => {
     const reset = window.setTimeout(() => setElapsed(0), 0);
     const timer = window.setInterval(() => setElapsed(value => value + 1), 1000);
     return () => { window.clearTimeout(reset); window.clearInterval(timer); };
   }, [city]);
-  return <div className="relative flex flex-1"><div ref={element} className="h-full w-full" /><div className="pointer-events-none absolute inset-0 flex items-center justify-center"><div className="w-72 rounded-md border px-4 py-3 shadow-lg" style={{ borderColor: "var(--border-strong)", background: "rgba(18,21,26,0.9)" }}><div className="flex items-center gap-2 font-mono text-xs tracking-wide text-paper"><LoaderCircle className="h-4 w-4 animate-spin text-accent" />{status}</div><div className="mt-2 font-mono text-[10px] tracking-wide text-slate">This tab · {elapsed}s</div></div></div></div>;
+  return <div className="relative flex flex-1"><div ref={element} className="h-full w-full" /><div className="pointer-events-none absolute inset-0 flex items-center justify-center"><div className="w-72 rounded-md border px-4 py-3 shadow-lg" style={{ borderColor: "var(--border-strong)", background: "var(--loading-overlay)" }}><div className="flex items-center gap-2 font-mono text-xs tracking-wide text-paper"><LoaderCircle className="h-4 w-4 animate-spin text-accent" />{status}</div><div className="mt-2 font-mono text-[10px] tracking-wide text-slate">This tab · {elapsed}s</div></div></div></div>;
 }

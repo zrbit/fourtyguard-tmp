@@ -24,6 +24,11 @@
   --accent-dim: rgba(53, 198, 178, 0.13);
   --accent-border: rgba(83, 221, 201, 0.42);
   --accent-ink: #031b19;
+  --overlay: rgba(7, 16, 24, 0.78);
+  --loading-overlay: rgba(16, 29, 41, 0.92);
+  --map-line: rgba(237, 239, 242, 0.35);
+  --chart-tick: #9aa3ad;
+  --chart-tooltip: #1b2028;
 
   --thermal-cold-deep: #1f4e96;
   --thermal-cold: #3e7fd9;
@@ -34,6 +39,31 @@
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 8px;
+}
+
+:root[data-theme="light"] {
+  --ground: #f5f8f8;
+  --surface: #ffffff;
+  --surface-raised: #edf3f3;
+  --surface-sunken: #e7eeee;
+
+  --border: rgba(22, 47, 54, 0.14);
+  --border-strong: rgba(22, 47, 54, 0.25);
+
+  --text-primary: #10242a;
+  --text-secondary: #45606a;
+  --text-tertiary: #6b8189;
+
+  --accent: #087f72;
+  --accent-strong: #05685e;
+  --accent-dim: rgba(8, 127, 114, 0.12);
+  --accent-border: rgba(8, 127, 114, 0.42);
+  --accent-ink: #ffffff;
+  --overlay: rgba(255, 255, 255, 0.84);
+  --loading-overlay: rgba(255, 255, 255, 0.93);
+  --map-line: rgba(16, 36, 42, 0.35);
+  --chart-tick: #58717a;
+  --chart-tooltip: #ffffff;
 }
 
 @theme inline {
@@ -68,6 +98,10 @@
 
 html {
   color-scheme: dark;
+}
+
+html[data-theme="light"] {
+  color-scheme: light;
 }
 
 body {
@@ -107,8 +141,13 @@ body {
 .maplibregl-ctrl-icon {
   filter: invert(1) brightness(1.7);
 }
+
+:root[data-theme="light"] .maplibregl-ctrl-icon,
+:root[data-theme="light"] .maplibregl-ctrl-attrib-button {
+  filter: none;
+}
 .maplibregl-ctrl-attrib {
-  background: rgba(13, 15, 19, 0.7) !important;
+  background: var(--overlay) !important;
   color: var(--text-tertiary) !important;
   border-radius: var(--radius-sm) 0 0 0 !important;
   font-family: var(--font-mono);
