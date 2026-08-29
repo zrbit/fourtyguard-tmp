@@ -30,7 +30,7 @@ export default function MapView({
   return (
     <div className="relative flex flex-1 flex-col" style={{ background: "var(--surface-sunken)" }}>
       <ThermalMap blocks={blocks} selectedId={selectedId} onSelect={onSelect} theme={theme} />
-      <MapLegend scale={anomalyScale} />
+      <MapLegend scale={anomalyScale} theme={theme} />
       <BlockList blocks={blocks} selectedId={selectedId} onSelect={onSelect} />
     </div>
   );
