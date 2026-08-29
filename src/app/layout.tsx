@@ -12,7 +12,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       className="h-full antialiased"
+      suppressHydrationWarning
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(() => { try { const saved = localStorage.getItem("heat-lens-theme"); const theme = saved === "light" || saved === "dark" ? saved : matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"; document.documentElement.dataset.theme = theme; } catch { document.documentElement.dataset.theme = "dark"; } })();`,
+          }}
+        />
+      </head>
       <body
         className="min-h-full flex flex-col bg-ground text-paper font-sans"
         suppressHydrationWarning

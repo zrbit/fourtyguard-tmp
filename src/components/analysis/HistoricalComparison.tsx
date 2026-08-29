@@ -87,11 +87,11 @@ export function HistoricalComparison({ block }: { block: BlockMetrics }) {
       <div className="mt-2 h-44 rounded-md border px-1 pt-2" style={{ borderColor: "var(--border-strong)", background: "var(--surface-sunken)" }}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData} margin={{ top: 8, right: 12, bottom: 6, left: -8 }}>
-            <XAxis dataKey="year" tick={{ fill: "#9aa3ad", fontSize: 10 }} axisLine={{ stroke: "rgba(237,239,242,0.2)" }} tickLine={false} />
-            <YAxis unit="°" tick={{ fill: "#9aa3ad", fontSize: 10 }} axisLine={false} tickLine={false} width={34} domain={["dataMin - 3", "dataMax + 3"]} />
-            <Tooltip contentStyle={{ background: "#1b2028", border: "1px solid rgba(237,239,242,0.2)", borderRadius: 4, fontSize: 11 }} labelStyle={{ color: "#edeff2" }} itemStyle={{ color: "#edeff2" }} formatter={(value, name) => [`${Number(value).toFixed(1)}°F`, name === "block" ? "Block mean" : "Air temperature"]} />
-            <Line type="monotone" dataKey="block" stroke="#73e6d5" strokeWidth={2} dot={{ r: 3 }} connectNulls name="block" />
-            <Line type="monotone" dataKey="air" stroke="#a9bbc2" strokeWidth={1.5} strokeDasharray="4 3" dot={{ r: 2 }} connectNulls name="air" />
+            <XAxis dataKey="year" tick={{ fill: "var(--chart-tick)", fontSize: 10 }} axisLine={{ stroke: "var(--border-strong)" }} tickLine={false} />
+            <YAxis unit="°" tick={{ fill: "var(--chart-tick)", fontSize: 10 }} axisLine={false} tickLine={false} width={34} domain={["dataMin - 3", "dataMax + 3"]} />
+            <Tooltip contentStyle={{ background: "var(--chart-tooltip)", border: "1px solid var(--border-strong)", borderRadius: 4, fontSize: 11 }} labelStyle={{ color: "var(--text-primary)" }} itemStyle={{ color: "var(--text-primary)" }} formatter={(value, name) => [`${Number(value).toFixed(1)}°F`, name === "block" ? "Block mean" : "Air temperature"]} />
+            <Line type="monotone" dataKey="block" stroke="var(--accent-strong)" strokeWidth={2} dot={{ r: 3 }} connectNulls name="block" />
+            <Line type="monotone" dataKey="air" stroke="var(--text-secondary)" strokeWidth={1.5} strokeDasharray="4 3" dot={{ r: 2 }} connectNulls name="air" />
           </LineChart>
         </ResponsiveContainer>
       </div>
