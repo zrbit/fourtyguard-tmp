@@ -9,7 +9,8 @@ This file makes the feature history easy to review during the hackathon.
 | `6fd98dd` | Live FortyGuard thermal workflow with resilient polling and caching. |
 | `a17a9f2` | Live thermal reasoning and server-side status handling. |
 | `bf37e34` | Live causal-evidence integration for selected cells. |
-| `feat: add guided heat validation experience` (current HEAD) | Live city heatmaps, clear signal summary, progressive evidence checks, same-day historical chart, optional persistence analysis, refined map UI, and this project documentation. |
+| `feat: add guided heat validation experience` | Live city heatmaps, clear signal summary, progressive evidence checks, same-day historical chart, optional persistence analysis, refined map UI, and this project documentation. |
+| `fix: clarify heat investigation language` (current HEAD) | Plain-language weather, imagery, persistence, and heat-duration labels that explain what each check means to a person using the dashboard. |
 
 ## Current product capabilities
 

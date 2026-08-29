@@ -95,16 +95,16 @@ export function LiveInvestigation({ block }: { block: BlockMetrics }) {
   const interpretation = causalInterpretation(jobs);
 
   return <section className="mt-4 rounded-lg border p-3.5" style={{ borderColor: "var(--border)", background: "var(--surface)" }}>
-    <div className="flex items-start gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-mono text-[10px] text-accent-strong" style={{ background: "var(--accent-dim)" }}>1</span><div><div className="flex items-center gap-2"><h3 className="text-[13px] font-bold text-paper">What might explain it?</h3><Info text="Checks weather and, if needed, imagery for possible heat drivers. It does not prove a single cause." /></div><p className="mt-0.5 text-[11px] leading-relaxed text-slate">Start with conditions. Add imagery only when you need visual clues.</p></div></div>
+    <div className="flex items-start gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-mono text-[10px] text-accent-strong" style={{ background: "var(--accent-dim)" }}>1</span><div><div className="flex items-center gap-2"><h3 className="text-[13px] font-bold text-paper">Why could this spot be warmer?</h3><Info text="Weather conditions can show whether the whole area was hot. Street and satellite imagery can reveal visible shade, trees, and pavement. Neither proves a cause on its own." /></div><p className="mt-0.5 text-[11px] leading-relaxed text-slate">First check local weather and sunlight. Then use images to look for shade, trees, and exposed pavement.</p></div></div>
     <button type="button" onClick={() => void start("environment")} disabled={loading || Boolean(environmentJob && !isFinal(environmentJob.status))} className="mt-3 flex w-full cursor-pointer items-center justify-center gap-2 rounded-md border py-2.5 text-[12px] font-bold disabled:cursor-wait disabled:opacity-60" style={{ borderColor: "var(--accent-border)", color: "var(--accent-strong)", background: "var(--accent-dim)" }}>
       {loading && !imageryBusy ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Activity className="h-3.5 w-3.5" />}
-      {environmentJob && !isFinal(environmentJob.status) ? "Checking conditions…" : environmentJob ? "Check conditions again" : "Check conditions"}
+      {environmentJob && !isFinal(environmentJob.status) ? "Checking local weather…" : environmentJob ? "Refresh local weather" : "Check local weather"}
     </button>
     <button type="button" onClick={() => void start("imagery")} disabled={loading || imageryBusy || environmentJob?.status !== "Completed"} className="mt-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-md border py-2 text-[11px] font-semibold disabled:cursor-wait disabled:opacity-60" style={{ borderColor: "var(--border-strong)", color: "var(--text-primary)", background: "var(--surface)" }}>
       {imageryBusy ? <RefreshCw className="h-3 w-3 animate-spin" /> : <Activity className="h-3 w-3" />}
-      {imageryBusy ? "Collecting imagery…" : environmentJob?.status !== "Completed" ? "Check conditions first" : "Add imagery (slower)"}
+      {imageryBusy ? "Collecting street and satellite images…" : environmentJob?.status !== "Completed" ? "Unlock images after weather check" : "Look for shade and pavement in images"}
     </button>
-    <p className="mt-1 text-[10px] text-slate">Conditions are usually quicker. Imagery can take several minutes.</p>
+    <p className="mt-1 text-[10px] text-slate">Weather is usually quicker. Image analysis can take several minutes.</p>
     {jobs.length > 0 && <div className="mt-3 space-y-2" aria-live="polite">
       {jobs.map(job => <div key={job.activityId} className="flex items-start justify-between gap-3 border-b pb-2 text-[11px]" style={{ borderColor: "var(--border)" }}>
         <div><span className="text-ash">{job.label}</span>{job.status === "Processing" && <p className="mt-0.5 text-[10px] text-slate">Still processing. We keep checking for up to 10 minutes.</p>}{job.status === "Failed" && job.message && <p className="mt-0.5 text-[10px] text-slate">{job.message}</p>}</div>
