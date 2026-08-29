@@ -11,7 +11,8 @@ This file makes the feature history easy to review during the hackathon.
 | `bf37e34` | Live causal-evidence integration for selected cells. |
 | `feat: add guided heat validation experience` | Live city heatmaps, clear signal summary, progressive evidence checks, same-day historical chart, optional persistence analysis, refined map UI, and this project documentation. |
 | `fix: clarify heat investigation language` | Plain-language weather, imagery, persistence, and heat-duration labels that explain what each check means to a person using the dashboard. |
-| `feat: add action brief shortlist` (current HEAD) | Interactive top-five shortlist of locally warmer places, plain-language selected-place context, and a direct path to the heat-duration check. |
+| `feat: add action brief shortlist` | Interactive top-five shortlist of locally warmer places, plain-language selected-place context, and a direct path to the heat-duration check. |
+| `feat: add transparent intervention optimizer` (current HEAD) | On-demand action planning using local thermal controls and the next-24-hour forecast, with ranked recommendations, timing, expected benefit, and disclosed assumptions. |
 
 ## Current product capabilities
 
@@ -22,5 +23,6 @@ This file makes the feature history easy to review during the hackathon.
 - **Persistent-heat check:** assesses continuous time over 90°F / 32°C on the latest completed day.
 - **Same-day history:** compares the selected place with three previous years and visually separates block thermal data from regional air temperature.
 - **Transparent intervention scenario:** lets a user explore canopy and pavement assumptions without presenting them as a forecast.
+- **Intervention Optimizer:** ranks shade, surface, and near-term protection actions from local controls and forecast conditions, while keeping its assumptions visible.
 
 The current feature batch is documented above by its stable commit subject; `git log -1 --oneline` shows its exact hash.
