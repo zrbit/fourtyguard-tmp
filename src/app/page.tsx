@@ -6,7 +6,8 @@ import { AlertTriangle, Radio, RefreshCw } from "lucide-react";
 import { TopBar, type HeatPeriod } from "@/components/layout/TopBar";
 import type { BlockMetrics, City } from "@/types/thermal";
 import { formatSigned, thermalColor } from "@/lib/utils";
-import { InterventionOptimizer } from "@/components/analysis/InterventionOptimizer";
+// AI action plans cover this; commented out for now.
+// import { InterventionOptimizer } from "@/components/analysis/InterventionOptimizer";
 import { LiveThermalReasoning } from "@/components/analysis/LiveThermalReasoning";
 
 const MapView = dynamic(() => import("@/components/map/MapView"), { ssr: false });
@@ -47,6 +48,16 @@ function blocksFromHeatmap(mapData: unknown, city: City): BlockMetrics[] {
     const celsius = candidate; const lng = points.reduce((sum, point) => sum + point[0], 0) / points.length; const lat = points.reduce((sum, point) => sum + point[1], 0) / points.length;
     return { index, celsius, lat, lng };
   }).filter((tile): tile is { index: number; celsius: number; lat: number; lng: number } => tile !== null);
+  // Scan-wide average: every cell already returned by this same heatmap
+  // call, no extra FortyGuard request. This is a broad "does this whole
+  // area run hot" signal, distinct from the 8-nearest-neighbor average
+  // below, which is a fine local-outlier signal -- a cell deep inside a
+  // large hot zone reads as unremarkable vs. its neighbors (they're hot
+  // too) but clearly warm vs. this scan-wide figure.
+  const scanTemperatures = tiles.map(tile => Math.round((tile.celsius * 9 / 5 + 32) * 100) / 100);
+  const scanAverage = scanTemperatures.length
+    ? Math.round((scanTemperatures.reduce((sum, value) => sum + value, 0) / scanTemperatures.length) * 100) / 100
+    : 0;
   return tiles.map(tile => {
     // Keep enough precision for analysis. The API's LA scan has a total
     // spread close to 1°F, so rounding each cell to a tenth before comparing
@@ -74,6 +85,7 @@ function blocksFromHeatmap(mapData: unknown, city: City): BlockMetrics[] {
       lng: tile.lng,
       temperature,
       nearbyAverage: Math.round(nearbyAverage * 100) / 100,
+      scanAverage,
       surfaceTemperature: temperature,
       nearbySurfaceTemperature: Math.round(nearbyAverage * 100) / 100,
       treeCanopyPct: 0,
@@ -122,8 +134,11 @@ export default function Home() {
   async function load() {
     if (period === "compare") return;
     setLoading(true); setLoadStatus("Loading cached live heatmap…"); setError(null); setBlocks([]); setManualSelection(false);
-    const cacheKey = `fortyguard-live-heatmap-v2:${city}:${period}`;
-    const jobKey = `fortyguard-live-job-v2:${city}:${period}`;
+    // v4: bumped when the "Los Angeles" study area was widened west to pull
+    // in the Sepulveda Basin/Lake Balboa vegetation, so no browser serves
+    // the smaller, stale Van Nuys-only box under the same city name.
+    const cacheKey = `fortyguard-live-heatmap-v4:${city}:${period}`;
+    const jobKey = `fortyguard-live-job-v4:${city}:${period}`;
     try { const cached = window.localStorage.getItem(cacheKey); if (cached) { const live = blocksFromHeatmap(cached, city); if (live.length) { setScans(current => ({ ...current, [period]: live })); setBlocks(live); setSelectedId(mostUnusualBlock(live).id); setLoading(false); return; } } } catch { /* Storage is an optional performance optimization. */ }
     setLoadStatus("Submitting live heatmap…");
     try {
@@ -156,6 +171,7 @@ export default function Home() {
   const visibleBlocks = useMemo(() => period === "compare" && scans.day && scans.night ? nightMinusDay(scans.day, scans.night) : blocks, [blocks, period, scans.day, scans.night]);
   const block = useMemo(() => visibleBlocks.find(item => item.id === selectedId) ?? visibleBlocks[0], [visibleBlocks, selectedId]);
   const anomaly = block ? block.temperature - block.nearbyAverage : 0;
+  const scanAnomaly = block?.scanAverage !== undefined ? block.temperature - block.scanAverage : null;
   const comparisonMax = Math.max(...visibleBlocks.map(item => item.temperature)); const comparisonMin = Math.min(...visibleBlocks.map(item => item.temperature));
   const coolingScore = period === "compare" && block ? Math.round(((block.temperature - comparisonMin) / Math.max(0.01, comparisonMax - comparisonMin)) * 100) : null;
   const dayTimestamp = scheduledScanTimestamp("day"); const nightTimestamp = scheduledScanTimestamp("night");
@@ -177,11 +193,12 @@ export default function Home() {
               <p className="mt-2 font-mono text-[10px] leading-relaxed text-slate">{period === "compare" ? <>Daytime: {dayTimestamp}<br />Nighttime: {nightTimestamp}</> : period === "day" ? `Daytime scan: ${dayTimestamp}` : `Nighttime scan: ${nightTimestamp}`}</p>
               <div className="mt-5 flex items-end gap-2 font-mono"><span className="text-4xl font-semibold">{period === "compare" ? formatSigned(block.temperature, 1) : block.temperature.toFixed(1)}</span><span className="pb-1 text-lg text-ash">°F</span></div>
               <p className="mt-2 font-mono text-[13px]" style={{ color: thermalColor(anomaly) }}>{period === "compare" ? "Temperature change from daytime to nighttime" : `${formatSigned(anomaly, 2)}°F compared with 8 nearby places`}</p>
+              {period !== "compare" && scanAnomaly !== null && <p className="mt-0.5 font-mono text-[11px]" style={{ color: thermalColor(scanAnomaly) }}>{formatSigned(scanAnomaly, 2)}°F vs. this scan's average ({block.scanAverage!.toFixed(1)}°F)</p>}
               {coolingScore !== null && <div className="mt-3 rounded-md border p-3" style={{ borderColor: "var(--accent-border)", background: "var(--accent-dim)" }}><div className="font-mono text-[10px] tracking-wide text-accent-strong uppercase">Overnight cooling priority</div><div className="mt-1 text-sm font-semibold text-paper">{coolingScore}/100</div><p className="mt-1 text-[11px] leading-relaxed text-slate">Higher scores identify cells that cooled the least between the two scans.</p></div>}
               <p className="mt-2 font-mono text-[10.5px] text-slate">{block.lat.toFixed(5)}, {block.lng.toFixed(5)}</p>
               <p className="mt-4 text-[12px] leading-relaxed text-slate">{manualSelection ? "You picked this place. Choose another square on the map to compare it." : "We picked this place because it is one of the most unusual temperatures nearby."}</p>
             </div>
-            {period !== "compare" && <><LiveThermalReasoning block={block} allBlocks={blocks} onSelect={(id) => { setSelectedId(id); setManualSelection(true); }} /><InterventionOptimizer block={block} allBlocks={blocks} /></>}
+            {period !== "compare" && <><LiveThermalReasoning block={block} allBlocks={blocks} onSelect={(id) => { setSelectedId(id); setManualSelection(true); }} />{/* AI action plans cover this; commented out for now. */}{/* <InterventionOptimizer block={block} allBlocks={blocks} /> */}</>}
           </aside>
         </> : null}
       </main>

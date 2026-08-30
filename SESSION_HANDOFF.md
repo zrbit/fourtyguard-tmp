@@ -2,8 +2,18 @@
 
 Last updated: 2026-08-30
 
-This is the canonical continuity record for `D:\Fortyguard_batra`. Read it
+This is the canonical continuity record for `C:\Fortyguard_batra`. Read it
 before collecting data, training, or altering the app.
+
+**2026-08-30, later same day:** the user confirmed `C:\Fortyguard_batra`
+replaces `D:\Fortyguard_batra` going forward for the web app. The D: copy's
+`next dev` server (web app only, not any Python process) has been stopped so
+it stops shadowing C:. `ml/cooling_deficit`'s multi-night collector finished
+this session (24/24 AOI-nights, per `runtime/multi_night.stdout.log` and
+`data/multi_night_manifest_local-time-v2.json` on D:) but **its `data/` and
+`runtime/` have deliberately not been copied to C: yet** — do that
+consciously, not as a side effect, since another agent may already be
+mid-transfer per the note above about parallel Claude/Codex work.
 
 ## Security and working-directory rules
 
@@ -208,7 +218,7 @@ cooling collection is active. Copy those only after its collector completes.
 
 ## How to run locally
 
-For the web app in `C:\Fortyguard_batra` or `D:\Fortyguard_batra`:
+For the web app in `C:\Fortyguard_batra` (canonical — D: is retired for the app):
 
 ```powershell
 npm install

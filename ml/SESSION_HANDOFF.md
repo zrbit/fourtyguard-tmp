@@ -1,6 +1,8 @@
 # Session handoff — Thermal Reasoning Agent (ml/ pipeline)
 
-Written 2026-08-30 so a fresh Claude session in this directory (`D:\Fortyguard_batra`)
+Written 2026-08-30 so a fresh Claude session in this directory (originally
+`D:\Fortyguard_batra`; `C:\Fortyguard_batra` is now the canonical copy — see
+the root `SESSION_HANDOFF.md`)
 can pick up with full context. Read this first, then `COLLECTION_PLAN.md` and
 `ENRICHMENT_PLAN.md` alongside it.
 

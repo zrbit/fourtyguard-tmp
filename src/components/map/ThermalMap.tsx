@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import {
   Map as MaplibreMap,
   NavigationControl,
+  type GeoJSONSource,
   type MapLayerMouseEvent,
 } from "maplibre-gl";
 import { blocksToFeatureCollection, boundsOf } from "@/lib/spatial/blockGeometry";
@@ -156,6 +157,33 @@ export function ThermalMap({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [theme]);
+
+  // Refresh the rendered tiles whenever the data actually changes (e.g.
+  // switching day/night/compare period). The map itself is only built once
+  // per theme, so without this the source data and color scale would stay
+  // frozen on whatever `blocks` happened to be in scope the last time the
+  // mount effect ran.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const apply = () => {
+      const source = map.getSource(MARKER_SOURCE);
+      if (source && "setData" in source) {
+        (source as GeoJSONSource).setData(blocksToFeatureCollection(blocks));
+      }
+      if (map.getLayer(RECTANGLE_LAYER)) {
+        map.setPaintProperty(
+          RECTANGLE_LAYER,
+          "fill-color",
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- MapLibre rejects dynamic expression arrays
+          thermalColorExpression(minTemperature, maxTemperature, theme) as any,
+        );
+      }
+    };
+    if (map.isStyleLoaded()) apply();
+    else map.once("load", apply);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [blocks, minTemperature, maxTemperature]);
 
   // Keep the accent ring in sync with whichever block is selected,
   // including selections made via the keyboard-accessible block list.

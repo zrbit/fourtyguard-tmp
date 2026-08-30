@@ -33,7 +33,9 @@ unmeasured-building-geometry caveat rather than claim causality.
 
 ## Safe execution sequence
 
-From `D:\Fortyguard_batra\ml` with the Python 3.11 virtual environment active:
+From `C:\Fortyguard_batra\ml` with the Python 3.11 virtual environment active
+(this package's own `data/` and `runtime/` have not yet been copied over from
+the retired `D:\Fortyguard_batra` — check before assuming a fresh state here):
 
 ```powershell
 # First run only once on Windows if the environment lacks IANA timezone data.

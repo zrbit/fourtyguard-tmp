@@ -7,7 +7,16 @@ export const STUDY_AREAS = {
   // Compact neighbourhood windows keep the tile count small. At the
   // documented 100 m (fastest) resolution these produce a focused local
   // comparison rather than a slow city-scale batch job.
-  "Los Angeles": [-118.255, 34.045, -118.235, 34.063],
+  // Van Nuys, San Fernando Valley. Chosen over other Valley AOIs in
+  // ml/src/collect/aoi_sampling.py because "valley_dense_mixed" already has
+  // real training coverage (dense multifamily, surface parking, and some
+  // canopy in one small area). Widened west (~4.7 km x 2 km overall, up
+  // from the original ~1.85 km x 2 km Van Nuys-only box) to pull in part of
+  // the Sepulveda Basin / Lake Balboa recreation area — golf courses, the
+  // lake, and tree cover — so the demo shows a real hot/cool contrast
+  // between dense Van Nuys blocks and clearly vegetated ones, not just a
+  // uniformly dense sample.
+  "Los Angeles": [-118.492, 34.1777, -118.4387, 34.1957],
   Chicago: [-87.64, 41.875, -87.62, 41.892],
   "New York City": [-73.995, 40.705, -73.975, 40.722],
 } as const;

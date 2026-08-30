@@ -6,7 +6,7 @@ import { LoaderCircle } from "lucide-react";
 import type { City } from "@/types/thermal";
 
 const CENTERS: Record<City, [number, number]> = {
-  "Los Angeles": [-118.245, 34.054],
+  "Los Angeles": [-118.4654, 34.1867], // San Fernando Valley (Van Nuys + Lake Balboa/Sepulveda Basin)
   Chicago: [-87.631, 41.883],
   "New York City": [-73.987, 40.713],
 };

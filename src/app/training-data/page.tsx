@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { ThermometerIcon } from "@/components/icons/FactorIcons";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
-import { TrainingCoverageMap } from "@/components/training/TrainingCoverageMap";
+import { TrainingDataClient } from "@/components/training/TrainingDataClient";
 import { getTrainingCoverage } from "@/lib/training/trainingCoverage";
 import { getCellAttributionForAoi, getCellAttributionAoiNames } from "@/lib/reasoning/cellAttribution";
 
@@ -47,7 +47,7 @@ export default function TrainingDataPage() {
           from ml/.
         </div>
       ) : (
-        <TrainingCoverageMap aois={aois} cellAttribution={cellAttribution} />
+        <TrainingDataClient aois={aois} cellAttribution={cellAttribution} />
       )}
     </div>
   );
