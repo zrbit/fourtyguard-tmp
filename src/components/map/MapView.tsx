@@ -23,14 +23,12 @@ export default function MapView({
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
     return () => observer.disconnect();
   }, []);
-  const anomalyScale = Math.max(
-    0.15,
-    ...blocks.map(block => Math.abs(block.temperature - block.nearbyAverage)),
-  );
+  const minTemperature = Math.min(...blocks.map(block => block.temperature));
+  const maxTemperature = Math.max(...blocks.map(block => block.temperature));
   return (
     <div className="relative flex flex-1 flex-col" style={{ background: "var(--surface-sunken)" }}>
       <ThermalMap blocks={blocks} selectedId={selectedId} onSelect={onSelect} theme={theme} />
-      <MapLegend scale={anomalyScale} theme={theme} />
+      <MapLegend minTemperature={minTemperature} maxTemperature={maxTemperature} theme={theme} />
       <BlockList blocks={blocks} selectedId={selectedId} onSelect={onSelect} />
     </div>
   );
