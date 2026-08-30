@@ -223,11 +223,13 @@ export function TrainingCoverageMap({
                 {inspected.collected ? "Collected" : "Not yet collected"}
               </span>
               {cellAttribution?.[inspected.name] && (
-                <CellAttributionBreakdown
-                  aoiName={inspected.name}
-                  summary={cellAttribution[inspected.name].summary}
-                  examples={cellAttribution[inspected.name].examples}
-                />
+                <div className="mt-4 border-t pt-4" style={{ borderColor: "var(--border)" }}>
+                  <CellAttributionBreakdown
+                    aoiName={inspected.name}
+                    summary={cellAttribution[inspected.name].summary}
+                    examples={cellAttribution[inspected.name].examples}
+                  />
+                </div>
               )}
             </div>
           ) : (

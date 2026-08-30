@@ -14,7 +14,7 @@ from __future__ import annotations
 import argparse
 from datetime import date
 
-from .config import ENV_PARAMS_COST, HEATMAP_COST, PANEL_AOIS, night_pair
+from .config import CACHE_VERSION, ENV_PARAMS_COST, HEATMAP_COST, PANEL_AOIS, UTC, night_pair
 from .fortyguard import fetch_env_params, fetch_heatmap
 from .isolation import DATA_ROOT, atomic_write_json, exclusive_collection_lock
 
@@ -38,7 +38,7 @@ def main() -> None:
     print("Cooling-deficit panel (isolated from ml/data/raw and shared ledger)")
     print(f"  AOIs: {len(PANEL_AOIS)} | API calls: {paid_calls} | estimated maximum: {estimated_credits:,} credits")
     for period, timestamp in pair.items():
-        print(f"  {period}: {timestamp.isoformat()}")
+        print(f"  {period}: {timestamp.isoformat()} (cache ID {timestamp.astimezone(UTC).strftime('%Y%m%dT%H%MZ')})")
     if not args.execute:
         print("\nDry run only. No network calls and no credits spent.")
         return
@@ -58,8 +58,8 @@ def main() -> None:
                 fetch_env_params(aoi, period, timestamp)
                 completed.append(period)
             manifest.append({"aoi": aoi.name, "category": aoi.category, "periods": completed})
-            atomic_write_json(DATA_ROOT / "collection_manifest.json", {"night_date": str(args.night_date), "aois": manifest})
-    print("\nComplete. Each AOI was checkpointed under cooling_deficit/data/raw/.")
+            atomic_write_json(DATA_ROOT / f"collection_manifest_{CACHE_VERSION}.json", {"night_date": str(args.night_date), "aois": manifest})
+    print(f"\nComplete. Each AOI was checkpointed under cooling_deficit/data/raw/ ({CACHE_VERSION}).")
 
 
 if __name__ == "__main__":

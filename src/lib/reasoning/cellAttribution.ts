@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { getMlLiveGrid } from "./mlExplain";
 
 /**
  * Reads the static JSON produced by ml/src/serve/export_percell_for_app.py
@@ -95,4 +96,55 @@ export function getCellAttributionForAoi(aoiName: string): { summary: AoiCellSum
 export function getCellAttributionAoiNames(): string[] {
   const data = load();
   return data ? Object.keys(data.perAoi) : [];
+}
+
+// Matches mlExplain.ts's NEAREST_AOI_MAX_DEGREES exactly (~0.25deg, ~25-28km
+// at LA's latitude) -- same live-homepage-click problem, same honesty
+// tradeoff: a clicked point resolves to its nearest COLLECTED AOI's Tier 2
+// data, not a live per-cell computation for the exact clicked point (that
+// needs a real spatial index over ~103K cells -- separate, larger, not
+// built yet). Duplicated rather than imported from mlExplain.ts since it's
+// a private module constant there and this is one small literal, not
+// worth the extra coupling.
+const NEAREST_AOI_MAX_DEGREES = 0.25;
+
+/**
+ * The live homepage works off individual ~100m FortyGuard heatmap cells,
+ * not AOI names -- this bridges them spatially, same pattern as
+ * mlExplain.ts's getMlEvidenceNearestTo(): nearest-neighbor by lat/lng to
+ * one of the 80 AOIs that have Tier 2 data, honestly labeled by the caller
+ * as "the nearest analyzed neighborhood," not this exact cell.
+ */
+export function getCellAttributionNearestTo(
+  lat: number,
+  lng: number,
+): { aoi: string; distanceDegrees: number; summary: AoiCellSummary; examples: CellExample[] } | null {
+  const data = load();
+  if (!data) return null;
+
+  // AOI centroids, deduped from Tier 1's liveGrid (one row per AOI x
+  // date_time, same lat/lng repeated per date_time -- fine for a min-
+  // distance search, avoids storing centroids twice across both exports).
+  const centroids = new Map<string, { lat: number; lng: number }>();
+  for (const cell of getMlLiveGrid()) {
+    if (data.perAoi[cell.aoi] && !centroids.has(cell.aoi)) {
+      centroids.set(cell.aoi, { lat: cell.lat, lng: cell.lng });
+    }
+  }
+
+  let nearestAoi: string | null = null;
+  let nearestDistance = Infinity;
+  for (const [aoi, centroid] of centroids) {
+    const distance = Math.hypot(centroid.lat - lat, centroid.lng - lng);
+    if (distance < nearestDistance) {
+      nearestDistance = distance;
+      nearestAoi = aoi;
+    }
+  }
+  if (!nearestAoi || nearestDistance > NEAREST_AOI_MAX_DEGREES) return null;
+
+  const summary = data.perAoi[nearestAoi];
+  const examples = data.examples[nearestAoi];
+  if (!summary || !examples) return null;
+  return { aoi: nearestAoi, distanceDegrees: nearestDistance, summary, examples };
 }

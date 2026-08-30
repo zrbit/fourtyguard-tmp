@@ -2,153 +2,244 @@
 
 Last updated: 2026-08-30
 
-This is the canonical handoff for agents working in `D:\Fortyguard_batra`.
-Read this file first, followed by:
+This is the canonical continuity record for `D:\Fortyguard_batra`. Read it
+before collecting data, training, or altering the app.
 
-- `ml/COLLECTION_PLAN.md` — paid FortyGuard collection plan.
-- `ml/ENRICHMENT_PLAN.md` — free-data enrichment plan; do not execute until the user asks.
+## Security and working-directory rules
 
-Never place API key values in tracked files. The keys are stored in the
-gitignored root `.env.local` as `FORTYGUARD_TRAINING_API_KEY` and
-`FORTYGUARD_TRAINING_API_KEY_2`.
+- API-key values belong only in the gitignored root `.env.local`. Never print,
+  commit, or copy a value into a plan, report, or source file.
+- Current training-key variable names are
+  `FORTYGUARD_TRAINING_API_KEY`, `FORTYGUARD_TRAINING_API_KEY_2`, and
+  `FORTYGUARD_TRAINING_API_KEY_3`. Cooling-deficit code selects key 3 first,
+  then the other training keys; it intentionally does not fall back to the
+  general `FORTYGUARD_API_KEY`.
+- Do not overwrite or reset unrelated dirty work. The repository contains
+  parallel work from the user/Claude/Codex.
+- Paid daytime collection uses `ml/data/`. The cooling-deficit project is
+  deliberately isolated in `ml/cooling_deficit/data/` and must not read/write
+  the daytime raw cache or its ledger.
 
-## Project objective
+## Product and model design agreed so far
 
-This hackathon project combines a Next.js application with a Python ML pipeline.
-It explains why an LA heatmap cell is hotter or cooler than its surroundings
-using FortyGuard temperature, environmental and satellite data, XGBoost and
-SHAP. The long-term product design has two analytical tiers:
+The product explains why an LA location is hotter/cooler than surrounding
+locations, then suggests feasible heat interventions.
 
-1. An AOI-level model for broad neighborhood effects.
-2. A 100 m-cell model for local explanations, with nearby cells clustered into
-   roughly 400–500 m intervention zones for city action plans.
+1. **Tier 1 — AOI model.** Neighborhood-scale XGBoost/SHAP model trained on
+   AOI observations. Target is AOI mean temperature minus the mean of AOIs
+   sharing its exact date-time.
+2. **Tier 2 — per-cell model.** A 100 m-granularity cell model explains why a
+   specific heatmap cell is hot relative to its AOI. It is exported separately
+   from Tier 1.
+3. **Action-plan scale.** Do not prescribe interventions for a lone 100 m cell.
+   Cluster adjacent cell results into roughly 400–500 m intervention zones for
+   city-official-facing plans. This is an aggregation/reporting layer, not a
+   third ML model.
+4. Keep `GroupKFold` grouped by AOI for both models to avoid location leakage.
+   XGBoost is CPU-scale here; no GPU, Kaggle, or Colab is required.
 
-The second model and clustering layer have been planned but are not yet built.
+## FortyGuard collection work completed
 
-## Current state
+- Implemented the `ml/` pipeline: collection, cache, dataset build,
+  CPU XGBoost training, SHAP explanations, and static exports for Next.js.
+- Corrected several live API assumptions through real calls:
+  - heatmap returns cell temperatures (`average_temperature`);
+  - satellite is a whole paid point call and returns segmented land-cover
+    percentages; its parts cannot be bought separately;
+  - satellite imagery needs an older reference date (~30–45 days), while
+    heatmap/environment calls can use the requested historical time;
+  - there is **no confirmed two-calls-per-day satellite quota**. Earlier
+    apparent limits were transient service failures.
+- Confirmed approximate API costs from the provider usage endpoint:
+  heatmap 4,220; environmental parameters 2,900; satellite 14,400; street
+  view 8,600; Heat Intelligence 8,600 credits.
+- Added checkpointing, persistent date-time generation, cache stripping of
+  unused satellite image blobs, corrected API nesting/payload bugs, and a
+  local credit ledger. Treat the live provider usage endpoint—not the local
+  ledger—as credit truth.
+- Executed `ml/COLLECTION_PLAN.md` Tier 1–6 and retry passes. At the last
+  rebuilt reporting point the AOI data had **261 rows, 80 AOIs, and 5
+  date-times**. Rebuild/verify before quoting this count again if collection
+  has changed.
+- A historical weather-diversity runner exists at
+  `ml/src/collect/run_weather_diversity.py`. It covers six weather regimes
+  from 2021 onward. The user chose to launch/monitor that paid runner
+  themselves; do not launch it without explicit permission.
+- `ml/COLLECTION_PLAN.md` is the paid FortyGuard collection specification.
+  Its key was intentionally redacted; it must stay that way.
 
-- `COLLECTION_PLAN.md` Tier 1–6 collection is complete, including retries.
-- All 33 planned AOIs completed with no remaining failed AOIs after the retry.
-- The processed dataset was rebuilt to **261 rows, 80 AOIs and 5 date-times**.
-- Last known API balances after Tier 1–6:
-  - training key 1: **48,100 credits remaining**
-  - training key 2: **1,159,420 credits remaining**
-  Treat the live FortyGuard usage endpoint as authoritative; local ledger totals
-  are only bookkeeping estimates.
-- Weather-diversity collection is the next paid-data task. The user wants to
-  launch and monitor it themselves to control credit use.
-- `ENRICHMENT_PLAN.md` must remain on hold until explicitly requested.
-- Do not retrain until all requested fetching is complete and the updated
-  category/weather distribution has been reported.
+## Existing ML/application outputs
 
-## Running the weather-diversity collection
+- Tier 1 models: `ml/models/thermal_xgb_v1.json` and
+  `ml/models/feature_schema.json`.
+- Tier 2 models: `ml/models/thermal_xgb_percell_v1.json` and
+  `ml/models/feature_schema_percell.json`.
+- Processed datasets include `ml/data/processed/dataset.parquet` and
+  `ml/data/processed/dataset_percell.parquet`.
+- Important app exports:
+  - `src/lib/mock-data/ml-explanations.json`
+  - `src/lib/mock-data/cell-attribution.json`
+  - `src/lib/mock-data/cluster-action-plans.json`
+  - `src/lib/mock-data/training-coverage.json`
+- `src/components/analysis/LiveThermalReasoning.tsx` is the actual rendered
+  live component. `AnalysisPanel.tsx` is not the place to wire new work.
+- `/training-data` visualizes training coverage. `/action-plans` consumes the
+  cluster-plan export.
 
-Run these commands from PowerShell in `D:\Fortyguard_batra\ml`.
+## Free-data enrichment: decisions and status
 
-The bare `python` command may select system Python and fail with
-`ModuleNotFoundError: No module named 'requests'`. Use the repository virtual
-environment explicitly:
+`ml/ENRICHMENT_PLAN.md` is intentionally separate from paid collection. Do not
+start it until the user explicitly authorizes it. It can run in parallel with
+future FortyGuard collection as long as it writes only its own enrichment cache
+and does not rewrite shared dataset/model exports.
 
-```powershell
-.\.venv\Scripts\python.exe -m src.collect.run_weather_diversity --dry-run
-.\.venv\Scripts\python.exe -m src.collect.run_weather_diversity --execute
-```
+Agreed direction:
 
-Optional environment activation:
-
-```powershell
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-.\.venv\Scripts\Activate.ps1
-python -m src.collect.run_weather_diversity --dry-run
-python -m src.collect.run_weather_diversity --execute
-```
-
-The runner targets 12 backbone AOIs across six historical weather regimes:
-extreme heat, winter storm, Santa Ana, June gloom, mild clear weather and cold
-windy winter weather. The historical range starts in 2021. Approximate expected
-spend is **512,640 credits** for 72 heatmap/environment snapshot pairs because
-satellite data for these AOIs is already cached. The dry-run may show a higher
-worst-case figure because its estimate includes satellite calls.
-
-## ML pipeline
-
-1. `ml/src/collect/` fetches and caches paid FortyGuard data plus free OSM and
-   Open-Meteo inputs in `ml/data/raw/`. Collection checkpoints after each AOI.
-2. `ml/src/features/build_dataset.py` creates
-   `ml/data/processed/dataset.parquet`. The current AOI-level target is the AOI
-   mean temperature minus the mean of AOIs sharing the same date-time.
-3. `ml/src/train/train_xgboost.py` trains CPU-only XGBoost using GroupKFold by
-   AOI and monotonic constraints. A GPU or Colab/Kaggle is unnecessary at this
-   scale.
-4. `ml/src/train/explain_shap.py` generates and sanity-checks SHAP evidence.
-5. `ml/src/serve/export_for_app.py` and
-   `ml/src/serve/export_training_coverage.py` export static JSON for the app.
-
-Confirmed FortyGuard call costs are:
-
-- heatmap: 4,220 credits
-- environmental parameters: 2,900 credits
-- satellite segmentation: 14,400 credits
-- street view: 8,600 credits
-- Heat Intelligence: 8,600 credits
-
-There is no confirmed two-calls-per-day satellite quota. Satellite calls are
-billed as complete calls; individual segmentation outputs cannot be purchased
-separately.
-
-## App integration
-
-- `src/components/analysis/LiveThermalReasoning.tsx` is the live-rendered
-  reasoning component. Do not mistakenly implement against the unused
-  `AnalysisPanel.tsx`.
-- `src/components/analysis/MlAttribution.tsx` renders ranked SHAP evidence.
-- `/training-data` shows candidate and collected AOIs on a coverage map.
-- Static ML exports live under `src/lib/mock-data/`.
-
-## Agreed enrichment direction
-
-The enrichment work is documented separately and has not started.
-
-- Sentinel-2 NDVI may be used for relative, within-AOI disaggregation of
-  FortyGuard's trusted canopy percentage to 100 m cells. It must not be framed
-  as replacing or validating FortyGuard's AOI-level value.
-- Per-cell elevation and distance to the ocean are planned as non-actionable
-  context features.
-- Sentinel-2 albedo is planned, but an earlier calculation did not cleanly
-  reconcile with a rough Heat Intelligence material-based estimate; retain this
-  as an open calibration issue.
-- Terrain/slope was explicitly dropped.
-- NDBI is excluded: it failed both cross-AOI and within-AOI tests; the measured
-  within-AOI NDVI/NDBI correlation was only -0.058.
-- ESA WorldCover built percentage is not a reliable replacement for FortyGuard
+- Use **raw per-cell Sentinel-2 NDVI** as an independent feature; do not rescale
+  it into FortyGuard canopy percentage. The rescale would map identical NDVI
+  to different canopy values per AOI and adds circularity.
+- Use **NLCD Fractional Impervious Surface** (30 m) per cell rather than NDBI
+  for imperviousness; use **NLCD Tree Canopy Cover** as another independent
+  canopy feature; use **NLCD Impervious Descriptor** to separate road-like from
+  non-road impervious area.
+- Elevation should come from a DEM raster (3DEP/Copernicus), not the
+  Open-Elevation service. Distance-to-coast should use a public coastline
+  geometry. Both are per heatmap cell and must be flagged as non-actionable
+  context in product explanations.
+- Compute Sentinel-2 broadband albedo once from a fixed, cloud-masked
+  July–August median composite for all AOIs in a temperature year. The prior
+  `0.311` vs Heat Intelligence report estimate is a definition mismatch
+  (nadir surface vs effective urban/canyon albedo), not proof of a bug; shadow
+  masking remains a required validation.
+- Terrain, slope/aspect, and sky-view factor are **deferred/excluded for now**
+  at the user's direction.
+- NDBI is excluded from the current feature set. The prior dense-AOI test gave
+  only `-0.058` NDVI/NDBI correlation; this alone is weak evidence, but NLCD is
+  the purpose-built alternative.
+- ESA WorldCover built percentage is not a reliable substitute for FortyGuard
   impervious segmentation.
+- Free data should add resolution/new dimensions, never be framed as validating
+  or second-guessing FortyGuard, which the user wants treated as trusted.
 
-Free sources add resolution or new dimensions; they are not used to
-second-guess FortyGuard, which should be treated as the trusted reference.
+## Heat Intelligence and street imagery findings
 
-## Important files
+- A real FortyGuard Heat Intelligence report was fetched and saved at
+  `ml/reports/heat_intelligence_downtown_la.pdf` (gitignored). It is a useful
+  44-page PDF with contextual SVF, albedo, cooling-equity, and intervention
+  material—not a convenient structured bulk-training endpoint.
+- Street View segmentation is best used on demand after a user clicks a tile:
+  it distinguishes a highway from a street with planting space and helps reject
+  infeasible suggestions. It complements satellite imagery rather than
+  replacing it. It costs 8,600 credits per view. The docs do not confirm the
+  camera field of view, so four 90-degree shots cannot be assumed to cover
+  exactly 360 degrees without empirical testing.
 
-- `ml/src/fortyguard_client.py` — API client and key loading.
-- `ml/src/collect/run_collection.py` — general collection runner.
-- `ml/src/collect/run_weather_diversity.py` — historical weather runner.
-- `ml/src/collect/aoi_sampling.py` — AOI definitions.
-- `ml/src/collect/credit_ledger.py` — cost estimates and local ledger.
-- `ml/src/features/build_dataset.py` — AOI-level dataset builder.
-- `ml/src/train/train_xgboost.py` — current training pipeline.
-- `ml/reports/heat_intelligence_downtown_la.pdf` — downloaded report,
-  gitignored but useful for SVF, albedo and cooling-equity context.
+## Cooling-deficit feature work (separate, active)
 
-## Non-negotiable constraints and next steps
+Goal: find cells that cool less than nearby peers overnight, alongside a
+nighttime heat-exposure measure. This is not the original daytime model.
 
-1. Let the user run and monitor weather-diversity collection; do not launch it
-   independently unless asked.
-2. Stop paid collection when available training-key credits are exhausted and
-   notify the user.
-3. Keep `ENRICHMENT_PLAN.md` paused until explicitly authorized.
-4. After fetching, rebuild the dataset, report AOI/category/date/weather
-   distributions, and only then retrain.
-5. Preserve GroupKFold-by-AOI for both the AOI and future per-cell models to
-   prevent location leakage.
-6. For the future per-cell model, use cell-versus-AOI temperature anomaly as
-   the local target. The 400–500 m action-plan layer is an aggregation layer,
-   not a third model.
+### Package and safeguards
+
+Implemented under `ml/cooling_deficit/`:
+
+- `capability_check.py` — endpoint/time acceptance test.
+- `collect_overnight.py` — original single-night 12-AOI collector.
+- `screen_nights.py` — candidate-night screen using three sentinel AOIs.
+- `collect_multi_night.py` — multi-night, three-timepoint panel collector.
+- `extract_pairs.py`, `compute_deficit.py`, `validate_local_time.py`,
+  `fortyguard.py`, `config.py`, `isolation.py`, tests, and README.
+- Data/cache/locks live only beneath `ml/cooling_deficit/data/` and
+  `ml/cooling_deficit/runtime/`; `ml/data/` is untouched.
+
+### Important correction
+
+The first 12-AOI overnight run is **invalid for overnight inference**: it sent
+UTC clock values to an API that interprets `start_time` as location-local. It
+therefore sampled approximately 05:00 and 11:00 LA instead of 22:00 and 04:00.
+Never train from that first batch.
+
+The corrected `local-time-v2` path converts aware timestamps to LA local time,
+adds versioned filenames to avoid accidental old-cache hits, and was verified
+on Downtown LA. For the tested night: 22:00 mean 25.91 C vs 04:00 mean 25.97 C;
+this showed a near-flat/warmer night, not a reliable citywide cool-down.
+
+### Current collection status (verify before intervening)
+
+- Six-AOI panel: Downtown LA, Vernon, Huntington Park, Elysian Park, Sylmar,
+  Venice.
+- Four screened valid nights: extreme heat wave, winter storm, mild clear
+  shoulder, cold windy winter.
+- Three local sample times each: 22:00, 01:00, 04:00.
+- Maximum planned cost is 72 heatmap calls / 303,840 credits before cache reuse.
+- At handoff time the runner lock is present and its manifest reports **19
+  completed AOI-nights**. It is still running. Do not copy its `data/` or
+  `runtime/` to C: until the lock disappears and completion is verified.
+
+After it completes:
+
+1. Verify manifest completion (24 AOI-nights), errors, and lock removal.
+2. Extend extraction for multi-night `evening/overnight/predawn` cache names;
+   the current pair extractor only covers one-night-style inputs.
+3. Generate per-cell cooling, peer-relative cooling deficit per night, median
+   deficit/consistency across nights, and nighttime heat exposure.
+4. Merge approved enrichment features, then train/export a separate cooling
+   model only after the data quality/distribution report.
+
+## D → C transfer completed this session
+
+The requested non-destructive D-to-C copy finished from
+`D:\Fortyguard_batra` to `C:\Fortyguard_batra`. It used additive copying, not
+mirror/delete operations.
+
+Copied and verified:
+
+- `.env.local`: training key variables `_2` and `_3` were merged without
+  exposing values or overwriting unrelated entries.
+- `ml/models/` including Tier 2 model files.
+- `ml/data/processed/` (85 files, ~43 MB).
+- `ml/data/raw/` (1,590 files, ~1.46 GB); all D file paths existed on C after
+  a follow-up copy of four files written during the main transfer.
+- `ml/data/live-cache/`.
+- The four app JSON exports listed above.
+
+Not copied: `ml/cooling_deficit/data/` or `runtime/`, because the multi-night
+cooling collection is active. Copy those only after its collector completes.
+
+## How to run locally
+
+For the web app in `C:\Fortyguard_batra` or `D:\Fortyguard_batra`:
+
+```powershell
+npm install
+npm run dev
+```
+
+If `next` is not recognized, dependencies have not been installed in that copy;
+run `npm install` from the repository root. A Python virtualenv being active
+does not supply Node dependencies.
+
+For Python use 3.11, not the environment where pandas attempted a source build.
+From `ml`:
+
+```powershell
+py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+Cooling commands use their own `.venv-cooling` when running from the copied C
+project. Read `ml/cooling_deficit/README.md` before a new collector launch.
+
+## Immediate next steps and guardrails
+
+1. Let the active cooling collection finish; monitor the lock, manifest and
+   `runtime/multi_night.stdout.log` rather than launching a duplicate runner.
+2. Do not launch paid weather-diversity collection or enrichment without user
+   authorization.
+3. When any collection ends, report actual rows/AOIs/weather/night coverage
+   before retraining.
+4. Preserve the shared daytime cache; never delete/re-fetch paid raw data just
+   to regenerate a model.
+5. When the cooling run finishes, sync its finalized data to C separately.

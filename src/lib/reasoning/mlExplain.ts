@@ -53,6 +53,8 @@ type MlExplanations = {
   modelVersion: string;
   cvMae: number | null;
   cvR2: number | null;
+  nAois: number | null;
+  nRows: number | null;
   featureColumns: string[];
   demoBlocks: Record<string, MlBlockEntry>;
   liveGrid: MlLiveGridCell[];
@@ -94,6 +96,8 @@ export function getMlModelInfo() {
     generatedAt: data.generatedAt,
     cvMae: data.cvMae,
     cvR2: data.cvR2,
+    nAois: data.nAois,
+    nRows: data.nRows,
   };
 }
 

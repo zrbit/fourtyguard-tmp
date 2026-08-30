@@ -5,7 +5,7 @@ import { Cpu } from "lucide-react";
 import { ProvenanceTag } from "@/components/ui/ProvenanceTag";
 import type { Evidence } from "@/types/thermal";
 
-type ModelInfo = { modelVersion: string; generatedAt: string; cvMae: number | null; cvR2: number | null };
+type ModelInfo = { modelVersion: string; generatedAt: string; cvMae: number | null; cvR2: number | null; nAois: number | null; nRows: number | null };
 type Response_ = { evidence: Evidence[]; model: ModelInfo | null; nearestAoi?: string; error?: string };
 
 type Lookup = { blockId: string } | { lat: number; lng: number };
@@ -121,8 +121,10 @@ export function MlAttribution({ lookup, active }: { lookup: Lookup; active: bool
           {model && (
             <p className="mt-3 font-mono text-[10.5px] text-slate">
               {model.modelVersion}
-              {model.cvMae != null ? ` · cross-validated MAE ${model.cvMae.toFixed(2)}°F` : ""} · trained on a small
-              real dataset (17 LA neighborhoods) — treat as illustrative, not a mature model.
+              {model.cvMae != null ? ` · cross-validated MAE ${model.cvMae.toFixed(2)}°F` : ""}
+              {model.cvR2 != null ? `, R² ${model.cvR2.toFixed(2)}` : ""} · trained on
+              {model.nRows != null && model.nAois != null ? ` ${model.nRows} rows across ${model.nAois} LA neighborhoods` : " a real dataset"}
+              {" "}— treat as illustrative, not a mature model.
             </p>
           )}
         </>

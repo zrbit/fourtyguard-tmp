@@ -35,7 +35,7 @@ export function CellAttributionBreakdown({
   examples: CellExample[];
 }) {
   return (
-    <div className="mt-4 border-t pt-4" style={{ borderColor: "var(--border)" }}>
+    <div>
       <h3 className="font-display text-[13.5px] font-bold text-paper">Tier 2 — why cells in {aoiName} run hot</h3>
       <p className="mt-1 text-[11.5px] leading-relaxed text-slate">
         Across this neighborhood&apos;s {summary.nCells.toLocaleString()} analyzed 100m cells, the single largest

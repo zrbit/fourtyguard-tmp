@@ -60,7 +60,7 @@ Once collected, compute the UTC stamps printed by the dry run and produce an
 isolated cell-pair table:
 
 ```powershell
-python -m cooling_deficit.extract_pairs --evening-stamp 20240906T0500 --predawn-stamp 20240906T1100
+python -m cooling_deficit.extract_pairs --evening-stamp 20240906T0500Z --predawn-stamp 20240906T1100Z
 ```
 
 Then copy (not link) reviewed enrichment values into a new

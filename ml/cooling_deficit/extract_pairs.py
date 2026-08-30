@@ -15,7 +15,7 @@ from pathlib import Path
 from statistics import fmean
 from typing import Iterable
 
-from .config import PANEL_AOIS
+from .config import CACHE_VERSION, PANEL_AOIS
 from .isolation import DERIVED_ROOT, RAW_ROOT
 
 TEMPERATURE_KEYS = ("average_temperature", "temperature", "tcm", "temp", "surface_temperature", "value")
@@ -65,8 +65,8 @@ def read_heatmap(path: Path) -> list[dict]:
 def _heatmap_paths(aoi_name: str, evening_stamp: str, predawn_stamp: str) -> tuple[Path, Path]:
     slug = "".join(character.lower() if character.isalnum() else "-" for character in aoi_name).strip("-")
     directory = RAW_ROOT / slug
-    evening = list(directory.glob(f"{evening_stamp}_evening_heatmap.json"))
-    predawn = list(directory.glob(f"{predawn_stamp}_predawn_heatmap.json"))
+    evening = list(directory.glob(f"{evening_stamp}_evening_{CACHE_VERSION}_heatmap.json"))
+    predawn = list(directory.glob(f"{predawn_stamp}_predawn_{CACHE_VERSION}_heatmap.json"))
     if len(evening) != 1 or len(predawn) != 1:
         raise FileNotFoundError(
             f"Expected one evening and one predawn heatmap for {aoi_name} in {directory}; "
@@ -126,7 +126,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--evening-stamp", required=True, help="Evening UTC timestamp, e.g. 20260830T0500")
     parser.add_argument("--predawn-stamp", required=True, help="Predawn UTC timestamp, e.g. 20260831T1100")
-    parser.add_argument("--output", type=Path, default=DERIVED_ROOT / "cooling_pairs.csv")
+    parser.add_argument("--output", type=Path, default=DERIVED_ROOT / f"cooling_pairs_{CACHE_VERSION}.csv")
     args = parser.parse_args()
     rows = build_pairs(args.evening_stamp, args.predawn_stamp)
     write_csv(rows, args.output)

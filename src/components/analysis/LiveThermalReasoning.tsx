@@ -3,6 +3,7 @@ import type { BlockMetrics } from "@/types/thermal";
 import { formatSigned } from "@/lib/utils";
 import { LiveInvestigation } from "@/components/analysis/LiveInvestigation";
 import { MlAttribution } from "@/components/analysis/MlAttribution";
+import { CellAttributionSection } from "@/components/analysis/CellAttributionSection";
 import { HistoricalComparison } from "@/components/analysis/HistoricalComparison";
 import { ChronicHeatCheck } from "@/components/analysis/ChronicHeatCheck";
 import { ActionBrief } from "@/components/analysis/ActionBrief";
@@ -47,5 +48,6 @@ export function LiveThermalReasoning({ block, allBlocks, onSelect }: { block: Bl
     <ChronicHeatCheck key={`chronic-${block.id}`} block={block} />
     <HistoricalComparison key={`history-${block.id}`} block={block} />
     <MlAttribution key={`ml-${block.id}`} lookup={{ lat: block.lat, lng: block.lng }} active />
+    <CellAttributionSection key={`cell-${block.id}`} lat={block.lat} lng={block.lng} active />
   </section>;
 }

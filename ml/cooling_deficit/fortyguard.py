@@ -12,7 +12,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from .config import Aoi, date_time_payload
+from .config import Aoi, CACHE_VERSION, UTC, date_time_payload
 from .isolation import RAW_ROOT, atomic_write_json
 
 API_ROOT = "https://api.fortyguard.com/v1"
@@ -88,8 +88,8 @@ def slug(value: str) -> str:
 
 
 def cache_path(aoi: Aoi, period: str, kind: str, timestamp) -> Path:
-    stamp = timestamp.strftime("%Y%m%dT%H%MZ")
-    return RAW_ROOT / slug(aoi.name) / f"{stamp}_{period}_{kind}.json"
+    stamp = timestamp.astimezone(UTC).strftime("%Y%m%dT%H%MZ")
+    return RAW_ROOT / slug(aoi.name) / f"{stamp}_{period}_{CACHE_VERSION}_{kind}.json"
 
 
 def fetch_heatmap(aoi: Aoi, period: str, timestamp) -> dict:

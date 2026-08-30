@@ -49,12 +49,12 @@ def _api_key() -> str:
     return key
 
 
-def _request(path: str, method: str = "GET", json: dict | None = None) -> dict[str, Any]:
+def _request(path: str, method: str = "GET", json: dict | None = None, api_key: str | None = None) -> dict[str, Any]:
     response = requests.request(
         method,
         f"{API_ROOT}{path}",
         json=json,
-        headers={"api-key": _api_key(), "content-type": "application/json"},
+        headers={"api-key": api_key or _api_key(), "content-type": "application/json"},
         timeout=30,
     )
     try:
@@ -67,16 +67,16 @@ def _request(path: str, method: str = "GET", json: dict | None = None) -> dict[s
     return body or {}
 
 
-def submit_job(path: str, payload: dict) -> str:
-    body = _request(path, method="POST", json=payload)
+def submit_job(path: str, payload: dict, api_key: str | None = None) -> str:
+    body = _request(path, method="POST", json=payload, api_key=api_key)
     activity_id = (body.get("data") or {}).get("activity_id")
     if not isinstance(activity_id, str):
         raise FortyGuardError(f"FortyGuard did not return an activity ID for {path}.")
     return activity_id
 
 
-def job_status(activity_id: str) -> dict[str, Any]:
-    return _request(f"/status/{activity_id}")
+def job_status(activity_id: str, api_key: str | None = None) -> dict[str, Any]:
+    return _request(f"/status/{activity_id}", api_key=api_key)
 
 
 def poll_until_complete(
@@ -84,11 +84,12 @@ def poll_until_complete(
     *,
     interval_seconds: float = 3.0,
     timeout_seconds: float = 180.0,
+    api_key: str | None = None,
 ) -> dict[str, Any]:
     """Bounded polling. Raises FortyGuardError on Failed or timeout."""
     deadline = time.monotonic() + timeout_seconds
     while True:
-        body = job_status(activity_id)
+        body = job_status(activity_id, api_key=api_key)
         status = (body.get("data") or {}).get("status") or body.get("status")
         if status == "Completed":
             return body
@@ -99,6 +100,6 @@ def poll_until_complete(
         time.sleep(interval_seconds)
 
 
-def submit_and_wait(path: str, payload: dict, **poll_kwargs) -> dict[str, Any]:
-    activity_id = submit_job(path, payload)
-    return poll_until_complete(activity_id, **poll_kwargs)
+def submit_and_wait(path: str, payload: dict, api_key: str | None = None, **poll_kwargs) -> dict[str, Any]:
+    activity_id = submit_job(path, payload, api_key=api_key)
+    return poll_until_complete(activity_id, api_key=api_key, **poll_kwargs)

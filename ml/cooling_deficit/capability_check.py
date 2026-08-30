@@ -11,7 +11,7 @@ from __future__ import annotations
 import argparse
 from datetime import datetime
 
-from .config import PANEL_AOIS, UTC
+from .config import PANEL_AOIS, UTC, los_angeles_tz
 from .fortyguard import fetch_env_params, fetch_heatmap
 from .isolation import exclusive_collection_lock
 
@@ -20,7 +20,7 @@ def parse_timestamp(value: str) -> datetime:
     parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
     if parsed.tzinfo is None:
         raise argparse.ArgumentTypeError("Use a timezone-aware timestamp such as 2024-09-06T05:00:00Z.")
-    return parsed.astimezone(UTC)
+    return parsed.astimezone(los_angeles_tz())
 
 
 def main() -> None:
@@ -37,8 +37,8 @@ def main() -> None:
     if not args.daytime_pipeline_idle:
         raise SystemExit("Refusing concurrent paid work. Wait for the daytime pipeline and pass --daytime-pipeline-idle.")
     with exclusive_collection_lock():
-        fetch_heatmap(aoi, "capability-check", args.timestamp)
-        fetch_env_params(aoi, "capability-check", args.timestamp)
+        fetch_heatmap(aoi, "capability-check-local-time", args.timestamp)
+        fetch_env_params(aoi, "capability-check-local-time", args.timestamp)
     print("Success: both endpoints accepted this nighttime/historical timestamp. Review the isolated cache before panel collection.")
 
 

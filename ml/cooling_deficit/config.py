@@ -15,6 +15,7 @@ UTC = timezone.utc
 HEATMAP_COST = 4_220
 ENV_PARAMS_COST = 2_900
 MIN_PEER_GROUP_SIZE = 15
+CACHE_VERSION = "local-time-v2"
 
 
 @dataclass(frozen=True)
@@ -81,7 +82,7 @@ def los_angeles_tz() -> ZoneInfo:
 
 
 def night_pair(night_date: date, evening_hour: int = 22, predawn_hour: int = 4) -> dict[str, datetime]:
-    """Return same-night LA-local evening and next-day predawn in UTC.
+    """Return same-night LA-local evening and next-day predawn timestamps.
 
     ``night_date=2026-08-30`` means 22:00 on Aug 30 and 04:00 on Aug 31,
     which avoids accidentally pairing a predawn reading with the previous
@@ -96,15 +97,22 @@ def night_pair(night_date: date, evening_hour: int = 22, predawn_hour: int = 4) 
         predawn_hour,
         tzinfo=los_angeles_tz(),
     )
-    return {"evening": evening.astimezone(UTC), "predawn": predawn.astimezone(UTC)}
+    return {"evening": evening, "predawn": predawn}
 
 
 def date_time_payload(value: datetime) -> dict[str, int | str]:
+    """FortyGuard heatmap/env ``start_time`` is location-local, not UTC.
+
+    The initial batch proved this empirically: sending 05:00Z produced
+    overnight values while 11:00Z produced daytime values in Los Angeles.
+    Keep timestamps aware for cache identity, but send their LA wall-clock
+    date/time to the API.
+    """
     if value.tzinfo is None:
         raise ValueError("timestamp must be timezone-aware")
-    utc_value = value.astimezone(UTC)
+    local_value = value.astimezone(los_angeles_tz())
     return {
-        "start_date": utc_value.strftime("%Y-%m-%d"),
-        "start_time": utc_value.strftime("%H:%M"),
+        "start_date": local_value.strftime("%Y-%m-%d"),
+        "start_time": local_value.strftime("%H:%M"),
         "filter_type": 1,
     }

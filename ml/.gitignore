@@ -16,3 +16,9 @@ data/raw/osm_buildings_*.json
 data/raw/_ledger*.json
 data/raw/_session_date_times.json
 reports/
+
+# data/live-cache/ (the click-anywhere live prediction feature's satellite
+# cache) IS tracked too, same reasoning as data/raw/ above -- each entry is
+# a real 14,400-credit FortyGuard spend, keyed by location. The ledger file
+# in there is session bookkeeping, not data.
+data/live-cache/_live_satellite_ledger.json
