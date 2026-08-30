@@ -1,4 +1,4 @@
-export function MapLegend({ scale, theme }: { scale: number; theme: "light" | "dark" }) {
+export function MapLegend({ minTemperature, maxTemperature, label = "cell temperature", theme }: { minTemperature: number; maxTemperature: number; label?: string; theme: "light" | "dark" }) {
   const gradient = theme === "light"
     ? "linear-gradient(90deg, #136fa9, #5aaed5, #dbcab9, #e46f5c, #b93730)"
     : "linear-gradient(90deg, #2677bf, #61addb, #50636c, #e76e5a, #bd3d35)";
@@ -16,9 +16,9 @@ export function MapLegend({ scale, theme }: { scale: number; theme: "light" | "d
         }}
       />
       <div className="mt-1.5 flex justify-between font-mono text-[10px] text-slate">
-        <span>−{scale.toFixed(2)}°F</span>
-        <span>nearby mean</span>
-        <span>+{scale.toFixed(2)}°F</span>
+        <span>{minTemperature.toFixed(1)}°F</span>
+        <span>{label}</span>
+        <span>{maxTemperature.toFixed(1)}°F</span>
       </div>
     </div>
   );

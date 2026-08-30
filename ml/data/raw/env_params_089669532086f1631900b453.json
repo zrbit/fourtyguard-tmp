@@ -1,0 +1,87 @@
+{
+  "error": false,
+  "status_code": 200,
+  "message": "Completed",
+  "data": {
+    "activity_id": "66a80e4f-5c62-42ca-942e-525f66ae72b9",
+    "status": "Completed",
+    "result": {
+      "metadata": {
+        "timezone": "GMT-8",
+        "timezone_offset_hours": -8,
+        "time_range": {
+          "start": "2022-10-27T20:00:00-08:00",
+          "end": "2022-10-27T20:00:00-08:00",
+          "interval": "1h",
+          "count": 1
+        },
+        "timestamps": [
+          "2022-10-27T20:00:00-08:00"
+        ]
+      },
+      "locations": [
+        {
+          "lat": 34.1508,
+          "lon": -118.4489,
+          "elevation": 204.0,
+          "temperature": 30.0,
+          "parameters": {
+            "heat_index_celsius": [
+              34.4
+            ],
+            "apparent_temperature_celsius": [
+              15.9
+            ],
+            "relative_humidity_percent": [
+              67.5
+            ],
+            "precipitation_mm": [
+              0.0
+            ],
+            "cloud_cover_octas": [
+              0.0
+            ],
+            "wet_bulb_temperature_celsius": [
+              13.0
+            ],
+            "air_quality:idx": [
+              102.4
+            ],
+            "air_quality_pm2p5:idx": [
+              97.9
+            ],
+            "air_quality_pm10:idx": [
+              47.2
+            ],
+            "air_quality_no2:idx": [
+              39.8
+            ],
+            "aqi_us_co": [
+              2.7
+            ],
+            "air_quality_o3:idx": [
+              102.4
+            ],
+            "air_quality_so2:idx": [
+              4.0
+            ],
+            "methane_ppb": [
+              null
+            ],
+            "co2_ppm": [
+              null
+            ]
+          },
+          "solar_irradiance": {
+            "clear_sky": {
+              "ghi": 0.0,
+              "dni": 0.0,
+              "dhi": 0.0
+            },
+            "description": "The above values provide insights into the solar energy available at the specific location at 2022-10-27 20:00. GHI represents the total solar energy, DNI focuses on direct sunlight, and DHI accounts for scattered and diffuse radiation."
+          }
+        }
+      ]
+    }
+  }
+}

@@ -15,3 +15,4 @@ data/raw/osm_landcover_*.json
 data/raw/osm_buildings_*.json
 data/raw/_ledger*.json
 data/raw/_session_date_times.json
+reports/

@@ -1,0 +1,53 @@
+{
+  "error": false,
+  "status_code": 200,
+  "message": "Completed",
+  "data": {
+    "activity_id": "af8830c2-d660-4cf0-9ff4-57c757a36505",
+    "status": "Completed",
+    "result": {
+      "coordinates": {
+        "latitude": "33.9817",
+        "longitude": "-118.2248"
+      },
+      "image_year": 2026,
+      "segmentation": {
+        "request_id": "1aa9aaaf",
+        "processing_time_seconds": 1.079996,
+        "image_dimensions": {
+          "width": 395,
+          "height": 395
+        },
+        "mode": "sat",
+        "segments": {
+          "building": 70.2,
+          "road, route": 28.24,
+          "fence": 1.01,
+          "others": 0.55
+        },
+        "image_legend": {
+          "building": [
+            180,
+            120,
+            120
+          ],
+          "road, route": [
+            140,
+            140,
+            140
+          ],
+          "fence": [
+            255,
+            184,
+            6
+          ],
+          "others": [
+            255,
+            255,
+            255
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "error": false,
+  "status_code": 200,
+  "message": "Completed",
+  "data": {
+    "activity_id": "2c9065a5-8cf5-4f34-a6f9-e2f65fe46b44",
+    "status": "Completed",
+    "result": {
+      "coordinates": {
+        "latitude": "34.3106",
+        "longitude": "-118.4442"
+      },
+      "image_year": 2026,
+      "segmentation": {
+        "request_id": "4fc5571b",
+        "processing_time_seconds": 1.109355,
+        "image_dimensions": {
+          "width": 395,
+          "height": 395
+        },
+        "mode": "sat",
+        "segments": {
+          "building": 24.8,
+          "tree": 10.18,
+          "road, route": 14.28,
+          "grass": 5.95,
+          "sidewalk, pavement": 23.3,
+          "earth, ground": 10.27,
+          "plant": 10.64,
+          "others": 0.58
+        },
+        "image_legend": {
+          "building": [
+            180,
+            120,
+            120
+          ],
+          "tree": [
+            4,
+            200,
+            3
+          ],
+          "road, route": [
+            140,
+            140,
+            140
+          ],
+          "grass": [
+            4,
+            250,
+            7
+          ],
+          "sidewalk, pavement": [
+            235,
+            255,
+            7
+          ],
+          "earth, ground": [
+            120,
+            120,
+            70
+          ],
+          "plant": [
+            204,
+            255,
+            4
+          ],
+          "others": [
+            255,
+            255,
+            255
+          ]
+        }
+      }
+    }
+  }
+}

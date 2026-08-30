@@ -6,7 +6,7 @@ import {
   NavigationControl,
   type MapLayerMouseEvent,
 } from "maplibre-gl";
-import { blocksToPointFeatureCollection, boundsOf } from "@/lib/spatial/blockGeometry";
+import { blocksToFeatureCollection, boundsOf } from "@/lib/spatial/blockGeometry";
 import type { BlockMetrics } from "@/types/thermal";
 
 // Free, key-less CARTO Voyager basemap with light streets, labels, and
@@ -21,11 +21,10 @@ import type { BlockMetrics } from "@/types/thermal";
 const BASEMAP_STYLE = "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json";
 
 const MARKER_SOURCE = "block-markers";
-const CIRCLE_LAYER = "blocks-circle";
-const HOVER_LAYER = "blocks-hover-ring";
-const SELECTED_LAYER = "blocks-selected-ring";
+const RECTANGLE_LAYER = "blocks-rectangle";
+const HOVER_LAYER = "blocks-hover-outline";
+const SELECTED_LAYER = "blocks-selected-outline";
 
-// Same structural-typing friction as thermalColorExpression() below —
 // MapLibre's FilterSpecification union can't be satisfied by a plainly
 // inferred array literal, so this is a small typed escape hatch.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -34,45 +33,27 @@ function idFilter(id: string): any {
 }
 const NO_MATCH_FILTER = idFilter("__none__");
 
-// Mirrors the diverging thermal scale from the design system exactly —
-// anomaly, not absolute temperature, drives fill/marker color. MapLibre's
-// style-spec types this paint property as a deeply-nested discriminated
-// union that a dynamically-built expression array can't satisfy
-// structurally, so this is intentionally untyped — the shape is a
-// standard `interpolate` expression validated at runtime by MapLibre.
-function thermalColorExpression(scale: number, theme: "light" | "dark") {
+// Rectangles are colored from the coldest to hottest loaded cell: cool blue
+// through the mid-range to warm red.
+function thermalColorExpression(minTemperature: number, maxTemperature: number, theme: "light" | "dark") {
   const colors = theme === "light"
     ? ["#136fa9", "#5aaed5", "#dbcab9", "#e46f5c", "#b93730"]
     : ["#2677bf", "#61addb", "#50636c", "#e76e5a", "#bd3d35"];
+  const range = Math.max(0.01, maxTemperature - minTemperature);
   return [
     "interpolate",
     ["linear"],
-    ["get", "anomaly"],
-    -scale,
+    ["get", "temperature"],
+    minTemperature,
     colors[0],
-    -scale * 0.35,
+    minTemperature + range * 0.25,
     colors[1],
-    0,
+    minTemperature + range * 0.5,
     colors[2],
-    scale * 0.35,
+    minTemperature + range * 0.75,
     colors[3],
-    scale,
+    maxTemperature,
     colors[4],
-  ];
-}
-
-function thermalOpacityExpression(scale: number, theme: "light" | "dark") {
-  const intensity = theme === "light" ? [0.34, 0.58, 0.86] : [0.44, 0.66, 0.9];
-  return [
-    "interpolate",
-    ["linear"],
-    ["abs", ["get", "anomaly"]],
-    0,
-    intensity[0],
-    scale * 0.2,
-    intensity[1],
-    scale,
-    intensity[2],
   ];
 }
 
@@ -90,10 +71,9 @@ export function ThermalMap({
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MaplibreMap | null>(null);
   const onSelectRef = useRef(onSelect);
-  const anomalyScale = Math.max(
-    0.15,
-    ...blocks.map(block => Math.abs(block.temperature - block.nearbyAverage)),
-  );
+  const temperatures = blocks.map(block => block.temperature);
+  const minTemperature = Math.min(...temperatures);
+  const maxTemperature = Math.max(...temperatures);
   useEffect(() => {
     onSelectRef.current = onSelect;
   }, [onSelect]);
@@ -114,66 +94,53 @@ export function ThermalMap({
     map.addControl(new NavigationControl({ showCompass: false }), "top-right");
 
     map.on("load", () => {
-      // Footprint polygons: geographically accurate (~110m), but at a
-      // city-wide zoom spanning several neighborhoods they shrink to a
-      // couple of pixels — decorative context, not the click target.
-      // Marker circles: fixed screen-space size regardless of zoom — the
-      // actual click/hover/selection target.
+      // Each block has a square ~110m footprint. Its color represents its
+      // actual temperature within the range of all loaded cells.
       map.addSource(MARKER_SOURCE, {
         type: "geojson",
-        data: blocksToPointFeatureCollection(blocks),
+        data: blocksToFeatureCollection(blocks),
       });
       map.addLayer({
-        id: CIRCLE_LAYER,
-        type: "circle",
+        id: RECTANGLE_LAYER,
+        type: "fill",
         source: MARKER_SOURCE,
         paint: {
-          "circle-radius": ["interpolate", ["linear"], ["zoom"], 9, 6, 12, 10, 15, 17],
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- see thermalColorExpression()
-          "circle-color": thermalColorExpression(anomalyScale, theme) as any,
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- MapLibre's expression union rejects dynamic arrays
-          "circle-opacity": thermalOpacityExpression(anomalyScale, theme) as any,
-          "circle-blur": 0.18,
-          "circle-stroke-width": 1,
-          "circle-stroke-color": theme === "light" ? "rgba(255,255,255,0.8)" : "rgba(221,242,245,0.72)",
-          "circle-stroke-opacity": theme === "light" ? 0.42 : 0.58,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- MapLibre rejects dynamic expression arrays
+          "fill-color": thermalColorExpression(minTemperature, maxTemperature, theme) as any,
+          "fill-opacity": 0.82,
         },
       });
       map.addLayer({
         id: HOVER_LAYER,
-        type: "circle",
+        type: "line",
         source: MARKER_SOURCE,
         filter: NO_MATCH_FILTER,
         paint: {
-          "circle-radius": ["interpolate", ["linear"], ["zoom"], 8, 9, 14, 15],
-          "circle-color": "transparent",
-          "circle-stroke-width": 1.5,
-          "circle-stroke-color": theme === "light" ? "#10242a" : "#edeff2",
+          "line-width": 1.5,
+          "line-color": theme === "light" ? "#10242a" : "#edeff2",
         },
       });
       map.addLayer({
         id: SELECTED_LAYER,
-        type: "circle",
+        type: "line",
         source: MARKER_SOURCE,
         filter: NO_MATCH_FILTER,
         paint: {
-          "circle-radius": ["interpolate", ["linear"], ["zoom"], 8, 11, 14, 18],
-          "circle-color": "transparent",
-          "circle-stroke-width": 2.5,
-          "circle-stroke-color": "#73e6d5",
+          "line-width": 2.5,
+          "line-color": "#73e6d5",
         },
       });
 
-      map.on("click", CIRCLE_LAYER, (e: MapLayerMouseEvent) => {
+      map.on("click", RECTANGLE_LAYER, (e: MapLayerMouseEvent) => {
         const id = e.features?.[0]?.properties?.id as string | undefined;
         if (id) onSelectRef.current(id);
       });
-      map.on("mouseenter", CIRCLE_LAYER, (e: MapLayerMouseEvent) => {
+      map.on("mouseenter", RECTANGLE_LAYER, (e: MapLayerMouseEvent) => {
         map.getCanvas().style.cursor = "pointer";
         const id = e.features?.[0]?.properties?.id as string | undefined;
         if (id) map.setFilter(HOVER_LAYER, idFilter(id));
       });
-      map.on("mouseleave", CIRCLE_LAYER, () => {
+      map.on("mouseleave", RECTANGLE_LAYER, () => {
         map.getCanvas().style.cursor = "";
         map.setFilter(HOVER_LAYER, NO_MATCH_FILTER);
       });
