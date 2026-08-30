@@ -3,6 +3,7 @@
 import { MapPinned } from "lucide-react";
 import { ThermometerIcon } from "@/components/icons/FactorIcons";
 import { ProvenanceTag } from "@/components/ui/ProvenanceTag";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import type { City } from "@/types/thermal";
 
 // Only Los Angeles has a real map/block implementation right now. NYC and
@@ -68,6 +69,7 @@ export function TopBar({
           <MapPinned className="h-3.5 w-3.5" aria-hidden />
           <span>Viewing {city}</span>
         </div>
+        <ThemeToggle />
         <ProvenanceTag provenance="live" />
       </div>
     </header>
