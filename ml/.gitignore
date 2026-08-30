@@ -1,5 +1,17 @@
 .venv/
 __pycache__/
 *.pyc
-data/raw/
 data/processed/
+
+# data/raw/ IS tracked, selectively: satellite/heatmap/env_params/wind
+# responses are real paid FortyGuard data (850,700+ credits worth) with no
+# way to recover it except paying again, so they're committed as a
+# durability backup. osm_landcover/osm_buildings raw responses are free
+# (OpenStreetMap, no credits) and were ~90% of the raw/ directory's disk
+# footprint (verbose upstream geometry) purely from Overpass's response
+# format -- excluded, cheap to re-fetch if ever lost. The ledger is
+# session bookkeeping, not data -- also excluded.
+data/raw/osm_landcover_*.json
+data/raw/osm_buildings_*.json
+data/raw/_ledger*.json
+data/raw/_session_date_times.json

@@ -1,0 +1,87 @@
+{
+  "error": false,
+  "status_code": 200,
+  "message": "Completed",
+  "data": {
+    "activity_id": "07b00f59-3b8e-4eae-8096-d2357f64a30c",
+    "status": "Completed",
+    "result": {
+      "metadata": {
+        "timezone": "GMT-8",
+        "timezone_offset_hours": -8,
+        "time_range": {
+          "start": "2026-08-29T10:00:00-08:00",
+          "end": "2026-08-29T10:00:00-08:00",
+          "interval": "1h",
+          "count": 1
+        },
+        "timestamps": [
+          "2026-08-29T10:00:00-08:00"
+        ]
+      },
+      "locations": [
+        {
+          "lat": 34.0407,
+          "lon": -118.2468,
+          "elevation": 80.0,
+          "temperature": 30.0,
+          "parameters": {
+            "heat_index_celsius": [
+              29.3
+            ],
+            "apparent_temperature_celsius": [
+              35.9
+            ],
+            "relative_humidity_percent": [
+              36.8
+            ],
+            "precipitation_mm": [
+              0.0
+            ],
+            "cloud_cover_octas": [
+              77.0
+            ],
+            "wet_bulb_temperature_celsius": [
+              22.6
+            ],
+            "air_quality:idx": [
+              85.5
+            ],
+            "air_quality_pm2p5:idx": [
+              85.5
+            ],
+            "air_quality_pm10:idx": [
+              27.1
+            ],
+            "air_quality_no2:idx": [
+              18.9
+            ],
+            "aqi_us_co": [
+              2.2
+            ],
+            "air_quality_o3:idx": [
+              6.2
+            ],
+            "air_quality_so2:idx": [
+              3.8
+            ],
+            "methane_ppb": [
+              2069.2
+            ],
+            "co2_ppm": [
+              461.0
+            ]
+          },
+          "solar_irradiance": {
+            "clear_sky": {
+              "ghi": 753.44,
+              "dni": 743.39,
+              "dhi": 152.49
+            },
+            "description": "The above values provide insights into the solar energy available at the specific location at 2026-08-29 10:00. GHI represents the total solar energy, DNI focuses on direct sunlight, and DHI accounts for scattered and diffuse radiation."
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,266 @@
+- generic [ref=f2e4]:
+  - generic [ref=f2e6]:
+    - generic [ref=f2e7]:
+      - generic [ref=f2e8]:
+        - img "FortyGuard Logo" [ref=f2e9]
+        - generic [ref=f2e10]: API
+      - button "Switch to dark mode" [ref=f2e11] [cursor=pointer]
+    - textbox "Search endpoints..." [ref=f2e16]
+    - generic [ref=f2e17]:
+      - generic [ref=f2e18]:
+        - heading "Guides" [level=3] [ref=f2e19]
+        - list [ref=f2e20]:
+          - listitem [ref=f2e21]:
+            - link "Introduction" [ref=f2e22] [cursor=pointer]:
+              - /url: /docs/introduction
+          - listitem [ref=f2e24]:
+            - link "Quickstart" [ref=f2e25] [cursor=pointer]:
+              - /url: /docs/quickstart
+          - listitem [ref=f2e27]:
+            - link "Authentication" [ref=f2e28] [cursor=pointer]:
+              - /url: /docs/authentication
+      - generic [ref=f2e30]:
+        - heading "Analysis Endpoints" [level=3] [ref=f2e31]
+        - list [ref=f2e32]:
+          - listitem [ref=f2e33]:
+            - link "Create Heatmap POST" [ref=f2e34] [cursor=pointer]:
+              - /url: /docs/create-heatmap
+              - generic [ref=f2e35]: Create Heatmap
+              - generic [ref=f2e36]: POST
+          - listitem [ref=f2e37]:
+            - link "Satellite View Segmentation POST" [ref=f2e38] [cursor=pointer]:
+              - /url: /docs/satellite-view-segmentation
+              - generic [ref=f2e39]: Satellite View Segmentation
+              - generic [ref=f2e40]: POST
+          - listitem [ref=f2e41]:
+            - link "Street View Segmentation POST" [ref=f2e42] [cursor=pointer]:
+              - /url: /docs/street-view-segmentation
+              - generic [ref=f2e43]: Street View Segmentation
+              - generic [ref=f2e44]: POST
+          - listitem [ref=f2e45]:
+            - link "Heat Intelligence POST" [ref=f2e46] [cursor=pointer]:
+              - /url: /docs/heat-intelligence
+              - generic [ref=f2e47]: Heat Intelligence
+              - generic [ref=f2e48]: POST
+          - listitem [ref=f2e49]:
+            - link "Environmental Parameters POST" [ref=f2e50] [cursor=pointer]:
+              - /url: /docs/environmental-parameters
+              - generic [ref=f2e51]: Environmental Parameters
+              - generic [ref=f2e52]: POST
+      - generic [ref=f2e53]:
+        - heading "Task Management" [level=3] [ref=f2e54]
+        - list [ref=f2e55]:
+          - listitem [ref=f2e56]:
+            - link "Check Status GET" [ref=f2e57] [cursor=pointer]:
+              - /url: /docs/check-status
+              - generic [ref=f2e58]: Check Status
+              - generic [ref=f2e59]: GET
+          - listitem [ref=f2e60]:
+            - link "Check API Credits Usage GET" [ref=f2e61] [cursor=pointer]:
+              - /url: /docs/credits-usage
+              - generic [ref=f2e62]: Check API Credits Usage
+              - generic [ref=f2e63]: GET
+      - generic [ref=f2e64]:
+        - heading "Resources" [level=3] [ref=f2e65]
+        - list [ref=f2e66]:
+          - listitem [ref=f2e67]:
+            - link "Known Limitations" [ref=f2e68] [cursor=pointer]:
+              - /url: /docs/limitations
+          - listitem [ref=f2e70]:
+            - link "Release Notes" [ref=f2e71] [cursor=pointer]:
+              - /url: /docs/release-notes
+  - generic [ref=f2e75]:
+    - heading "Known Limitations" [level=1] [ref=f2e76]
+    - generic [ref=f2e77]:
+      - paragraph [ref=f2e78]: This page documents the current operational, technical, and plan-level limits of the FortyGuard Enterprise API. It is maintained alongside each release so you can plan integrations, size workloads, and anticipate constraints before hitting them in production.
+      - heading "Plan Limits" [level=2] [ref=f2e79]
+      - paragraph [ref=f2e80]: Every API key is associated with a subscription plan. The table below summarizes what each plan includes. See each endpoint page for plan-specific behavior.
+      - table [ref=f2e82]:
+        - rowgroup [ref=f2e83]:
+          - row [ref=f2e84]:
+            - columnheader "Capability" [ref=f2e85]
+            - columnheader "API Basic" [ref=f2e86]
+            - columnheader "API Premium" [ref=f2e87]
+            - columnheader "API Startup" [ref=f2e88]
+        - rowgroup [ref=f2e89]:
+          - row [ref=f2e90]:
+            - cell "Monthly credits" [ref=f2e91]
+            - cell "1,000,000" [ref=f2e92]
+            - cell "5,000,000" [ref=f2e93]
+            - cell "1,000,000" [ref=f2e94]
+          - row [ref=f2e95]:
+            - cell "Commercial License" [ref=f2e96]
+            - cell "Included" [ref=f2e97]
+            - cell "Included" [ref=f2e99]
+            - cell "Included" [ref=f2e101]
+          - row [ref=f2e103]:
+            - cell "Heatmap Generation (max area)" [ref=f2e104]
+            - cell "Up to 10 mi²" [ref=f2e105]
+            - cell "Up to 50 mi²" [ref=f2e106]
+            - cell "Up to 10 mi²" [ref=f2e107]
+          - row [ref=f2e108]:
+            - cell "Map Statistics" [ref=f2e109]
+            - cell "Full access" [ref=f2e110]
+            - cell "Full access" [ref=f2e112]
+            - cell "Full access" [ref=f2e114]
+          - row [ref=f2e116]:
+            - cell "Environmental Parameters" [ref=f2e117]
+            - cell "Up to 3 parameters per request" [ref=f2e118]
+            - cell "Full access to all parameters" [ref=f2e119]
+            - cell "Up to 3 parameters per request" [ref=f2e120]
+          - row [ref=f2e121]:
+            - cell "Satellite Segmentation" [ref=f2e122]
+            - cell "Not included" [ref=f2e123]
+            - cell "Included" [ref=f2e125]
+            - cell "Not included" [ref=f2e127]
+          - row [ref=f2e129]:
+            - cell "Street View Segmentation" [ref=f2e130]
+            - cell "Not included" [ref=f2e131]
+            - cell "Included" [ref=f2e133]
+            - cell "Not included" [ref=f2e135]
+          - row [ref=f2e137]:
+            - cell "Heat Intelligence Reports" [ref=f2e138]
+            - cell "Not included" [ref=f2e139]
+            - cell "Included" [ref=f2e141]
+            - cell "Not included" [ref=f2e143]
+          - row [ref=f2e145]:
+            - cell "Access window" [ref=f2e146]
+            - cell "Monthly (renews each cycle)" [ref=f2e147]
+            - cell "Monthly (renews each cycle)" [ref=f2e148]
+            - cell "6 months (one-time)" [ref=f2e149]
+          - row [ref=f2e150]:
+            - cell "Regional coverage" [ref=f2e151]
+            - cell "United States only" [ref=f2e152]
+            - cell "United States only" [ref=f2e153]
+            - cell "United States only" [ref=f2e154]
+      - heading "Input Constraints" [level=2] [ref=f2e155]
+      - paragraph [ref=f2e156]:
+        - text: Requests that violate the following constraints return
+        - code [ref=f2e157]: 400 Bad Request
+        - text: and are not charged against your credit balance.
+      - list [ref=f2e158]:
+        - listitem [ref=f2e159]:
+          - strong [ref=f2e160]: "Coordinates:"
+          - code [ref=f2e161]: latitude
+          - text: must be in the range
+          - code [ref=f2e162]: "[-90, 90]"
+          - text: and
+          - code [ref=f2e163]: longitude
+          - text: in
+          - code [ref=f2e164]: "[-180, 180]"
+          - text: . During the current release, coordinates must fall within the United States.
+        - listitem [ref=f2e165]:
+          - strong [ref=f2e166]: "Polygon Area of Interest:"
+          - text: must be a valid GeoJSON
+          - code [ref=f2e167]: FeatureCollection
+          - text: whose geometry is a closed
+          - code [ref=f2e168]: Polygon
+          - text: (first and last coordinates identical).
+        - listitem [ref=f2e169]:
+          - strong [ref=f2e170]: "Date format:"
+          - code [ref=f2e171]: start_date
+          - text: and
+          - code [ref=f2e172]: end_date
+          - text: must be
+          - code [ref=f2e173]: YYYY-MM-DD
+          - text: .
+          - code [ref=f2e174]: start_time
+          - text: and
+          - code [ref=f2e175]: end_time
+          - text: must be
+          - code [ref=f2e176]: HH:MM
+          - text: in 24-hour time.
+        - listitem [ref=f2e177]:
+          - strong [ref=f2e178]: "Date range:"
+          - text: all date and time inputs must fall between
+          - code [ref=f2e179]: 2019-01-01
+          - text: and the present day.
+          - strong [ref=f2e180]: Create Heatmap
+          - text: additionally supports forecasting up to
+          - strong [ref=f2e181]: 12 hours
+          - text: beyond the current time — so the latest accepted value is
+          - emphasis [ref=f2e182]: now + 12 hours
+          - text: . Any date/time earlier than
+          - code [ref=f2e183]: 2019-01-01
+          - text: or more than 12 hours in the future is rejected. For Satellite Segmentation, Environmental Parameters, and Heat Intelligence, the date/time should match the heatmap you generated for the same location and time.
+        - listitem [ref=f2e184]:
+          - strong [ref=f2e185]: "Filter types:"
+          - code [ref=f2e186]: filter_type
+          - text: must be
+          - code [ref=f2e187]: "1"
+          - text: (Single Hour),
+          - code [ref=f2e188]: "2"
+          - text: (Range of Hours), or
+          - code [ref=f2e189]: "3"
+          - text: (Single Day). Max supported range for
+          - code [ref=f2e190]: filter_type = 2
+          - text: —
+          - code [ref=f2e191]: 23Hrs
+          - text: .
+        - listitem [ref=f2e192]:
+          - strong [ref=f2e193]: "Granularity:"
+          - code [ref=f2e194]: granularity
+          - text: must be one of
+          - code [ref=f2e195]: 60m
+          - text: ","
+          - code [ref=f2e196]: 80m
+          - text: ", or"
+          - code [ref=f2e197]: 100m
+          - text: .
+        - listitem [ref=f2e198]:
+          - strong [ref=f2e199]: "Heat Intelligence analysis:"
+          - code [ref=f2e200]: analysis
+          - text: must be a subset of
+          - code [ref=f2e201]: "[\"geographic\", \"environmental\", \"urban\", \"events\", \"anthropogenic\"]"
+          - text: .
+      - heading "Processing & Results" [level=2] [ref=f2e202]
+      - list [ref=f2e203]:
+        - listitem [ref=f2e204]:
+          - strong [ref=f2e205]: "Activity lifecycle:"
+          - text: submission endpoints return an
+          - code [ref=f2e206]: activity_id
+          - text: . Results are retrieved asynchronously via the
+          - code [ref=f2e207]: "GET /v1/status/{activity_id}"
+          - text: endpoint.
+        - listitem [ref=f2e208]:
+          - strong [ref=f2e209]: "Failed tasks:"
+          - text: tasks that fail during processing (status
+          - code [ref=f2e210]: Failed
+          - text: ) do
+          - strong [ref=f2e211]: not
+          - text: consume credits.
+        - listitem [ref=f2e212]:
+          - strong [ref=f2e213]: "Image encoding:"
+          - text: segmentation outputs return Base64-encoded images. If the response omits the MIME prefix, prepend
+          - code [ref=f2e214]: data:image/png;base64,
+          - text: before rendering in a browser.
+        - listitem [ref=f2e215]:
+          - strong [ref=f2e216]: "Heat Intelligence reports:"
+          - text: the completed status response returns JSON with
+          - code [ref=f2e217]: data.result.download_link
+          - text: . The link is temporary; use it immediately to download the PDF, and do not log or share the full signed URL.
+      - heading "Regional Coverage" [level=2] [ref=f2e218]
+      - list [ref=f2e219]:
+        - listitem [ref=f2e220]:
+          - text: The current release supports requests for locations within the
+          - strong [ref=f2e221]: United States
+          - text: on the API Basic, API Premium, and API Startup plans.
+      - heading "Credits & Billing" [level=2] [ref=f2e222]
+      - list [ref=f2e223]:
+        - listitem [ref=f2e224]:
+          - text: Credits are deducted only on successful task completion (status
+          - code [ref=f2e225]: Completed
+          - text: ).
+        - listitem [ref=f2e226]:
+          - text: Unused credits do not roll over between billing cycles — they reset on your
+          - emphasis [ref=f2e227]: credits_reset_date
+          - text: .
+        - listitem [ref=f2e228]:
+          - strong [ref=f2e229]: "API Startup:"
+          - text: a one-time allocation of 1,000,000 credits valid for a 6-month access window (not a recurring monthly cycle).
+      - heading "Reporting an Issue" [level=2] [ref=f2e230]
+      - paragraph [ref=f2e231]:
+        - text: If you hit a limit that is not documented here, or a documented limit that is incorrect, please contact
+        - link "support@fortyguard.com" [ref=f2e232] [cursor=pointer]:
+          - /url: mailto:support@fortyguard.com
+        - text: .

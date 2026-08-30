@@ -33,7 +33,14 @@ class FortyGuardError(RuntimeError):
 
 
 def _api_key() -> str:
-    key = os.environ.get("FORTYGUARD_API_KEY") or os.environ.get("api_key")
+    # The bulk training/collection pipeline uses its own dedicated key
+    # (separate budget from the live Next.js app's FORTYGUARD_API_KEY),
+    # falling back to the app's key for local dev convenience if unset.
+    key = (
+        os.environ.get("FORTYGUARD_TRAINING_API_KEY")
+        or os.environ.get("FORTYGUARD_API_KEY")
+        or os.environ.get("api_key")
+    )
     if not key:
         raise FortyGuardError(
             "Missing FortyGuard API key. Add FORTYGUARD_API_KEY to a .env.local "

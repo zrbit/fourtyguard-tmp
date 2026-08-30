@@ -13,6 +13,8 @@ time-invariant, so this is called once per AOI, not once per date_time.
 
 from __future__ import annotations
 
+import json
+
 from .. import fortyguard_client as fg
 from . import raw_cache
 from .aoi_sampling import Aoi
@@ -22,6 +24,21 @@ from .date_times import date_time_payload, satellite_reference_date
 
 def _params(aoi: Aoi, granularity: int) -> dict:
     return {"aoi": aoi.name, "granularity": granularity}
+
+
+def _strip_images(result: dict) -> dict:
+    """Drops the base64-encoded original/segmentation images before caching --
+    schema_adapter.extract_land_cover() only reads segmentation.segments, and
+    these images alone were ~85% of the raw cache's disk footprint (measured:
+    242MB total raw/, most of it images never used downstream). Keeps the
+    cache small enough to safely commit to git as a durability backup for
+    this genuinely paid-for data (see ml/README.md)."""
+    result = json.loads(json.dumps(result))  # cheap deep copy
+    inner = ((result.get("data") or {}).get("result")) or {}
+    inner.pop("original_image", None)
+    inner.pop("orignal_image", None)  # API's own typo, both keys have appeared
+    (inner.get("segmentation") or {}).pop("image_content", None)
+    return result
 
 
 def load_cached(aoi: Aoi, granularity: int = 100) -> dict | None:
@@ -49,5 +66,5 @@ def fetch_satellite(aoi: Aoi, ledger: CreditLedger, granularity: int = 100) -> d
     except Exception:
         ledger.release("satellite", aoi.name)
         raise
-    raw_cache.save("satellite", params, result)
+    raw_cache.save("satellite", params, _strip_images(result))
     return result

@@ -34,16 +34,26 @@ from ..collect import (
     fetch_wind_openmeteo,
 )
 from ..collect.aoi_sampling import AOIS, Aoi
-from ..collect.date_times import sample_date_times
+from ..collect.date_times import daytime_date_times, sample_date_times
 from . import schema_adapter
 
 OUTPUT_PATH = Path(__file__).resolve().parents[2] / "data" / "processed" / "dataset.parquet"
 OUTPUT_CSV_PATH = OUTPUT_PATH.with_suffix(".csv")  # human-readable copy, easier to eyeball
 
-# How many candidate date_times to probe per AOI when scanning the cache.
-# Matches run_collection.py's --date-times default (2) with headroom in case
-# a run used more.
-_MAX_DATE_TIME_CANDIDATES = 4
+def _candidate_date_times() -> list:
+    """Every date_time this cache could plausibly hold, deduplicated: the
+    current daytime sampler (run_collection.py's default) over the last few
+    days, plus the older generic sampler used earlier in the project (the
+    original 34 rows' 2 date_times were fetched with that one, before the
+    "daytime only" decision) -- so rebuilding never loses AOIs collected
+    under either scheme."""
+    candidates = daytime_date_times(3, days_back=4) + sample_date_times(4)
+    seen: dict[str, None] = {}
+    for dt in candidates:
+        seen.setdefault(dt.isoformat(), None)
+    from datetime import datetime as _dt  # local import to avoid a top-level rename
+
+    return [_dt.fromisoformat(iso) for iso in seen]
 
 
 def _env_properties(env_response: dict | None) -> dict:
@@ -60,7 +70,7 @@ def _aoi_mean_temperature_f(heatmap_response: dict) -> float | None:
 
 
 def build_rows() -> list[dict]:
-    date_time_candidates = sample_date_times(_MAX_DATE_TIME_CANDIDATES)
+    date_time_candidates = _candidate_date_times()
     # Pass 1: gather each (aoi, date_time)'s mean temperature, so we can
     # compute the regional (all-AOIs-at-that-hour) baseline for pass 2.
     partial_rows: list[dict] = []

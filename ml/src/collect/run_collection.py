@@ -21,9 +21,9 @@ from __future__ import annotations
 
 import argparse
 
-from .aoi_sampling import AOIS, Aoi
+from .aoi_sampling import AOIS, NIGHT_AOIS, Aoi
 from .credit_ledger import COST_ESTIMATES, CreditLedger
-from .date_times import sample_date_times
+from .date_times import daytime_date_times, nighttime_date_times
 from . import fetch_satellite as fetch_satellite_module
 from .fetch_env_params import fetch_env_params
 from .fetch_heatmap import fetch_heatmap
@@ -38,17 +38,17 @@ def aoi_total_cost(date_time_count: int) -> int:
     return satellite_cost + date_time_count * (heatmap_cost + env_cost)
 
 
-def print_dry_run(date_time_count: int, credit_cap: int) -> None:
+def print_dry_run(date_time_count: int, credit_cap: int, aois: list[Aoi] = AOIS) -> None:
     per_aoi = aoi_total_cost(date_time_count)
     affordable = credit_cap // per_aoi if per_aoi else 0
-    planned = AOIS[: min(affordable, len(AOIS))]
+    planned = aois[: min(affordable, len(aois))]
 
-    print(f"Candidate AOIs: {len(AOIS)}  |  date_times per AOI: {date_time_count}  |  cost per AOI: ~{per_aoi} credits")
+    print(f"Candidate AOIs: {len(aois)}  |  date_times per AOI: {date_time_count}  |  cost per AOI: ~{per_aoi} credits")
     print(f"At the {credit_cap} cap, ~{affordable} AOIs are affordable in full; {len(planned)} will be attempted:\n")
     for aoi in planned:
         print(f"  {aoi.name:<32} [{aoi.category}]")
-    if len(planned) < len(AOIS):
-        skipped = AOIS[len(planned):]
+    if len(planned) < len(aois):
+        skipped = aois[len(planned):]
         print(f"\n  Skipped (would exceed the cap): {', '.join(a.name for a in skipped)}")
     print(f"\nEstimated total: ~{len(planned) * per_aoi} / {credit_cap} credits (all three unit costs confirmed")
     print("  via /v1/system/fetch-api-key-usage -- see credit_ledger.py.)")
@@ -81,10 +81,9 @@ def collect_one_aoi(aoi: Aoi, date_times: list, ledger: CreditLedger) -> None:
             print(f"  [warn] wind fetch failed for {aoi.name} @ {dt.isoformat()}: {exc}")
 
 
-def run(date_time_count: int, credit_cap: int, aois: list[Aoi] = AOIS) -> None:
+def run(date_times: list, credit_cap: int, aois: list[Aoi] = AOIS) -> None:
     ledger = CreditLedger.load(cap=credit_cap)
-    per_aoi = aoi_total_cost(date_time_count)
-    date_times = sample_date_times(date_time_count)
+    per_aoi = aoi_total_cost(len(date_times))
 
     print(f"Starting collection. Cap: {credit_cap}. Already spent (prior runs): {ledger.spent}.")
     processed, skipped, failed = 0, 0, []
@@ -113,20 +112,38 @@ def main() -> None:
     parser.add_argument("--execute", action="store_true", help="Actually make network calls / spend credits.")
     parser.add_argument("--dry-run", action="store_true", help="Print the plan and estimated cost only (default).")
     parser.add_argument("--credit-cap", type=int, default=250_000, help="Hard cap on estimated credits spent.")
-    parser.add_argument("--date-times", type=int, default=2, help="Distinct date_times sampled per AOI (max 4).")
+    parser.add_argument(
+        "--date-times", type=int, default=3,
+        help="Distinct LA-local DAYTIME hours sampled per AOI, today (max 3: late morning/early "
+        "afternoon/early evening -- see date_times.daytime_date_times()). No nighttime sampling: "
+        "not needed for a daytime thermal reasoning use case.",
+    )
     parser.add_argument(
         "--pilot",
         action="store_true",
         help="Collect only the first AOI (with --execute). Use this FIRST to confirm real response "
         "shapes and actual credit costs before running the full batch -- see ml/README.md step 2.",
     )
+    parser.add_argument(
+        "--night-batch",
+        action="store_true",
+        help="Collect aoi_sampling.NIGHT_AOIS instead of AOIS, with BOTH daytime and nighttime "
+        "date_times (--date-times count of each, so 2 -> 2 day + 2 night = 4 total). For the "
+        "'add more AOIs, include night for them' decision -- AOIS stays daytime-only.",
+    )
     args = parser.parse_args()
 
-    if args.execute:
-        aois = AOIS[:1] if args.pilot else AOIS
-        run(date_time_count=args.date_times, credit_cap=args.credit_cap, aois=aois)
+    if args.night_batch:
+        aois = NIGHT_AOIS[:1] if args.pilot else NIGHT_AOIS
+        date_times = daytime_date_times(args.date_times) + nighttime_date_times(args.date_times)
     else:
-        print_dry_run(date_time_count=args.date_times, credit_cap=args.credit_cap)
+        aois = AOIS[:1] if args.pilot else AOIS
+        date_times = daytime_date_times(args.date_times)
+
+    if args.execute:
+        run(date_times=date_times, credit_cap=args.credit_cap, aois=aois)
+    else:
+        print_dry_run(date_time_count=len(date_times), credit_cap=args.credit_cap, aois=aois)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,35 @@
+{
+  "error": false,
+  "status_code": 200,
+  "message": "Completed",
+  "data": {
+    "activity_id": "e914291e-29cc-46ed-9a54-4d72fa9d4a06",
+    "status": "Completed",
+    "result": {
+      "coordinates": {
+        "latitude": "33.9802",
+        "longitude": "-118.4517"
+      },
+      "image_year": 2026,
+      "segmentation": {
+        "request_id": "2d000213",
+        "processing_time_seconds": 1.047233,
+        "image_dimensions": {
+          "width": 395,
+          "height": 395
+        },
+        "mode": "sat",
+        "segments": {
+          "wall": 100.0
+        },
+        "image_legend": {
+          "wall": [
+            120,
+            120,
+            120
+          ]
+        }
+      }
+    }
+  }
+}

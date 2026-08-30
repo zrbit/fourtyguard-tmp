@@ -1,0 +1,157 @@
+- generic [ref=f1e4]:
+  - generic [ref=f1e6]:
+    - generic [ref=f1e7]:
+      - generic [ref=f1e8]:
+        - img "FortyGuard Logo" [ref=f1e9]
+        - generic [ref=f1e10]: API
+      - button "Switch to dark mode" [ref=f1e11] [cursor=pointer]
+    - textbox "Search endpoints..." [ref=f1e16]
+    - generic [ref=f1e17]:
+      - generic [ref=f1e18]:
+        - heading "Guides" [level=3] [ref=f1e19]
+        - list [ref=f1e20]:
+          - listitem [ref=f1e21]:
+            - link "Introduction" [ref=f1e22] [cursor=pointer]:
+              - /url: /docs/introduction
+          - listitem [ref=f1e24]:
+            - link "Quickstart" [ref=f1e25] [cursor=pointer]:
+              - /url: /docs/quickstart
+          - listitem [ref=f1e27]:
+            - link "Authentication" [ref=f1e28] [cursor=pointer]:
+              - /url: /docs/authentication
+      - generic [ref=f1e30]:
+        - heading "Analysis Endpoints" [level=3] [ref=f1e31]
+        - list [ref=f1e32]:
+          - listitem [ref=f1e33]:
+            - link "Create Heatmap POST" [ref=f1e34] [cursor=pointer]:
+              - /url: /docs/create-heatmap
+              - generic [ref=f1e35]: Create Heatmap
+              - generic [ref=f1e36]: POST
+          - listitem [ref=f1e37]:
+            - link "Satellite View Segmentation POST" [ref=f1e38] [cursor=pointer]:
+              - /url: /docs/satellite-view-segmentation
+              - generic [ref=f1e39]: Satellite View Segmentation
+              - generic [ref=f1e40]: POST
+          - listitem [ref=f1e41]:
+            - link "Street View Segmentation POST" [ref=f1e42] [cursor=pointer]:
+              - /url: /docs/street-view-segmentation
+              - generic [ref=f1e43]: Street View Segmentation
+              - generic [ref=f1e44]: POST
+          - listitem [ref=f1e45]:
+            - link "Heat Intelligence POST" [ref=f1e46] [cursor=pointer]:
+              - /url: /docs/heat-intelligence
+              - generic [ref=f1e47]: Heat Intelligence
+              - generic [ref=f1e48]: POST
+          - listitem [ref=f1e49]:
+            - link "Environmental Parameters POST" [ref=f1e50] [cursor=pointer]:
+              - /url: /docs/environmental-parameters
+              - generic [ref=f1e51]: Environmental Parameters
+              - generic [ref=f1e52]: POST
+      - generic [ref=f1e53]:
+        - heading "Task Management" [level=3] [ref=f1e54]
+        - list [ref=f1e55]:
+          - listitem [ref=f1e56]:
+            - link "Check Status GET" [ref=f1e57] [cursor=pointer]:
+              - /url: /docs/check-status
+              - generic [ref=f1e58]: Check Status
+              - generic [ref=f1e59]: GET
+          - listitem [ref=f1e60]:
+            - link "Check API Credits Usage GET" [ref=f1e61] [cursor=pointer]:
+              - /url: /docs/credits-usage
+              - generic [ref=f1e62]: Check API Credits Usage
+              - generic [ref=f1e63]: GET
+      - generic [ref=f1e64]:
+        - heading "Resources" [level=3] [ref=f1e65]
+        - list [ref=f1e66]:
+          - listitem [ref=f1e67]:
+            - link "Known Limitations" [ref=f1e68] [cursor=pointer]:
+              - /url: /docs/limitations
+          - listitem [ref=f1e70]:
+            - link "Release Notes" [ref=f1e71] [cursor=pointer]:
+              - /url: /docs/release-notes
+  - generic [ref=f1e75]:
+    - generic [ref=f1e76]:
+      - heading "Street View Segmentation POST" [level=1] [ref=f1e77]:
+        - generic [ref=f1e78]: Street View Segmentation
+        - generic [ref=f1e79]: POST
+      - generic [ref=f1e81]:
+        - generic [ref=f1e82]: Available in
+        - generic [ref=f1e83]: API Premium
+      - paragraph [ref=f1e86]: This endpoint performs segmentation analysis on street view imagery to identify and classify urban features, building facades, vegetation, road surfaces, and thermal characteristics from ground-level perspectives.
+    - generic [ref=f1e87]:
+      - heading "Required attributes" [level=2] [ref=f1e88]
+      - generic [ref=f1e89]:
+        - generic [ref=f1e90]:
+          - generic [ref=f1e91]:
+            - generic [ref=f1e92]: latitude
+            - generic [ref=f1e93]: number
+          - paragraph [ref=f1e95]: Latitude coordinate of the street view location.
+        - generic [ref=f1e96]:
+          - generic [ref=f1e97]:
+            - generic [ref=f1e98]: longitude
+            - generic [ref=f1e99]: number
+          - paragraph [ref=f1e101]: Longitude coordinate of the street view location.
+        - generic [ref=f1e102]:
+          - generic [ref=f1e103]:
+            - generic [ref=f1e104]: vertical_angle
+            - generic [ref=f1e105]: number
+          - paragraph [ref=f1e107]: Vertical viewing angle in degrees (tilt up/down).
+        - generic [ref=f1e108]:
+          - generic [ref=f1e109]:
+            - generic [ref=f1e110]: horizontal_angle
+            - generic [ref=f1e111]: number
+          - paragraph [ref=f1e113]: Horizontal viewing angle in degrees (pan left/right, 0-360).
+        - generic [ref=f1e114]:
+          - generic [ref=f1e115]:
+            - generic [ref=f1e116]: back_view
+            - generic [ref=f1e117]: boolean
+          - paragraph [ref=f1e119]: Whether to capture the back view (opposite direction).
+    - heading "Result Schema Breakdown" [level=2] [ref=f1e121]
+    - generic [ref=f1e122]:
+      - heading "Result Output Fields" [level=3] [ref=f1e123]
+      - generic [ref=f1e124]:
+        - generic [ref=f1e125]:
+          - generic [ref=f1e126]:
+            - generic [ref=f1e127]: Coordinates
+            - generic [ref=f1e128]: object
+          - generic [ref=f1e129]:
+            - paragraph [ref=f1e130]: Location that was analyzed.
+            - list [ref=f1e131]:
+              - listitem [ref=f1e132]: latitude (string) - Latitude value
+              - listitem [ref=f1e133]: longitude (string) - Longitude value
+        - generic [ref=f1e134]:
+          - generic [ref=f1e135]:
+            - generic [ref=f1e136]: Front
+            - generic [ref=f1e137]: object
+          - generic [ref=f1e138]:
+            - paragraph [ref=f1e139]: Street View "front" camera results for that location.
+            - list [ref=f1e140]:
+              - listitem [ref=f1e141]: "original_image (string) - Base64-encoded original street view image. Note: If raw Base64, users may need data:image/png;base64, to render in a browser"
+              - listitem [ref=f1e142]: segments (object) - Class coverage values (typically percentages of the image)
+              - listitem [ref=f1e143]: image_legend (object) - RGB color legend for rendering the segmentation output
+              - listitem [ref=f1e144]: segmented_image (string) - Base64-encoded segmentation mask image, decode to display/save the segmentation output
+              - listitem [ref=f1e145]: image_date (string) - Date the Street View image was captured, in YYYY-MM-DD format
+  - generic [ref=f1e148]:
+    - generic [ref=f1e149]:
+      - generic [ref=f1e150]:
+        - heading "Request" [level=3] [ref=f1e151]
+        - button "Python" [ref=f1e153] [cursor=pointer]
+      - generic [ref=f1e154]:
+        - code [ref=f1e156]: "import requests response = requests.post( 'https://api.fortyguard.com/v1/streetview', headers={'api-key': 'your_api_key'}, json={ 'latitude': 40.7128, 'longitude': -74.0060, 'vertical_angle': 10.0, 'horizontal_angle': 90.0, 'back_view': False } )"
+        - button "Copy code" [ref=f1e157] [cursor=pointer]: Copy
+    - generic [ref=f1e158]:
+      - heading "Response" [level=3] [ref=f1e160]
+      - generic [ref=f1e161]:
+        - code [ref=f1e163]:
+          - text: "{ \"error\":"
+          - generic [ref=f1e164]: "false"
+          - text: ", \"status_code\": 200, \"message\": \"Street View Segmentation Submitted Successfully\", \"data\": { \"activity_id\": \"e574b989-c100-4a03-97d8-beef65656623\" } }"
+        - button "Copy code" [ref=f1e165] [cursor=pointer]: Copy
+    - generic [ref=f1e166]:
+      - heading "Result Schema" [level=3] [ref=f1e168]
+      - generic [ref=f1e169]:
+        - code [ref=f1e171]:
+          - text: "{ \"error\":"
+          - generic [ref=f1e172]: "false"
+          - text: ", \"status_code\": 200, \"message\": \"Completed\", \"data\": { \"activity_id\": \"e574b989-c100-4a03-97d8-beef65656623\", \"status\": \"Completed\", \"result\": { \"coordinates\": { \"latitude\": \"40.7128\", \"longitude\": \"-74.006\" }, \"front\": { \"original_image\": \"\", \"segments\": {}, \"image_legend\": {}, \"segmented_image\": \"\", \"image_date\": \"YYYY-MM-DD\" } } } }"
+        - button "Copy code" [ref=f1e173] [cursor=pointer]: Copy
