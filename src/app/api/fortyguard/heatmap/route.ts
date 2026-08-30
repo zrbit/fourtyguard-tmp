@@ -12,25 +12,32 @@ export const STUDY_AREAS = {
   "New York City": [-73.995, 40.705, -73.975, 40.722],
 } as const;
 
+const PERIOD_HOURS_UTC = { day: 20, night: 8 } as const;
+
 export async function POST(request: Request) {
-  const { city } = await request.json().catch(() => ({}));
+  const { city, period } = await request.json().catch(() => ({}));
   if (typeof city !== "string" || !(city in STUDY_AREAS)) return Response.json({ error: "Unsupported US study area." }, { status: 400 });
-  const existing = activeJob(city);
+  if (period !== "day" && period !== "night") return Response.json({ error: "Choose either the day or night thermal scan." }, { status: 400 });
+  const scanPeriod = period as keyof typeof PERIOD_HOURS_UTC;
+  const jobKey = `${city}:${scanPeriod}`;
+  const existing = activeJob(jobKey);
   if (existing) return Response.json({ activityId: existing.activityId, reused: true, result: existing.result ?? null });
   const [west, south, east, north] = STUDY_AREAS[city as keyof typeof STUDY_AREAS];
-  // Ask for the most recent completed model hour. Sending the current minute
-  // can be accepted as a job yet produce zero cells when the hourly raster has
-  // not landed for that timestamp.
-  const now = new Date(Date.now() - 60 * 60 * 1000);
-  now.setUTCMinutes(0, 0, 0);
+  // Request the latest completed scan for the selected thermal period. The
+  // two periods stay deliberately distinct so their jobs and cached results
+  // can never be confused.
+  const now = new Date();
+  const scanTime = new Date(now);
+  scanTime.setUTCHours(PERIOD_HOURS_UTC[scanPeriod], 0, 0, 0);
+  if (scanTime.getTime() > now.getTime() - 2 * 60 * 60 * 1000) scanTime.setUTCDate(scanTime.getUTCDate() - 1);
   try {
     const activityId = await submitJob("/heatmap", {
       polygon_aoi: { type: "FeatureCollection", features: [{ type: "Feature", properties: {}, geometry: { type: "Polygon", coordinates: [[[west, south], [east, south], [east, north], [west, north], [west, south]]] } }] },
-      date_time: { start_date: now.toISOString().slice(0, 10), start_time: now.toISOString().slice(11, 16), filter_type: 1 },
+      date_time: { start_date: scanTime.toISOString().slice(0, 10), start_time: scanTime.toISOString().slice(11, 16), filter_type: 1 },
       granularity: 100,
       analytic_type: "tcm",
     });
-    saveJob(city, activityId);
+    saveJob(jobKey, activityId);
     return Response.json({ activityId, reused: false });
   } catch (error) {
     const known = error instanceof FortyGuardError ? error : null;

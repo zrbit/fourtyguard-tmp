@@ -10,10 +10,14 @@ export default function MapView({
   blocks,
   selectedId,
   onSelect,
+  legendLabel,
+  comparison = false,
 }: {
   blocks: BlockMetrics[];
   selectedId: string;
   onSelect: (id: string) => void;
+  legendLabel?: string;
+  comparison?: boolean;
 }) {
   const [theme, setTheme] = useState<"light" | "dark">("dark");
   useEffect(() => {
@@ -28,8 +32,8 @@ export default function MapView({
   return (
     <div className="relative flex flex-1 flex-col" style={{ background: "var(--surface-sunken)" }}>
       <ThermalMap blocks={blocks} selectedId={selectedId} onSelect={onSelect} theme={theme} />
-      <MapLegend minTemperature={minTemperature} maxTemperature={maxTemperature} theme={theme} />
-      <BlockList blocks={blocks} selectedId={selectedId} onSelect={onSelect} />
+      <MapLegend minTemperature={minTemperature} maxTemperature={maxTemperature} label={legendLabel} theme={theme} />
+      <BlockList blocks={blocks} selectedId={selectedId} onSelect={onSelect} comparison={comparison} />
     </div>
   );
 }

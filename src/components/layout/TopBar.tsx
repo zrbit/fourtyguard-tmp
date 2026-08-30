@@ -1,6 +1,6 @@
 "use client";
 
-import { MapPinned } from "lucide-react";
+import { ArrowDownUp, MapPinned, Moon, Sun } from "lucide-react";
 import { ThermometerIcon } from "@/components/icons/FactorIcons";
 import { ProvenanceTag } from "@/components/ui/ProvenanceTag";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
@@ -15,13 +15,20 @@ const CITIES: { name: City; enabled: boolean }[] = [
   { name: "Chicago", enabled: true },
   { name: "Los Angeles", enabled: true },
 ];
+export type HeatPeriod = "day" | "night" | "compare";
 
 export function TopBar({
   city,
   onCityChange,
+  period,
+  onPeriodChange,
+  comparisonAvailable,
 }: {
   city: City;
   onCityChange: (c: City) => void;
+  period: HeatPeriod;
+  onPeriodChange: (period: HeatPeriod) => void;
+  comparisonAvailable: boolean;
 }) {
   return (
     <header
@@ -59,6 +66,12 @@ export function TopBar({
             )}
           </button>
         ))}
+      </div>
+
+      <div className="hidden items-center gap-1 rounded-md border p-0.5 md:flex" style={{ borderColor: "var(--border)" }} aria-label="Thermal period">
+        <button type="button" title="View the daytime thermal scan" onClick={() => onPeriodChange("day")} aria-pressed={period === "day"} className="flex items-center gap-1 rounded-sm px-2 py-1 font-mono text-[10px] transition-colors" style={{ background: period === "day" ? "var(--accent-dim)" : "transparent", color: period === "day" ? "var(--accent-strong)" : "var(--text-secondary)" }}><Sun className="h-3 w-3" />Daytime</button>
+        <button type="button" title="View the nighttime thermal scan" onClick={() => onPeriodChange("night")} aria-pressed={period === "night"} className="flex items-center gap-1 rounded-sm px-2 py-1 font-mono text-[10px] transition-colors" style={{ background: period === "night" ? "var(--accent-dim)" : "transparent", color: period === "night" ? "var(--accent-strong)" : "var(--text-secondary)" }}><Moon className="h-3 w-3" />Nighttime</button>
+        <button type="button" disabled={!comparisonAvailable} title={comparisonAvailable ? "Compare nighttime temperature with daytime temperature" : "Open both Daytime and Nighttime once to enable comparison"} onClick={() => onPeriodChange("compare")} aria-pressed={period === "compare"} className="flex items-center gap-1 rounded-sm px-2 py-1 font-mono text-[10px] transition-colors disabled:cursor-not-allowed disabled:opacity-45" style={{ background: period === "compare" ? "var(--accent-dim)" : "transparent", color: period === "compare" ? "var(--accent-strong)" : "var(--text-secondary)" }}><ArrowDownUp className="h-3 w-3" />Compare</button>
       </div>
 
       <div className="flex items-center gap-3">

@@ -9,19 +9,20 @@ It is intentionally not a generic heat-map viewer. It helps a resident, planner,
 ## The experience
 
 1. **Choose a place to start** — the Action Brief lists the five places that are warmest compared with their closest neighbours. It is an investigation shortlist, not a danger rating.
-2. **Understand the signal** — choose a live 100 m cell and see its temperature against its eight closest spatial controls and the wider scan.
+2. **Understand the signal** — choose a live 100 m cell and see its temperature against its eight closest spatial controls and the wider scan. Rectangle colors are scaled from the coldest to hottest cell in the active scan, with exact °F endpoints in the legend.
 3. **Check conditions** — request FortyGuard environmental evidence first; add slower satellite and street imagery only if a visual explanation is needed.
 4. **Check persistence** — test whether local heat stayed above 90°F / 32°C during the latest complete day, instead of trusting one snapshot.
 5. **Compare history** — chart the same calendar day and UTC hour across the previous three years, with Open-Meteo regional air temperature as context.
 6. **Build an action plan** — combine the local temperature difference, closest control places, and the next 24-hour weather forecast to rank practical shade, surface, and near-term protection actions. It is a transparent screening model, not a guaranteed intervention forecast.
 
 7. **Read the map in context** — CARTO Voyager provides a light, labelled streets basemap beneath the thermal overlays, while the header control lets people choose light or dark application chrome.
+8. **Compare day and night** — load the labelled Daytime and Nighttime scans, then choose **Compare** to map each cell's `Night − Day` temperature change. The view displays both UTC scan timestamps, ranks the five cells with the least overnight cooling, and assigns a relative overnight-cooling priority score to the selected cell.
 
 Every interpretation is intentionally cautious: temperature locates a signal; it does not prove a cause or a health outcome.
 
 ## Live data
 
-- **FortyGuard heatmaps:** live 100 m thermal cells in Los Angeles, Chicago, and New York City.
+- **FortyGuard heatmaps:** live 100 m thermal cells in Los Angeles, Chicago, and New York City. Daytime (20:00 UTC) and nighttime (08:00 UTC) scans are stored separately and use the latest completed instance of each scheduled time.
 - **FortyGuard environmental parameters:** contextual heat conditions.
 - **FortyGuard satellite and street-view segmentation:** optional imagery evidence for shade, vegetation, and exposed-surface investigation.
 - **FortyGuard persistence:** continuous time above a selected heat threshold for a compact local AOI.
@@ -62,6 +63,7 @@ The hackathon-provided `api_key=...` is also supported. Never use a `NEXT_PUBLIC
 ## Data and product guardrails
 
 - The live map is a local comparison tool, not a city-wide health-risk model.
+- The overnight-cooling priority is a relative ranking within the displayed study area. It identifies cells that cooled least between the selected scans; it is not a health-risk score or a causal diagnosis.
 - Persistence uses the latest completed UTC day, so partial hourly data is not mistaken for a short heat event.
 - Segmentation and environmental results are leads for investigation—not causal proof.
 - The Action Plan is a transparent screening model. It ranks what to inspect or do first; it does not prove a heat cause, calculate a health outcome, or guarantee an intervention benefit.
