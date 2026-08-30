@@ -6,15 +6,11 @@ import {
   NavigationControl,
   type MapLayerMouseEvent,
 } from "maplibre-gl";
-import {
-  blocksToFeatureCollection,
-  blocksToPointFeatureCollection,
-  boundsOf,
-} from "@/lib/spatial/blockGeometry";
+import { blocksToPointFeatureCollection, boundsOf } from "@/lib/spatial/blockGeometry";
 import type { BlockMetrics } from "@/types/thermal";
 
-// Free, key-less dark basemap — no account or token required, which matters
-// since demo mode has to run without any credentials. Attribution is
+// Free, key-less CARTO Voyager basemap with light streets, labels, and
+// colorful geographic context. No account or token is needed. Attribution is
 // rendered by MapLibre's built-in AttributionControl per CARTO/OSM terms.
 //
 // Pinned to the maplibre-gl v4 line deliberately: v6.5.0 fetched this
@@ -22,14 +18,7 @@ import type { BlockMetrics } from "@/types/thermal";
 // request afterward (confirmed via devtools — style loaded, source
 // registered, zero .mvt requests, map stayed blank indefinitely). v4 is
 // the long-established, widely-deployed line and renders it correctly.
-const BASEMAP_STYLES = {
-  dark: "https://basemaps.cartocdn.com/gl/dark-matter-nolabels-gl-style/style.json",
-  light: "https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json",
-} as const;
-
-const FOOTPRINT_SOURCE = "block-footprints";
-const FILL_LAYER = "blocks-fill";
-const LINE_LAYER = "blocks-line";
+const BASEMAP_STYLE = "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json";
 
 const MARKER_SOURCE = "block-markers";
 const CIRCLE_LAYER = "blocks-circle";
@@ -51,21 +40,39 @@ const NO_MATCH_FILTER = idFilter("__none__");
 // union that a dynamically-built expression array can't satisfy
 // structurally, so this is intentionally untyped — the shape is a
 // standard `interpolate` expression validated at runtime by MapLibre.
-function thermalColorExpression(scale: number) {
+function thermalColorExpression(scale: number, theme: "light" | "dark") {
+  const colors = theme === "light"
+    ? ["#136fa9", "#5aaed5", "#dbcab9", "#e46f5c", "#b93730"]
+    : ["#2677bf", "#61addb", "#50636c", "#e76e5a", "#bd3d35"];
   return [
     "interpolate",
     ["linear"],
     ["get", "anomaly"],
     -scale,
-    "#1f4e96",
+    colors[0],
     -scale * 0.35,
-    "#3e7fd9",
+    colors[1],
     0,
-    "#3a4048",
+    colors[2],
     scale * 0.35,
-    "#c6483a",
+    colors[3],
     scale,
-    "#8c2a20",
+    colors[4],
+  ];
+}
+
+function thermalOpacityExpression(scale: number, theme: "light" | "dark") {
+  const intensity = theme === "light" ? [0.34, 0.58, 0.86] : [0.44, 0.66, 0.9];
+  return [
+    "interpolate",
+    ["linear"],
+    ["abs", ["get", "anomaly"]],
+    0,
+    intensity[0],
+    scale * 0.2,
+    intensity[1],
+    scale,
+    intensity[2],
   ];
 }
 
@@ -98,7 +105,7 @@ export function ThermalMap({
 
     const map = new MaplibreMap({
       container: containerRef.current,
-      style: BASEMAP_STYLES[theme],
+      style: BASEMAP_STYLE,
       bounds: boundsOf(blocks),
       fitBoundsOptions: { padding: 80 },
       attributionControl: { compact: true },
@@ -110,27 +117,6 @@ export function ThermalMap({
       // Footprint polygons: geographically accurate (~110m), but at a
       // city-wide zoom spanning several neighborhoods they shrink to a
       // couple of pixels — decorative context, not the click target.
-      map.addSource(FOOTPRINT_SOURCE, {
-        type: "geojson",
-        data: blocksToFeatureCollection(blocks),
-      });
-      map.addLayer({
-        id: FILL_LAYER,
-        type: "fill",
-        source: FOOTPRINT_SOURCE,
-        paint: {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- see thermalColorExpression()
-          "fill-color": thermalColorExpression(anomalyScale) as any,
-          "fill-opacity": 0.78,
-        },
-      });
-      map.addLayer({
-        id: LINE_LAYER,
-        type: "line",
-        source: FOOTPRINT_SOURCE,
-        paint: { "line-color": theme === "light" ? "rgba(16,36,42,0.35)" : "rgba(237,239,242,0.35)", "line-width": 1 },
-      });
-
       // Marker circles: fixed screen-space size regardless of zoom — the
       // actual click/hover/selection target.
       map.addSource(MARKER_SOURCE, {
@@ -142,10 +128,15 @@ export function ThermalMap({
         type: "circle",
         source: MARKER_SOURCE,
         paint: {
-          "circle-radius": 1.5,
+          "circle-radius": ["interpolate", ["linear"], ["zoom"], 9, 6, 12, 10, 15, 17],
           // eslint-disable-next-line @typescript-eslint/no-explicit-any -- see thermalColorExpression()
-          "circle-color": thermalColorExpression(anomalyScale) as any,
-          "circle-stroke-width": 0,
+          "circle-color": thermalColorExpression(anomalyScale, theme) as any,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- MapLibre's expression union rejects dynamic arrays
+          "circle-opacity": thermalOpacityExpression(anomalyScale, theme) as any,
+          "circle-blur": 0.18,
+          "circle-stroke-width": 1,
+          "circle-stroke-color": theme === "light" ? "rgba(255,255,255,0.8)" : "rgba(221,242,245,0.72)",
+          "circle-stroke-opacity": theme === "light" ? 0.42 : 0.58,
         },
       });
       map.addLayer({
@@ -177,10 +168,6 @@ export function ThermalMap({
         const id = e.features?.[0]?.properties?.id as string | undefined;
         if (id) onSelectRef.current(id);
       });
-      map.on("click", FILL_LAYER, (e: MapLayerMouseEvent) => {
-        const id = e.features?.[0]?.properties?.id as string | undefined;
-        if (id) onSelectRef.current(id);
-      });
       map.on("mouseenter", CIRCLE_LAYER, (e: MapLayerMouseEvent) => {
         map.getCanvas().style.cursor = "pointer";
         const id = e.features?.[0]?.properties?.id as string | undefined;
@@ -190,8 +177,6 @@ export function ThermalMap({
         map.getCanvas().style.cursor = "";
         map.setFilter(HOVER_LAYER, NO_MATCH_FILTER);
       });
-      map.on("mouseenter", FILL_LAYER, () => { map.getCanvas().style.cursor = "pointer"; });
-      map.on("mouseleave", FILL_LAYER, () => { map.getCanvas().style.cursor = ""; });
     });
 
     const resizeObserver = new ResizeObserver(() => map.resize());
