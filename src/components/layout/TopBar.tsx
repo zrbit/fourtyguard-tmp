@@ -1,6 +1,7 @@
 "use client";
 
-import { MapPinned } from "lucide-react";
+import Link from "next/link";
+import { MapPinned, Satellite } from "lucide-react";
 import { ThermometerIcon } from "@/components/icons/FactorIcons";
 import { ProvenanceTag } from "@/components/ui/ProvenanceTag";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
@@ -69,6 +70,14 @@ export function TopBar({
           <MapPinned className="h-3.5 w-3.5" aria-hidden />
           <span>Viewing {city}</span>
         </div>
+        <Link
+          href="/training-data"
+          className="hidden items-center gap-1.5 rounded-full border px-3 py-1.5 font-mono text-xs tracking-wide text-slate transition-colors duration-150 hover:text-paper md:flex"
+          style={{ borderColor: "var(--border)" }}
+        >
+          <Satellite className="h-3.5 w-3.5" aria-hidden />
+          Training data
+        </Link>
         <ThemeToggle />
         <ProvenanceTag provenance="live" />
       </div>
