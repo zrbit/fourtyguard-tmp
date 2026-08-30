@@ -9,22 +9,30 @@ It is intentionally not a generic heat-map viewer. It helps a resident, planner,
 ## The experience
 
 1. **Choose a place to start** — the Action Brief lists the five places that are warmest compared with their closest neighbours. It is an investigation shortlist, not a danger rating.
-2. **Understand the signal** — choose a live 100 m cell and see its temperature against its eight closest spatial controls and the wider scan.
+2. **Understand the signal** — choose a live 100 m cell and see its temperature against its eight closest spatial controls and the wider scan. Rectangle colors are scaled from the coldest to hottest cell in the active scan, with exact °F endpoints in the legend.
 3. **Check conditions** — request FortyGuard environmental evidence first; add slower satellite and street imagery only if a visual explanation is needed.
 4. **Check persistence** — test whether local heat stayed above 90°F / 32°C during the latest complete day, instead of trusting one snapshot.
 5. **Compare history** — chart the same calendar day and UTC hour across the previous three years, with Open-Meteo regional air temperature as context.
 6. **Build an action plan** — combine the local temperature difference, closest control places, and the next 24-hour weather forecast to rank practical shade, surface, and near-term protection actions. It is a transparent screening model, not a guaranteed intervention forecast.
 
+7. **Read the map in context** — CARTO Voyager provides a light, labelled streets basemap beneath the thermal overlays, while the header control lets people choose light or dark application chrome.
+8. **Compare day and night** — load the labelled Daytime and Nighttime scans, then choose **Compare** to map each cell's `Night − Day` temperature change. The view displays both UTC scan timestamps, ranks the five cells with the least overnight cooling, and assigns a relative overnight-cooling priority score to the selected cell.
+
 Every interpretation is intentionally cautious: temperature locates a signal; it does not prove a cause or a health outcome.
 
 ## Live data
 
-- **FortyGuard heatmaps:** live 100 m thermal cells in Los Angeles, Chicago, and New York City.
+### Optional AI action brief
+
+After the deterministic Action Plan is built, a user can request an **AI site brief**. It uses only the plan's aggregate evidence to produce a concise explanation and one or two site checks. It cannot change the ranked recommendations, introduce a new intervention, or replace the underlying comparison and forecast evidence.
+
+- **FortyGuard heatmaps:** live 100 m thermal cells in Los Angeles, Chicago, and New York City. Each city uses its own local 12 PM (noon) daytime and 12 AM (midnight) nighttime scan; the app converts those local times to UTC for FortyGuard and uses the latest completed instance.
 - **FortyGuard environmental parameters:** contextual heat conditions.
 - **FortyGuard satellite and street-view segmentation:** optional imagery evidence for shade, vegetation, and exposed-surface investigation.
 - **FortyGuard persistence:** continuous time above a selected heat threshold for a compact local AOI.
 - **Open-Meteo Archive:** historical 2 m air temperature context; it is clearly kept separate from FortyGuard block-level thermal data.
 - **Open-Meteo Forecast:** next-24-hour temperature, apparent temperature, and sunlight context for the Action Plan.
+- **CARTO Voyager:** a light, colourful vector basemap with roads, labels, and places for map context; it does not contribute to thermal analysis.
 
 All FortyGuard work follows the asynchronous submit-and-poll pattern. API keys remain server-side; clients receive only compact job state and safe result summaries.
 
@@ -52,17 +60,21 @@ Create `.env` in the project root:
 
 ```dotenv
 FORTYGUARD_API_KEY=your_key_here
+GROQ_API_KEY=your_key_here
 ```
 
-The hackathon-provided `api_key=...` is also supported. Never use a `NEXT_PUBLIC_` prefix, commit `.env`, or put the key in browser code.
+The hackathon-provided `api_key=...` is also supported. `GROQ_API_KEY` is optional: without it, the transparent action plan still works and only the AI site brief is unavailable. Never use a `NEXT_PUBLIC_` prefix, commit `.env`, or put either key in browser code.
 
 ## Data and product guardrails
 
 - The live map is a local comparison tool, not a city-wide health-risk model.
+- The overnight-cooling priority is a relative ranking within the displayed study area. It identifies cells that cooled least between the selected scans; it is not a health-risk score or a causal diagnosis.
 - Persistence uses the latest completed UTC day, so partial hourly data is not mistaken for a short heat event.
 - Segmentation and environmental results are leads for investigation—not causal proof.
 - The Action Plan is a transparent screening model. It ranks what to inspect or do first; it does not prove a heat cause, calculate a health outcome, or guarantee an intervention benefit.
 - External historical air temperature is regional background context, not a substitute for block-level surface thermal data.
+
+- The AI site brief receives only aggregated plan evidence, is validated as structured output, and cannot change the transparent ranking. It may fail independently without affecting the action plan.
 
 ## API documentation
 

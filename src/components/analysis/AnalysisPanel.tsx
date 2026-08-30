@@ -8,6 +8,7 @@ import { HypothesisList } from "@/components/analysis/HypothesisList";
 import { CompareTable } from "@/components/analysis/CompareTable";
 import { ChatDock } from "@/components/agent/ChatDock";
 import { LiveInvestigation } from "@/components/analysis/LiveInvestigation";
+import { MlAttribution } from "@/components/analysis/MlAttribution";
 import { ProvenanceTag } from "@/components/ui/ProvenanceTag";
 import { analyzeBlock } from "@/lib/reasoning/analyze";
 import { cn, formatSigned, thermalColor, thermalTone } from "@/lib/utils";
@@ -158,6 +159,8 @@ export function AnalysisPanel({
               </div>
 
               <LiveInvestigation block={block} />
+
+              <MlAttribution lookup={{ blockId: block.id }} active={stage === "explained"} />
 
               <div className="border-t p-5" style={{ borderColor: "var(--border)" }}>
                 <h2 className="mb-3 font-display text-[13px] font-bold text-ash uppercase tracking-wide">

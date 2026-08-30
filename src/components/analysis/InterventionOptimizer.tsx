@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { BrainCircuit, CheckCircle2, CircleHelp, CloudSun, RefreshCw, TriangleAlert } from "lucide-react";
+import { BrainCircuit, CheckCircle2, CircleHelp, CloudSun, RefreshCw, Sparkles, TriangleAlert } from "lucide-react";
 import type { BlockMetrics } from "@/types/thermal";
 import { formatSigned } from "@/lib/utils";
 
 type Forecast = { peakTemperatureF: number; peakApparentF: number; peakSolarWm2: number; peakTime: string };
 type Action = { title: string; when: string; score: number; reason: string; outcome: string };
+type AiBrief = { brief: string; verifyFirst: string[] };
 
 function localControls(block: BlockMetrics, allBlocks: BlockMetrics[]) {
   return allBlocks.filter(candidate => candidate.id !== block.id).map(candidate => ({ candidate, distance: Math.hypot(candidate.lat - block.lat, candidate.lng - block.lng) })).sort((a, b) => a.distance - b.distance).slice(0, 8).map(item => item.candidate);
@@ -14,17 +15,29 @@ function localControls(block: BlockMetrics, allBlocks: BlockMetrics[]) {
 function timeLabel(iso: string) { return new Intl.DateTimeFormat("en-US", { weekday: "short", hour: "numeric", timeZone: "UTC" }).format(new Date(`${iso}Z`)); }
 
 export function InterventionOptimizer({ block, allBlocks }: { block: BlockMetrics; allBlocks: BlockMetrics[] }) {
-  const [forecast, setForecast] = useState<Forecast | null>(null); const [loading, setLoading] = useState(false); const [error, setError] = useState<string | null>(null);
+  const [forecast, setForecast] = useState<Forecast | null>(null); const [loading, setLoading] = useState(false); const [error, setError] = useState<string | null>(null); const [aiBrief, setAiBrief] = useState<AiBrief | null>(null); const [aiLoading, setAiLoading] = useState(false); const [aiError, setAiError] = useState<string | null>(null);
   const anomaly = block.temperature - block.nearbyAverage;
   const controls = localControls(block, allBlocks); const warmerThan = controls.filter(control => block.temperature > control.temperature).length;
 
   async function buildPlan() {
-    setLoading(true); setError(null);
+    setLoading(true); setError(null); setAiBrief(null); setAiError(null);
     try {
       const response = await fetch(`/api/forecast?latitude=${encodeURIComponent(block.lat)}&longitude=${encodeURIComponent(block.lng)}`); const payload = await response.json() as Forecast & { error?: string };
       if (!response.ok || payload.error) throw new Error(payload.error ?? "Could not load the local forecast."); setForecast(payload);
     } catch (cause) { setError(cause instanceof Error ? cause.message : "Could not build an action plan."); }
     finally { setLoading(false); }
+  }
+
+  async function createAiBrief() {
+    if (!forecast || !actions.length) return;
+    setAiLoading(true); setAiError(null);
+    try {
+      const response = await fetch("/api/reasoning/action-brief", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ anomalyF: anomaly, warmerThan, controlCount: controls.length, forecast, actions: actions.map(({ title, when, reason }) => ({ title, when, reason })) }) });
+      const payload = await response.json() as AiBrief & { error?: string };
+      if (!response.ok || payload.error) throw new Error(payload.error ?? "Could not create an AI site brief.");
+      setAiBrief(payload);
+    } catch (cause) { setAiError(cause instanceof Error ? cause.message : "Could not create an AI site brief."); }
+    finally { setAiLoading(false); }
   }
 
   const actions: Action[] = forecast ? [
@@ -36,6 +49,11 @@ export function InterventionOptimizer({ block, allBlocks }: { block: BlockMetric
   return <section className="border-t p-5" style={{ borderColor: "var(--border)" }}>
     <div className="flex items-center gap-2"><BrainCircuit className="h-4 w-4 text-accent-strong" /><h2 className="text-sm font-bold text-ash">What should we do here?</h2><span title="This transparent planning model combines the local temperature difference, its closest nearby controls, and the next 24-hour weather forecast. It suggests what to investigate first; it does not guarantee an intervention outcome."><CircleHelp className="h-3.5 w-3.5 text-slate" /></span></div>
     <p className="mt-2 text-[12px] leading-relaxed text-slate">Build a practical plan for this place using its local heat signal and the weather expected next.</p>
+    {forecast && <div className="mt-3 rounded-md border p-3" style={{ borderColor: "var(--accent-border)", background: "var(--surface-sunken)" }}>
+      <div className="flex items-center justify-between gap-3"><div><div className="flex items-center gap-1.5 text-[11px] font-semibold text-paper"><Sparkles className="h-3.5 w-3.5 text-accent-strong" />AI site brief</div><p className="mt-1 text-[10px] leading-relaxed text-slate">Uses only this plan’s evidence; it cannot change the ranking.</p></div><button type="button" onClick={() => void createAiBrief()} disabled={aiLoading} className="shrink-0 rounded-md border px-2.5 py-1.5 text-[10px] font-bold text-accent-strong disabled:opacity-60" style={{ borderColor: "var(--accent-border)" }}>{aiLoading ? "Writing…" : aiBrief ? "Refresh" : "Create brief"}</button></div>
+      {aiBrief && <div className="mt-3 text-[11px] leading-relaxed text-ash"><p>{aiBrief.brief}</p><p className="mt-2 font-medium text-paper">Verify first</p><ul className="mt-1 list-disc space-y-1 pl-4 text-slate">{aiBrief.verifyFirst.map(item => <li key={item}>{item}</li>)}</ul></div>}
+      {aiError && <p className="mt-2 text-[10px] leading-relaxed" style={{ color: "#e36b5d" }}>{aiError} The ranked plan is still available.</p>}
+    </div>}
     <button type="button" onClick={buildPlan} disabled={loading} className="mt-3 flex w-full items-center justify-center gap-2 rounded-md border py-2.5 text-[12px] font-bold disabled:cursor-wait disabled:opacity-60" style={{ borderColor: "var(--accent-border)", color: "var(--accent-strong)", background: "var(--accent-dim)" }}>{loading ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <CloudSun className="h-3.5 w-3.5" />}{loading ? "Building a plan…" : forecast ? "Refresh action plan" : "Build an action plan"}</button>
     {forecast && <div className="mt-3" aria-live="polite"><div className="rounded-md border p-3" style={{ borderColor: "var(--accent-border)", background: "var(--surface)" }}><div className="flex items-center gap-2 text-[11px] font-semibold text-paper"><CheckCircle2 className="h-3.5 w-3.5 text-accent-strong" />Why this place is a priority</div><p className="mt-1 text-[11px] leading-relaxed text-slate">It is {formatSigned(anomaly, 2)}°F compared with nearby places and warmer than {warmerThan} of its {controls.length} closest comparisons. The forecast reaches {forecast.peakApparentF.toFixed(1)}°F when it feels hottest.</p></div><div className="mt-3 space-y-2">{actions.map((action, index) => <article key={action.title} className="rounded-lg border p-3.5" style={{ borderColor: index === 0 ? "var(--accent-border)" : "var(--border)", background: index === 0 ? "var(--accent-dim)" : "var(--surface)" }}><div className="flex items-start justify-between gap-3"><div><div className="font-mono text-[10px] tracking-wide text-accent-strong uppercase">{index === 0 ? "Start here" : "Next option"}</div><h3 className="mt-1 text-[13px] font-bold text-paper">{action.title}</h3></div><span className="rounded-full border px-2 py-1 font-mono text-[10px] text-accent-strong" style={{ borderColor: "var(--accent-border)" }}>{action.score}/100 fit</span></div><p className="mt-2 text-[11px] leading-relaxed text-ash">{action.reason}</p><div className="mt-2 border-t pt-2 text-[10px] leading-relaxed text-slate" style={{ borderColor: "var(--border)" }}><span className="text-ash">When:</span> {action.when}<br /><span className="text-ash">Expected benefit:</span> {action.outcome}</div></article>)}</div><details className="mt-3 rounded-md border px-3 py-2.5 text-[10px]" style={{ borderColor: "var(--border)", background: "var(--surface-sunken)" }}><summary className="cursor-pointer font-medium text-ash">Show how this plan was ranked</summary><p className="mt-2 leading-relaxed text-slate">The score weighs how much warmer this place is than its closest controls, tomorrow’s apparent heat, and forecast sunlight. It intentionally does not claim that trees, pavement, or shade caused the difference. Run imagery evidence before committing funds.</p></details></div>}
     {error && <p className="mt-3 flex gap-1.5 text-[11px] leading-relaxed" style={{ color: "#e36b5d" }}><TriangleAlert className="mt-0.5 h-3.5 w-3.5 shrink-0" />{error}</p>}
