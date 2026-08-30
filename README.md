@@ -22,7 +22,11 @@ Every interpretation is intentionally cautious: temperature locates a signal; it
 
 ## Live data
 
-- **FortyGuard heatmaps:** live 100 m thermal cells in Los Angeles, Chicago, and New York City. Daytime (20:00 UTC) and nighttime (08:00 UTC) scans are stored separately and use the latest completed instance of each scheduled time.
+### Optional AI action brief
+
+After the deterministic Action Plan is built, a user can request an **AI site brief**. It uses only the plan's aggregate evidence to produce a concise explanation and one or two site checks. It cannot change the ranked recommendations, introduce a new intervention, or replace the underlying comparison and forecast evidence.
+
+- **FortyGuard heatmaps:** live 100 m thermal cells in Los Angeles, Chicago, and New York City. Each city uses its own local 12 PM (noon) daytime and 12 AM (midnight) nighttime scan; the app converts those local times to UTC for FortyGuard and uses the latest completed instance.
 - **FortyGuard environmental parameters:** contextual heat conditions.
 - **FortyGuard satellite and street-view segmentation:** optional imagery evidence for shade, vegetation, and exposed-surface investigation.
 - **FortyGuard persistence:** continuous time above a selected heat threshold for a compact local AOI.
@@ -56,9 +60,10 @@ Create `.env` in the project root:
 
 ```dotenv
 FORTYGUARD_API_KEY=your_key_here
+GROQ_API_KEY=your_key_here
 ```
 
-The hackathon-provided `api_key=...` is also supported. Never use a `NEXT_PUBLIC_` prefix, commit `.env`, or put the key in browser code.
+The hackathon-provided `api_key=...` is also supported. `GROQ_API_KEY` is optional: without it, the transparent action plan still works and only the AI site brief is unavailable. Never use a `NEXT_PUBLIC_` prefix, commit `.env`, or put either key in browser code.
 
 ## Data and product guardrails
 
@@ -68,6 +73,8 @@ The hackathon-provided `api_key=...` is also supported. Never use a `NEXT_PUBLIC
 - Segmentation and environmental results are leads for investigation—not causal proof.
 - The Action Plan is a transparent screening model. It ranks what to inspect or do first; it does not prove a heat cause, calculate a health outcome, or guarantee an intervention benefit.
 - External historical air temperature is regional background context, not a substitute for block-level surface thermal data.
+
+- The AI site brief receives only aggregated plan evidence, is validated as structured output, and cannot change the transparent ranking. It may fail independently without affecting the action plan.
 
 ## API documentation
 

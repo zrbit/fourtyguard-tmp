@@ -12,24 +12,54 @@ export const STUDY_AREAS = {
   "New York City": [-73.995, 40.705, -73.975, 40.722],
 } as const;
 
-const PERIOD_HOURS_UTC = { day: 20, night: 8 } as const;
+const CITY_TIME_ZONES = {
+  "Los Angeles": "America/Los_Angeles",
+  Chicago: "America/Chicago",
+  "New York City": "America/New_York",
+} as const;
+
+// Noon and midnight are intentionally interpreted in each selected city's
+// local time zone before being converted to the UTC timestamp FortyGuard needs.
+const PERIOD_HOURS_LOCAL = { day: 12, night: 0 } as const;
+
+function localParts(date: Date, timeZone: string) {
+  const parts = new Intl.DateTimeFormat("en-US", { timeZone, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", hourCycle: "h23" }).formatToParts(date);
+  return Object.fromEntries(parts.filter(part => part.type !== "literal").map(part => [part.type, Number(part.value)])) as Record<"year" | "month" | "day" | "hour", number>;
+}
+
+function localTimeToUtc(year: number, month: number, day: number, hour: number, timeZone: string) {
+  const guess = Date.UTC(year, month - 1, day, hour);
+  const local = localParts(new Date(guess), timeZone);
+  const offset = Date.UTC(local.year, local.month - 1, local.day, local.hour) - guess;
+  return new Date(guess - offset);
+}
+
+function latestCompletedLocalScan(city: keyof typeof STUDY_AREAS, period: keyof typeof PERIOD_HOURS_LOCAL) {
+  const timeZone = CITY_TIME_ZONES[city];
+  const now = new Date();
+  const localNow = localParts(now, timeZone);
+  let localDate = new Date(Date.UTC(localNow.year, localNow.month - 1, localNow.day));
+  let scanTime = localTimeToUtc(localDate.getUTCFullYear(), localDate.getUTCMonth() + 1, localDate.getUTCDate(), PERIOD_HOURS_LOCAL[period], timeZone);
+  if (scanTime.getTime() > now.getTime() - 2 * 60 * 60 * 1000) {
+    localDate = new Date(localDate.getTime() - 24 * 60 * 60 * 1000);
+    scanTime = localTimeToUtc(localDate.getUTCFullYear(), localDate.getUTCMonth() + 1, localDate.getUTCDate(), PERIOD_HOURS_LOCAL[period], timeZone);
+  }
+  return scanTime;
+}
 
 export async function POST(request: Request) {
   const { city, period } = await request.json().catch(() => ({}));
   if (typeof city !== "string" || !(city in STUDY_AREAS)) return Response.json({ error: "Unsupported US study area." }, { status: 400 });
   if (period !== "day" && period !== "night") return Response.json({ error: "Choose either the day or night thermal scan." }, { status: 400 });
-  const scanPeriod = period as keyof typeof PERIOD_HOURS_UTC;
+  const scanPeriod = period as keyof typeof PERIOD_HOURS_LOCAL;
   const jobKey = `${city}:${scanPeriod}`;
   const existing = activeJob(jobKey);
   if (existing) return Response.json({ activityId: existing.activityId, reused: true, result: existing.result ?? null });
   const [west, south, east, north] = STUDY_AREAS[city as keyof typeof STUDY_AREAS];
-  // Request the latest completed scan for the selected thermal period. The
-  // two periods stay deliberately distinct so their jobs and cached results
-  // can never be confused.
-  const now = new Date();
-  const scanTime = new Date(now);
-  scanTime.setUTCHours(PERIOD_HOURS_UTC[scanPeriod], 0, 0, 0);
-  if (scanTime.getTime() > now.getTime() - 2 * 60 * 60 * 1000) scanTime.setUTCDate(scanTime.getUTCDate() - 1);
+  // Request each city's latest completed local-afternoon or local-night scan,
+  // then convert it to UTC for the provider. The two periods stay deliberately
+  // distinct so their jobs and cached results can never be confused.
+  const scanTime = latestCompletedLocalScan(city as keyof typeof STUDY_AREAS, scanPeriod);
   try {
     const activityId = await submitJob("/heatmap", {
       polygon_aoi: { type: "FeatureCollection", features: [{ type: "Feature", properties: {}, geometry: { type: "Polygon", coordinates: [[[west, south], [east, south], [east, north], [west, north], [west, south]]] } }] },
