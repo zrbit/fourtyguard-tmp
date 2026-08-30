@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { CellAttributionBreakdown } from "@/components/analysis/CellAttributionBreakdown";
+import type { AoiCellSummary, CellExample } from "@/lib/reasoning/cellAttribution";
 
 export type TrainingAoi = {
   name: string;
@@ -64,7 +66,13 @@ function project(lat: number, lng: number, bounds: { minLat: number; maxLat: num
   return [x, y] as const;
 }
 
-export function TrainingCoverageMap({ aois }: { aois: TrainingAoi[] }) {
+export function TrainingCoverageMap({
+  aois,
+  cellAttribution,
+}: {
+  aois: TrainingAoi[];
+  cellAttribution?: Record<string, { summary: AoiCellSummary; examples: CellExample[] }>;
+}) {
   const [hovered, setHovered] = useState<TrainingAoi | null>(null);
   const [selected, setSelected] = useState<TrainingAoi | null>(null);
   const [activeCluster, setActiveCluster] = useState<string | null>(null);
@@ -214,6 +222,13 @@ export function TrainingCoverageMap({ aois }: { aois: TrainingAoi[] }) {
               >
                 {inspected.collected ? "Collected" : "Not yet collected"}
               </span>
+              {cellAttribution?.[inspected.name] && (
+                <CellAttributionBreakdown
+                  aoiName={inspected.name}
+                  summary={cellAttribution[inspected.name].summary}
+                  examples={cellAttribution[inspected.name].examples}
+                />
+              )}
             </div>
           ) : (
             <p className="text-[12.5px] leading-relaxed text-slate">Hover or click a tile on the map to inspect it.</p>

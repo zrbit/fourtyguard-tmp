@@ -1,0 +1,45 @@
+{
+  "feature_columns": [
+    "imperviousPctRel",
+    "canopyPctRel",
+    "albedoRel",
+    "elevationMRel",
+    "distanceToCoastMRel",
+    "buildingDensity",
+    "windMph",
+    "humidity",
+    "cloudCoverPct",
+    "solarIrradiance",
+    "heatIndex",
+    "hourOfDay"
+  ],
+  "monotone_constraints": {
+    "imperviousPctRel": 1,
+    "canopyPctRel": -1,
+    "albedoRel": -1,
+    "elevationMRel": 0,
+    "distanceToCoastMRel": 0,
+    "buildingDensity": 1,
+    "windMph": -1,
+    "humidity": 0,
+    "cloudCoverPct": 0,
+    "solarIrradiance": 0,
+    "heatIndex": 0,
+    "hourOfDay": 0
+  },
+  "non_actionable_features": [
+    "elevationMRel",
+    "distanceToCoastMRel"
+  ],
+  "target": "cellAnomaly",
+  "group_column": "aoi",
+  "best_params": {
+    "max_depth": 2,
+    "n_estimators": 100,
+    "learning_rate": 0.03
+  },
+  "cv_mae": 0.38139812321553257,
+  "cv_r2": 0.07084287657408228,
+  "n_rows": 102553,
+  "n_aois": 80
+}

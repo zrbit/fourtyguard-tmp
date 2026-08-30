@@ -4,11 +4,19 @@ import { ThermometerIcon } from "@/components/icons/FactorIcons";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { TrainingCoverageMap } from "@/components/training/TrainingCoverageMap";
 import { getTrainingCoverage } from "@/lib/training/trainingCoverage";
+import { getCellAttributionForAoi, getCellAttributionAoiNames } from "@/lib/reasoning/cellAttribution";
 
 export const metadata = { title: "Training Data — Heat Lens" };
 
 export default function TrainingDataPage() {
   const aois = getTrainingCoverage();
+  // Tier 2 per-cell breakdowns (ml/src/serve/export_percell_for_app.py) --
+  // only the AOIs that have per-cell enrichment + a per-cell model run get
+  // an entry; server component so this reads the static JSON once here,
+  // TrainingCoverageMap (client) just receives the already-resolved data.
+  const cellAttribution = Object.fromEntries(
+    getCellAttributionAoiNames().map((name) => [name, getCellAttributionForAoi(name)!]),
+  );
 
   return (
     <div className="flex h-dvh flex-col">
@@ -39,7 +47,7 @@ export default function TrainingDataPage() {
           from ml/.
         </div>
       ) : (
-        <TrainingCoverageMap aois={aois} />
+        <TrainingCoverageMap aois={aois} cellAttribution={cellAttribution} />
       )}
     </div>
   );

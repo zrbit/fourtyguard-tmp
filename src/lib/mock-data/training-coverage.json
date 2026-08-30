@@ -524,7 +524,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "main",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.693
   },
   {
@@ -535,7 +535,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "main",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.697
   },
   {
@@ -546,7 +546,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "main",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.7
   },
   {
@@ -557,7 +557,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "main",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.695
   },
   {
@@ -568,7 +568,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "main",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.701
   },
   {
@@ -579,7 +579,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "main",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.698
   },
   {
@@ -590,7 +590,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "main",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.695
   },
   {
@@ -601,7 +601,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "main",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.696
   },
   {
@@ -612,7 +612,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "main",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.689
   },
   {
@@ -623,7 +623,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "main",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.697
   },
   {
@@ -634,7 +634,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "night_batch",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.692
   },
   {
@@ -645,7 +645,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "night_batch",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.691
   },
   {
@@ -656,7 +656,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "night_batch",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.708
   },
   {
@@ -667,7 +667,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "night_batch",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.703
   },
   {
@@ -678,7 +678,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "night_batch",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.701
   },
   {
@@ -689,7 +689,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "night_batch",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.705
   },
   {
@@ -700,7 +700,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "night_batch",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.704
   },
   {
@@ -711,7 +711,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "night_batch",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.699
   },
   {
@@ -722,7 +722,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "night_batch",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.685
   },
   {
@@ -733,7 +733,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "night_batch",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.689
   },
   {
@@ -744,7 +744,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "night_batch",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.694
   },
   {
@@ -755,7 +755,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "night_batch",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.695
   },
   {
@@ -766,7 +766,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "night_batch",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.693
   },
   {
@@ -777,7 +777,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "night_batch",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.695
   },
   {
@@ -788,7 +788,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "night_batch",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.696
   },
   {
@@ -799,7 +799,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "night_batch",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.697
   },
   {
@@ -810,7 +810,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "night_batch",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.708
   },
   {
@@ -821,7 +821,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "night_batch",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.708
   },
   {
@@ -832,7 +832,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "night_batch",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.702
   },
   {
@@ -843,7 +843,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "night_batch",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.702
   },
   {
@@ -854,7 +854,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "night_batch",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.7
   },
   {
@@ -865,7 +865,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "night_batch",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.699
   },
   {
@@ -876,7 +876,7 @@
     "latDelta": 0.009,
     "lngDelta": 0.01,
     "source": "night_batch",
-    "collected": false,
+    "collected": true,
     "areaKm2": 3.699
   }
 ]

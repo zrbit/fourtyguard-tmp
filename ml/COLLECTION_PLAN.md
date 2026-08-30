@@ -136,6 +136,19 @@ Estimated cost: 12 AOIs x 6 dates x 7,120 = ~512,640 credits.
 Run this AFTER Tier 1-6 completes (avoid two processes racing the same
 ledger file). Script: `src/collect/run_weather_diversity.py`.
 
+**Result (executed):** 4 of 6 dates returned real data across all 12
+backbone AOIs (extreme heat 2024-09-06, winter storm 2026-02-16, mild clear
+2022-10-27, cold windy 2023-02-25). The 2 dates from 2021 (santa ana wind
+2021-11-25, june gloom 2021-06-07) came back as **valid API responses with
+zero temperature cells, universally across all 12 AOIs** -- not a request
+error, a real gap in FortyGuard's practical historical coverage. The "API
+supports data from 2021" claim holds for the request being accepted, not
+for data actually existing that far back. **Treat ~2022 onward as the
+reliable floor for /heatmap and /env_params**, not 2021, for any future
+historical collection. Cost note: empty responses still bill in full (no
+exception raised, so no ledger refund) -- ~170,880 credits were spent on
+the 2 empty 2021 dates before this was discovered.
+
 ## Sequencing
 
 Do NOT retrain until fetching is done. Report the updated per-category
