@@ -1,0 +1,3 @@
+# The main ml requirements already supply requests and python-dotenv.
+# tzdata is needed on Windows for DST-safe America/Los_Angeles conversions.
+tzdata>=2025.2,<2027

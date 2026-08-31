@@ -1,0 +1,209 @@
+- generic [active] [ref=f5e1]:
+  - generic [ref=f5e2]:
+    - banner [ref=f5e3]:
+      - generic [ref=f5e4]: HEAT LENS
+      - generic [ref=f5e9]:
+        - button "New York City" [ref=f5e10] [cursor=pointer]
+        - button "Chicago" [ref=f5e11] [cursor=pointer]
+        - button "Los Angeles" [ref=f5e12] [cursor=pointer]
+      - generic "Thermal period" [ref=f5e13]:
+        - button "Daytime" [pressed] [ref=f5e14]
+        - button "Nighttime" [ref=f5e21]
+        - button "Compare" [disabled] [ref=f5e24]
+      - generic [ref=f5e28]:
+        - generic [ref=f5e29]: Viewing Los Angeles
+        - link "Training data" [ref=f5e35] [cursor=pointer]:
+          - /url: /training-data
+        - link "Action plans" [ref=f5e42] [cursor=pointer]:
+          - /url: /action-plans
+        - button "Switch to light mode" [ref=f5e46]
+        - generic [ref=f5e53]: Live
+    - main [ref=f5e55]:
+      - generic [ref=f5e234]:
+        - generic [ref=f5e235]:
+          - region "Map" [ref=f5e236]
+          - generic:
+            - generic [ref=f5e237]:
+              - button "Zoom in" [ref=f5e238] [cursor=pointer]
+              - button "Zoom out" [ref=f5e240] [cursor=pointer]
+            - group [ref=f5e242]:
+              - generic "Toggle attribution" [ref=f5e243] [cursor=pointer]
+              - generic [ref=f5e244]:
+                - text: ©
+                - link "CARTO" [ref=f5e245] [cursor=pointer]:
+                  - /url: https://carto.com/about-carto/
+                - text: ", ©"
+                - link "OpenStreetMap" [ref=f5e246] [cursor=pointer]:
+                  - /url: http://www.openstreetmap.org/about/
+                - text: contributors
+        - generic:
+          - generic:
+            - generic: 79.0°F
+            - generic: cell temperature
+            - generic: 79.9°F
+      - complementary [ref=f5e56]:
+        - generic [ref=f5e57]:
+          - generic [ref=f5e58]:
+            - generic [ref=f5e59]: Selected place
+            - generic [ref=f5e60]: Daytime scan
+          - paragraph [ref=f5e67]: "Daytime scan: Aug 29, 2026, 8:00 PM UTC"
+          - generic [ref=f5e68]:
+            - generic [ref=f5e69]: "79.4"
+            - generic [ref=f5e70]: °F
+          - paragraph [ref=f5e71]: "-0.13°F compared with 8 nearby places"
+          - paragraph [ref=f5e72]: 34.04546, -118.24086
+          - paragraph [ref=f5e73]: We picked this place because it is one of the most unusual temperatures nearby.
+        - generic [ref=f5e74]:
+          - generic [ref=f5e75]:
+            - generic [ref=f5e76]:
+              - heading "Where should I look first?" [level=2] [ref=f5e80]
+              - generic "This list looks for tiny areas warmer than the places right next to them. It helps decide where to investigate first; it is not a danger or health-risk rating." [ref=f5e81]
+            - paragraph [ref=f5e85]: These places are warmer than their nearby surroundings. Pick one to see why it may deserve a closer look.
+            - generic [ref=f5e86]:
+              - button "1 Show this place +0.04°F warmer" [ref=f5e87]:
+                - generic [ref=f5e88]:
+                  - generic [ref=f5e89]: "1"
+                  - generic [ref=f5e90]: Show this place
+                - generic [ref=f5e91]: +0.04°F warmer
+              - button "2 Show this place +0.04°F warmer" [ref=f5e92]:
+                - generic [ref=f5e93]:
+                  - generic [ref=f5e94]: "2"
+                  - generic [ref=f5e95]: Show this place
+                - generic [ref=f5e96]: +0.04°F warmer
+              - button "3 Show this place +0.03°F warmer" [ref=f5e97]:
+                - generic [ref=f5e98]:
+                  - generic [ref=f5e99]: "3"
+                  - generic [ref=f5e100]: Show this place
+                - generic [ref=f5e101]: +0.03°F warmer
+            - group [ref=f5e102]:
+              - generic "Show two more places" [ref=f5e103] [cursor=pointer]
+            - paragraph [ref=f5e104]: “Warmer” compares each place with its closest neighbours, not with the whole city.
+          - generic [ref=f5e105]:
+            - heading "What this signal means" [level=2] [ref=f5e106]
+            - generic [ref=f5e119]: High confidence
+          - paragraph [ref=f5e120]: This cell looks typical for its immediate area.
+          - paragraph [ref=f5e121]: Compare another time or choose a nearby cell before taking action.
+          - generic "Signal summary" [ref=f5e122]:
+            - generic [ref=f5e123]:
+              - generic [ref=f5e124]: Warmer than nearby
+              - generic [ref=f5e125]: "-0.13°F"
+              - generic [ref=f5e126]: than 8 close places
+            - generic [ref=f5e127]:
+              - generic [ref=f5e128]: Stands out more than
+              - generic [ref=f5e129]: 34%
+              - generic [ref=f5e130]: of this small scan
+            - generic [ref=f5e131]:
+              - generic [ref=f5e132]: What to do next
+              - generic [ref=f5e133]: Check it
+              - generic [ref=f5e136]: before action
+          - group [ref=f5e137]:
+            - generic "How did we decide this?" [ref=f5e138] [cursor=pointer]
+          - generic [ref=f5e145]:
+            - generic [ref=f5e146]: Validate this signal
+            - paragraph [ref=f5e149]: Choose only the checks that answer your next question.
+          - generic [ref=f5e150]:
+            - generic [ref=f5e151]:
+              - generic [ref=f5e152]: "1"
+              - generic [ref=f5e153]:
+                - generic [ref=f5e154]:
+                  - heading "Why could this spot be warmer?" [level=3] [ref=f5e155]
+                  - generic "Weather conditions can show whether the whole area was hot. Street and satellite imagery can reveal visible shade, trees, and pavement. Neither proves a cause on its own." [ref=f5e156]
+                - paragraph [ref=f5e160]: First check local weather and sunlight. Then use images to look for shade, trees, and exposed pavement.
+            - button "Check local weather" [ref=f5e161] [cursor=pointer]
+            - button "Unlock images after weather check" [disabled] [ref=f5e164]
+            - paragraph [ref=f5e167]: Weather is usually quicker. Image analysis can take several minutes.
+          - generic [ref=f5e168]:
+            - generic [ref=f5e169]:
+              - generic [ref=f5e170]: "2"
+              - generic [ref=f5e171]:
+                - generic [ref=f5e172]:
+                  - heading "Was this heat short-lived or persistent?" [level=3] [ref=f5e173]
+                  - generic "This checks the longest uninterrupted stretch above 90°F / 32°C in the small area around this selected cell, using the latest complete UTC day." [ref=f5e174]
+                - paragraph [ref=f5e178]: A hot moment may pass quickly. Longer heat can be more useful to prioritise for investigation.
+            - button "Measure how long the heat lasted" [ref=f5e179]
+          - generic [ref=f5e182]:
+            - generic [ref=f5e183]:
+              - generic [ref=f5e184]: "3"
+              - generic [ref=f5e185]:
+                - generic [ref=f5e186]:
+                  - heading "Was it hot here before?" [level=3] [ref=f5e187]
+                  - generic "Compares this cell at the same calendar day and UTC hour in each of the last three years. It may take several minutes because FortyGuard generates a separate heatmap per year." [ref=f5e188]
+                - paragraph [ref=f5e192]: See whether today is unusual, not just a warm regional day.
+            - button "Compare prior years" [ref=f5e193]
+          - generic [ref=f5e196]:
+            - generic [ref=f5e197]:
+              - heading "Model attribution" [level=2] [ref=f5e198]
+              - generic [ref=f5e202]: Modelled
+            - paragraph [ref=f5e247]:
+              - text: "An XGBoost model, trained on real FortyGuard temperature and land-cover data with physically-constrained directions (more pavement can only push warmer, more tree canopy only cooler — never backwards), independently ranks each factor's contribution below via SHAP. Shown here: the nearest analyzed neighborhood,"
+              - strong [ref=f5e248]: Little Tokyo
+              - text: — this cell itself wasn't individually part of the training data.
+            - list [ref=f5e249]:
+              - listitem [ref=f5e250]:
+                - generic [ref=f5e251]:
+                  - generic [ref=f5e252]: Impervious surface
+                  - generic [ref=f5e253]: The model attributes 0.96°F of the predicted anomaly to impervious surface (warming effect).
+                - generic [ref=f5e254]: warmer
+              - listitem [ref=f5e255]:
+                - generic [ref=f5e256]:
+                  - generic [ref=f5e257]: Cloud cover
+                  - generic [ref=f5e258]: The model attributes 0.88°F of the predicted anomaly to cloud cover (cooling effect).
+                - generic [ref=f5e259]: cooler
+              - listitem [ref=f5e260]:
+                - generic [ref=f5e261]:
+                  - generic [ref=f5e262]: Relative humidity
+                  - generic [ref=f5e263]: The model attributes 0.65°F of the predicted anomaly to relative humidity (cooling effect).
+                - generic [ref=f5e264]: cooler
+              - listitem [ref=f5e265]:
+                - generic [ref=f5e266]:
+                  - generic [ref=f5e267]: Wind speed
+                  - generic [ref=f5e268]: The model attributes 0.53°F of the predicted anomaly to wind speed (warming effect).
+                - generic [ref=f5e269]: warmer
+              - listitem [ref=f5e270]:
+                - generic [ref=f5e271]:
+                  - generic [ref=f5e272]: Solar irradiance
+                  - generic [ref=f5e273]: The model attributes 0.25°F of the predicted anomaly to solar irradiance (warming effect).
+                - generic [ref=f5e274]: warmer
+            - paragraph [ref=f5e275]: thermal_xgb_v1 · cross-validated MAE 2.09°F · trained on a small real dataset (17 LA neighborhoods) — treat as illustrative, not a mature model.
+          - generic [ref=f5e276]:
+            - generic [ref=f5e277]:
+              - heading "Tier 2 — this exact point, live" [level=3] [ref=f5e278]
+              - generic [ref=f5e279]: Live
+            - paragraph [ref=f5e281]: A real prediction computed for this exact location — a live FortyGuard satellite read (reused from an earlier click nearby, no new credits spent) for tree canopy, free sources for everything else.
+            - generic [ref=f5e282]:
+              - generic [ref=f5e283]:
+                - generic [ref=f5e284]: Predicted vs. this neighborhood
+                - generic [ref=f5e285]: 0.00°F
+              - generic [ref=f5e286]:
+                - generic [ref=f5e287]:
+                  - generic [ref=f5e288]: 40.5%
+                  - generic [ref=f5e290]: Distance to coast, relative to this neighborhood
+                  - generic [ref=f5e291]: cooler
+                - generic [ref=f5e292]:
+                  - generic [ref=f5e293]: 34.4%
+                  - generic [ref=f5e295]: Elevation, relative to this neighborhood
+                  - generic [ref=f5e296]: warmer
+                - generic [ref=f5e297]:
+                  - generic [ref=f5e298]: 11.4%
+                  - generic [ref=f5e300]: Solar irradiance at reading time
+                  - generic [ref=f5e301]: cooler
+                - generic [ref=f5e302]:
+                  - generic [ref=f5e303]: 7%
+                  - generic [ref=f5e305]: Building density
+                  - generic [ref=f5e306]: warmer
+                - generic [ref=f5e307]:
+                  - generic [ref=f5e308]: 4.3%
+                  - generic [ref=f5e310]: Impervious surface, relative to this neighborhood
+                  - generic [ref=f5e311]: warmer
+                - generic [ref=f5e312]:
+                  - generic [ref=f5e313]: 2.4%
+                  - generic [ref=f5e315]: Wind speed at reading time
+                  - generic [ref=f5e316]: warmer
+            - paragraph [ref=f5e317]: thermal_xgb_percell_v1 · live satellite canopy 0%, impervious 99.49000000000001%.
+        - generic [ref=f5e207]:
+          - generic [ref=f5e208]:
+            - heading "What should we do here?" [level=2] [ref=f5e221]
+            - generic "This transparent planning model combines the local temperature difference, its closest nearby controls, and the next 24-hour weather forecast. It suggests what to investigate first; it does not guarantee an intervention outcome." [ref=f5e222]
+          - paragraph [ref=f5e226]: Build a practical plan for this place using its local heat signal and the weather expected next.
+          - button "Build an action plan" [ref=f5e227]
+  - alert [ref=f5e233]

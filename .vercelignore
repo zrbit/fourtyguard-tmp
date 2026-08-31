@@ -1,0 +1,15 @@
+# The deployed Next.js app only needs src/, public/, and the small static
+# exports already inside src/lib/mock-data/ (read via fs at request time --
+# see mlExplain.ts / clusterActionPlans.ts / cellAttribution.ts). Everything
+# under ml/ is the offline Python pipeline that PRODUCES those exports; none
+# of it is needed at runtime, and ml/data/raw/ alone is ~1.46GB (1,590+
+# files) -- almost certainly why the first `vercel deploy` attempt failed
+# with a cascading "Upload aborted" (no .vercelignore existed yet, so the
+# CLI tried to upload the whole working directory, .venv and raw cache
+# included).
+ml/
+
+# Local test/dev artifacts, not part of the app.
+.playwright-mcp/
+*.png
+.dev-server.log

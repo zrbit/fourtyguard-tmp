@@ -18,7 +18,9 @@ import json
 from dataclasses import dataclass, field
 from pathlib import Path
 
-LEDGER_PATH = Path(__file__).resolve().parents[2] / "data" / "raw" / "_ledger.json"
+# v2: separate file, since FORTYGUARD_TRAINING_API_KEY (added later in the
+# project) is a distinct key/budget from whatever _ledger.json tracked.
+LEDGER_PATH = Path(__file__).resolve().parents[2] / "data" / "raw" / "_ledger_v2.json"
 
 # kind -> (credits per call, confirmed?) -- all three confirmed, see module docstring.
 COST_ESTIMATES: dict[str, tuple[int, bool]] = {

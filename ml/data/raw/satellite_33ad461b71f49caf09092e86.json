@@ -1,0 +1,47 @@
+{
+  "error": false,
+  "status_code": 200,
+  "message": "Completed",
+  "data": {
+    "activity_id": "9c35d197-773f-472c-b3ac-48c9d9ad5664",
+    "status": "Completed",
+    "result": {
+      "coordinates": {
+        "latitude": "34.0141",
+        "longitude": "-118.2879"
+      },
+      "image_year": 2026,
+      "segmentation": {
+        "request_id": "980e2275",
+        "processing_time_seconds": 0.807615,
+        "image_dimensions": {
+          "width": 395,
+          "height": 395
+        },
+        "mode": "sat",
+        "segments": {
+          "ceiling": 18.92,
+          "house": 70.53,
+          "others": 10.55
+        },
+        "image_legend": {
+          "ceiling": [
+            45,
+            99,
+            229
+          ],
+          "house": [
+            255,
+            9,
+            224
+          ],
+          "others": [
+            255,
+            255,
+            255
+          ]
+        }
+      }
+    }
+  }
+}

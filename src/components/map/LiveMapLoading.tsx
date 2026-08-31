@@ -6,27 +6,29 @@ import { LoaderCircle } from "lucide-react";
 import type { City } from "@/types/thermal";
 
 const CENTERS: Record<City, [number, number]> = {
-  "Los Angeles": [-118.245, 34.054],
+  "Los Angeles": [-118.4654, 34.1867], // San Fernando Valley (Van Nuys + Lake Balboa/Sepulveda Basin)
   Chicago: [-87.631, 41.883],
   "New York City": [-73.987, 40.713],
 };
 const BASEMAP_STYLE = "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json";
 
-export default function LiveMapLoading({ city, status }: { city: City; status: string }) {
+export default function LiveMapLoading({ city, status, center: centerOverride }: { city: City; status: string; center?: [number, number] }) {
   const element = useRef<HTMLDivElement>(null);
   const [elapsed, setElapsed] = useState(0);
+  const center = centerOverride ?? CENTERS[city];
   useEffect(() => {
     if (!element.current) return;
     const map = new MaplibreMap({
       container: element.current,
       style: BASEMAP_STYLE,
-      center: CENTERS[city],
-      zoom: 14,
+      center,
+      zoom: centerOverride ? 15.5 : 14,
       attributionControl: { compact: true },
     });
     map.addControl(new NavigationControl({ showCompass: false }), "top-right");
     return () => map.remove();
-  }, [city]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [city, center[0], center[1]]);
   useEffect(() => {
     const reset = window.setTimeout(() => setElapsed(0), 0);
     const timer = window.setInterval(() => setElapsed(value => value + 1), 1000);

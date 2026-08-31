@@ -1,0 +1,5 @@
+# This package owns all of its runtime artifacts.  Keep paid-response caches
+# local and out of commits; source code, docs and tests remain tracked.
+data/
+runtime/
+.runtime/

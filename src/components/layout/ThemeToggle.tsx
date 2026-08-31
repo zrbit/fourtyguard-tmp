@@ -1,7 +1,7 @@
 "use client";
 
 import { Moon, Sun } from "lucide-react";
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 
 type Theme = "light" | "dark";
 
@@ -10,9 +10,19 @@ function activeTheme(): Theme {
 }
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>(() =>
-    typeof document === "undefined" ? "dark" : activeTheme(),
-  );
+  // Always starts as "dark", matching the server-rendered HTML exactly, so
+  // hydration never has to reconcile a mismatch: the <head> inline script
+  // (see layout.tsx) already sets the real data-theme attribute on <html>
+  // before paint, but it doesn't touch this icon -- only the layout effect
+  // below does, which runs after hydration completes (so nothing to
+  // compare against SSR output) but before the browser paints (so there's
+  // no visible flash beyond this one icon, same trade-off the "Why not
+  // useEffect" section of preventing-flash-before-hydration.md calls out).
+  const [theme, setTheme] = useState<Theme>("dark");
+
+  useLayoutEffect(() => {
+    setTheme(activeTheme());
+  }, []);
 
   function toggleTheme() {
     const nextTheme: Theme = activeTheme() === "dark" ? "light" : "dark";

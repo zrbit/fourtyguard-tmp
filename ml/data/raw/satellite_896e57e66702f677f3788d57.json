@@ -1,0 +1,35 @@
+{
+  "error": false,
+  "status_code": 200,
+  "message": "Completed",
+  "data": {
+    "activity_id": "3e88dbfe-678f-411d-b3a9-83a22e5f4b8a",
+    "status": "Completed",
+    "result": {
+      "coordinates": {
+        "latitude": "34.1361",
+        "longitude": "-118.2942"
+      },
+      "image_year": 2026,
+      "segmentation": {
+        "request_id": "2dbe1fd7",
+        "processing_time_seconds": 1.081181,
+        "image_dimensions": {
+          "width": 395,
+          "height": 395
+        },
+        "mode": "sat",
+        "segments": {
+          "water": 100.0
+        },
+        "image_legend": {
+          "water": [
+            61,
+            230,
+            250
+          ]
+        }
+      }
+    }
+  }
+}

@@ -26,15 +26,33 @@ Every interpretation is intentionally cautious: temperature locates a signal; it
 
 After the deterministic Action Plan is built, a user can request an **AI site brief**. It uses only the plan's aggregate evidence to produce a concise explanation and one or two site checks. It cannot change the ranked recommendations, introduce a new intervention, or replace the underlying comparison and forecast evidence.
 
-- **FortyGuard heatmaps:** live 100 m thermal cells in Los Angeles, Chicago, and New York City. Each city uses its own local 12 PM (noon) daytime and 12 AM (midnight) nighttime scan; the app converts those local times to UTC for FortyGuard and uses the latest completed instance.
+- **FortyGuard heatmaps:** live 100 m thermal cells for Los Angeles, Chicago, New York City, or any user-searched US address (address search picks the center point and a user-chosen block size, 200–2000 m, then requests a fresh scan for that exact box). Each fixed city uses its own local 12 PM (noon) daytime and 12 AM (midnight) nighttime scan; the app converts those local times to UTC for FortyGuard and uses the latest completed instance.
 - **FortyGuard environmental parameters:** contextual heat conditions.
-- **FortyGuard satellite and street-view segmentation:** optional imagery evidence for shade, vegetation, and exposed-surface investigation.
+- **FortyGuard satellite and street-view segmentation:** optional imagery evidence for shade, vegetation, and exposed-surface investigation, including the Action Plan tiles' "Inspect street-level evidence" check.
 - **FortyGuard persistence:** continuous time above a selected heat threshold for a compact local AOI.
 - **Open-Meteo Archive:** historical 2 m air temperature context; it is clearly kept separate from FortyGuard block-level thermal data.
 - **Open-Meteo Forecast:** next-24-hour temperature, apparent temperature, and sunlight context for the Action Plan.
-- **CARTO Voyager:** a light, colourful vector basemap with roads, labels, and places for map context; it does not contribute to thermal analysis.
+- **OpenStreetMap Nominatim:** free geocoding for address search, proxied server-side with an identifying User-Agent per Nominatim's usage policy; submit-triggered, never per-keystroke.
+- **CARTO Voyager:** a light, colourful vector basemap with roads, labels, and places for every map in the app (live map, training-data coverage, action-plan tiles); it does not contribute to thermal analysis.
+- **Groq (`qwen/qwen3.8-27b` by default, configurable via `GROQ_MODEL`):** generates the optional AI site brief above from aggregate plan evidence only — never raw thermal data, never a new recommendation.
 
 All FortyGuard work follows the asynchronous submit-and-poll pattern. API keys remain server-side; clients receive only compact job state and safe result summaries.
+
+### ML pipeline data sources (offline, `ml/` — never called by the deployed app)
+
+The trained model, SHAP explanations, training-coverage map, and Action Plan tiles (including the Feasibility Guard's site-type screening) are all produced by a separate, manually-run Python pipeline under `ml/`, not computed live. It draws on more external sources than the app itself, all free/no-key unless noted:
+
+| Source | Used for |
+| --- | --- |
+| **FortyGuard** (`/heatmap`, `/env_params`, `/satellite`) | Bulk offline collection across ~80 hand-picked LA AOIs — the training dataset itself. Same paid API as the live app, billed to a training key. |
+| **OpenStreetMap Overpass API** (`overpass-api.de`, mirrored via `overpass.kumi.systems`) | Two distinct uses: (1) AOI-level building/road/canopy geometry as a fallback impervious/canopy % estimate; (2) per-priority-tile road/building/parking/canopy geometry that drives the Action Feasibility Guard's site-type classification (highway / parking / building / green / residential). |
+| **Microsoft Planetary Computer — Sentinel-2 L2A** (free, no auth, via `pystac_client`) | Per-AOI satellite imagery (5 bands, least-cloudy scene in the last 90 days) for NDVI and surface-albedo computation. |
+| **USGS/MRLC Annual NLCD** (Fractional Impervious Surface, via MRLC's public WCS) | Per-cell impervious-surface %, an independent cross-check/disaggregation source alongside FortyGuard's own land-cover numbers. |
+| **Open-Elevation** (`api.open-elevation.com`) | Per-cell elevation — a non-actionable geographic-context feature (a city can't change a block's elevation). |
+| **Open-Meteo** (forecast + archive endpoints) | Per-cell/AOI wind speed, since FortyGuard's `/env_params` has no wind field, plus the app-level historical/forecast uses above. |
+| **Bundled coastline geometry** (not a live source) | A hand-picked, simplified LA-coastline polyline (real landmark coordinates) embedded directly in code, for per-cell distance-to-coast — pure local geometry, no network call. |
+
+A local, optional second process (`ml/src/serve/live_predict_server.py`, started manually alongside `npm run dev`) can additionally call FortyGuard satellite, Sentinel-2, Open-Elevation, and Open-Meteo live, per exact clicked point, for a genuinely real-time Tier 2 prediction instead of the nearest precomputed AOI's summary — see that file's docstring. It never runs on the deployed site (it needs `rasterio`/GDAL, which isn't part of the Next.js deployment).
 
 ## Run locally
 
@@ -79,5 +97,7 @@ The hackathon-provided `api_key=...` is also supported. `GROQ_API_KEY` is option
 ## API documentation
 
 The implementation follows the official FortyGuard documentation for [heatmaps](https://docs-api.fortyguard.com/docs/create-heatmap), [environmental parameters](https://docs-api.fortyguard.com/docs/environmental-parameters), [satellite segmentation](https://docs-api.fortyguard.com/docs/satellite-view-segmentation), [street-view segmentation](https://docs-api.fortyguard.com/docs/street-view-segmentation), and [known limitations](https://docs-api.fortyguard.com/docs/limitations).
+
+Other external sources used, official docs for each: [Nominatim usage policy](https://operations.osmfoundation.org/policies/nominatim/), [Overpass API](https://wiki.openstreetmap.org/wiki/Overpass_API), [Open-Meteo](https://open-meteo.com/en/docs), [CARTO basemaps](https://github.com/CartoDB/basemap-styles), [Groq API](https://console.groq.com/docs), [Microsoft Planetary Computer STAC](https://planetarycomputer.microsoft.com/docs/quickstarts/reading-stac-data/), [USGS/MRLC NLCD](https://www.mrlc.gov/data), and [Open-Elevation](https://open-elevation.com/).
 
 See [COMMIT.md](COMMIT.md) for the feature-level history of the project.

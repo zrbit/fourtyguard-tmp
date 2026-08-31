@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { InlineScript } from "@/components/ui/InlineScript";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,10 +16,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
     >
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(() => { try { const saved = localStorage.getItem("heat-lens-theme"); const theme = saved === "light" || saved === "dark" ? saved : matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"; document.documentElement.dataset.theme = theme; } catch { document.documentElement.dataset.theme = "dark"; } })();`,
-          }}
+        <InlineScript
+          html={`(() => { try { const saved = localStorage.getItem("heat-lens-theme"); const theme = saved === "light" || saved === "dark" ? saved : matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"; document.documentElement.dataset.theme = theme; } catch { document.documentElement.dataset.theme = "dark"; } })();`}
         />
       </head>
       <body

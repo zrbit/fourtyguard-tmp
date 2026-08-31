@@ -107,6 +107,8 @@ def main() -> None:
         "modelVersion": "thermal_xgb_v1",
         "cvMae": schema.get("cv_mae"),
         "cvR2": schema.get("cv_r2"),
+        "nAois": schema.get("n_aois"),
+        "nRows": schema.get("n_rows"),
         "featureColumns": feature_columns,
         "demoBlocks": {},
         "liveGrid": [],

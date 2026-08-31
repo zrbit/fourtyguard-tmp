@@ -53,6 +53,8 @@ type MlExplanations = {
   modelVersion: string;
   cvMae: number | null;
   cvR2: number | null;
+  nAois: number | null;
+  nRows: number | null;
   featureColumns: string[];
   demoBlocks: Record<string, MlBlockEntry>;
   liveGrid: MlLiveGridCell[];
@@ -82,7 +84,18 @@ function toEvidence(item: MlEvidenceItem): Evidence {
     source: item.source,
     provenance: "modelled",
     strength: item.strength,
+    shapValue: item.shapValue,
     explanation: item.explanation,
+  };
+}
+
+function attributionFor(entry: Pick<MlBlockEntry, "predictedAnomaly" | "evidence">) {
+  const evidence = entry.evidence.map(toEvidence);
+  const exportedShapTotal = evidence.reduce((sum, item) => sum + (item.shapValue ?? 0), 0);
+  return {
+    evidence,
+    predictedAnomaly: entry.predictedAnomaly,
+    decompositionResidual: entry.predictedAnomaly - exportedShapTotal,
   };
 }
 
@@ -94,12 +107,19 @@ export function getMlModelInfo() {
     generatedAt: data.generatedAt,
     cvMae: data.cvMae,
     cvR2: data.cvR2,
+    nAois: data.nAois,
+    nRows: data.nRows,
   };
 }
 
 export function getMlEvidenceForDemoBlock(blockId: string): Evidence[] | null {
   const entry = load()?.demoBlocks[blockId];
   return entry ? entry.evidence.map(toEvidence) : null;
+}
+
+export function getMlAttributionForDemoBlock(blockId: string) {
+  const entry = load()?.demoBlocks[blockId];
+  return entry ? attributionFor(entry) : null;
 }
 
 export function getMlLiveGrid(): MlLiveGridCell[] {
@@ -115,14 +135,20 @@ const NEAREST_AOI_MAX_DEGREES = 0.25;
  * The live homepage (src/app/page.tsx) works off individual ~100m FortyGuard
  * heatmap cells (id `live-N`), not the 14 hand-authored demo block ids --
  * there's no shared key between the two. This bridges them spatially:
- * nearest-neighbor by lat/lng to one of the 17 AOIs actually collected
- * (ml/README.md), so a live cell shows "the nearest analyzed neighborhood's"
+ * nearest-neighbor by lat/lng to one of the AOIs actually collected, so a
+ * live cell shows "the nearest analyzed neighborhood's"
  * attribution rather than nothing. Returns null beyond the distance cutoff.
  */
 export function getMlEvidenceNearestTo(
   lat: number,
   lng: number,
-): { aoi: string; distanceDegrees: number; evidence: Evidence[] } | null {
+): {
+  aoi: string;
+  distanceDegrees: number;
+  evidence: Evidence[];
+  predictedAnomaly: number;
+  decompositionResidual: number;
+} | null {
   const grid = getMlLiveGrid();
   if (!grid.length) return null;
   let nearest: MlLiveGridCell | null = null;
@@ -135,7 +161,11 @@ export function getMlEvidenceNearestTo(
     }
   }
   if (!nearest || nearestDistance > NEAREST_AOI_MAX_DEGREES) return null;
-  return { aoi: nearest.aoi, distanceDegrees: nearestDistance, evidence: nearest.evidence.map(toEvidence) };
+  return {
+    aoi: nearest.aoi,
+    distanceDegrees: nearestDistance,
+    ...attributionFor(nearest),
+  };
 }
 
 /** Appends modelled evidence for `blockId` to `analysis.evidence`, if any is

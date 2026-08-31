@@ -1,0 +1,53 @@
+{
+  "error": false,
+  "status_code": 200,
+  "message": "Completed",
+  "data": {
+    "activity_id": "8242c481-8204-4a7b-ae19-092f903f959c",
+    "status": "Completed",
+    "result": {
+      "coordinates": {
+        "latitude": "34.0089",
+        "longitude": "-118.3573"
+      },
+      "image_year": 2026,
+      "segmentation": {
+        "request_id": "3c238c22",
+        "processing_time_seconds": 1.096016,
+        "image_dimensions": {
+          "width": 395,
+          "height": 395
+        },
+        "mode": "sat",
+        "segments": {
+          "road, route": 26.27,
+          "earth, ground": 1.9,
+          "mountain, mount": 69.98,
+          "others": 1.85
+        },
+        "image_legend": {
+          "road, route": [
+            140,
+            140,
+            140
+          ],
+          "earth, ground": [
+            120,
+            120,
+            70
+          ],
+          "mountain, mount": [
+            143,
+            255,
+            140
+          ],
+          "others": [
+            255,
+            255,
+            255
+          ]
+        }
+      }
+    }
+  }
+}

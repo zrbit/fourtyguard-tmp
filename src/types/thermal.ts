@@ -36,6 +36,8 @@ export type Evidence = {
   source: string;
   provenance: Provenance;
   strength: Strength;
+  /** Signed SHAP contribution when this evidence came from the model. */
+  shapValue?: number;
   explanation: string;
 };
 
@@ -75,7 +77,10 @@ export type BlockMetrics = {
   lng: number;
 
   temperature: number; // °F
-  nearbyAverage: number; // °F, mean of comparison set
+  nearbyAverage: number; // °F, mean of the 8 nearest cells (fine local-outlier signal)
+  scanAverage?: number; // °F, mean of every cell in the current live scan (broad hot-zone
+  // signal — same box the map is currently showing, not literally all of LA). Optional:
+  // hand-authored demo data (lib/mock-data/blocks.ts) predates this field.
   surfaceTemperature: number; // °F, target
   nearbySurfaceTemperature: number; // °F, comparison set mean
 
