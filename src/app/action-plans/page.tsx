@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, ClipboardList } from "lucide-react";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
-import { ActionPlanTileCard } from "@/components/analysis/ActionPlanTileCard";
+import { ActionPlansView } from "@/components/analysis/ActionPlansView";
 import { getActionPlanTilesByTier, getClusterActionPlanMeta } from "@/lib/reasoning/clusterActionPlans";
 
 export const metadata = { title: "Action Plans — Heat Lens" };
@@ -40,57 +40,40 @@ export default function ActionPlansPage() {
           from ml/.
         </div>
       ) : (
-        <div className="mx-auto w-full max-w-2xl flex-1 overflow-y-auto p-5 sm:p-8">
-          <div className="font-mono text-[10.5px] tracking-[0.09em] text-slate uppercase">
-            Tier 2 aggregated · {meta.tileSizeM}m tiles
-          </div>
-          <h1 className="mt-1.5 font-display text-2xl font-bold text-paper text-balance">
-            Where to focus, block by block
-          </h1>
-          <p className="mt-2 max-w-[58ch] text-[13.5px] leading-relaxed text-slate">
-            Every ~{meta.tileSizeM}m tile with at least {meta.minCellsPerTile} analyzed cells, ranked by how much
-            hotter it runs than its own surroundings. Split into tiles worth an official&apos;s attention
-            (a real, actionable cause exists) and tiles that are hot for reasons no policy can change.
-          </p>
-
-          <div className="mt-6 grid grid-cols-3 gap-2.5">
-            <Stat value={meta.nPriorityTiles} label="Priority tiles" accent />
-            <Stat value={meta.nGeographicTiles} label="Geography-driven" />
-            <Stat value={meta.nTypicalTiles} label="Typical / not notably hot" />
-          </div>
-
-          <section className="mt-8">
-            <SectionHeading title="Priority — worth investigating" note="Hot, with a real actionable lever." />
-            <div className="mt-3 flex flex-col gap-3">
-              {priorityTiles.map((tile, i) => (
-                <ActionPlanTileCard key={tile.tileId} tile={tile} rank={i + 1} />
-              ))}
+        <div className="flex min-h-0 w-full flex-1 flex-col overflow-y-auto p-5 sm:p-8">
+          <div className="mx-auto w-full max-w-2xl">
+            <div className="font-mono text-[10.5px] tracking-[0.09em] text-slate uppercase">
+              Tier 2 aggregated · {meta.tileSizeM}m tiles
             </div>
-          </section>
+            <h1 className="mt-1.5 font-display text-2xl font-bold text-paper text-balance">
+              Where to focus, block by block
+            </h1>
+            <p className="mt-2 max-w-[58ch] text-[13.5px] leading-relaxed text-slate">
+              Every ~{meta.tileSizeM}m tile with at least {meta.minCellsPerTile} analyzed cells, ranked by how much
+              hotter it runs than its own surroundings. Split into tiles worth an official&apos;s attention
+              (a real, actionable cause exists) and tiles that are hot for reasons no policy can change.
+            </p>
 
-          {geographicTiles.length > 0 && (
-            <section className="mt-8">
-              <SectionHeading
-                title="Hot, but not actionable"
-                note="Elevation and coastal distance explain these — no policy lever changes them. Shown for transparency, not action."
-              />
-              <details className="mt-3">
-                <summary className="cursor-pointer font-mono text-[11px] text-slate hover:text-ash">
-                  Show all {geographicTiles.length} tiles
-                </summary>
-                <div className="mt-3 flex flex-col gap-3">
-                  {geographicTiles.map((tile) => (
-                    <ActionPlanTileCard key={tile.tileId} tile={tile} />
-                  ))}
-                </div>
-              </details>
-            </section>
-          )}
+            <div className="mt-6 grid grid-cols-3 gap-2.5">
+              <Stat value={meta.nPriorityTiles} label="Priority tiles" accent />
+              <Stat value={meta.nGeographicTiles} label="Geography-driven" />
+              <Stat value={meta.nTypicalTiles} label="Typical / not notably hot" />
+            </div>
+          </div>
 
-          <footer className="mt-10 border-t pt-4 text-[11px] leading-relaxed text-slate" style={{ borderColor: "var(--border)" }}>
+          <ActionPlansView priorityTiles={priorityTiles} geographicTiles={geographicTiles} tileSizeM={meta.tileSizeM} />
+
+          <footer className="mx-auto mt-10 w-full max-w-2xl border-t pt-4 text-[11px] leading-relaxed text-slate" style={{ borderColor: "var(--border)" }}>
             {meta.modelVersion} · {meta.nTiles.toLocaleString()} tiles aggregated from Tier 2&apos;s per-cell model.
             Tiles are a fixed geographic grid, not an adaptive clustering — the same location always maps to the
             same tile across runs.
+            {meta.hasFeasibilityScreen && (
+              <>
+                {" "}Priority tiles are additionally screened against real OSM road/building/parking/canopy
+                geometry for which interventions are physically plausible before any are suggested — screening
+                only, not a construction-ready feasibility study.
+              </>
+            )}
           </footer>
         </div>
       )}
@@ -111,15 +94,6 @@ function Stat({ value, label, accent }: { value: number; label: string; accent?:
         {value}
       </div>
       <div className="mt-0.5 font-mono text-[10px] tracking-wide text-slate uppercase">{label}</div>
-    </div>
-  );
-}
-
-function SectionHeading({ title, note }: { title: string; note: string }) {
-  return (
-    <div>
-      <h2 className="font-display text-[15px] font-bold text-paper">{title}</h2>
-      <p className="mt-0.5 text-[11.5px] text-slate">{note}</p>
     </div>
   );
 }

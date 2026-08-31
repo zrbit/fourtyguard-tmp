@@ -17,6 +17,20 @@ const CLUSTER_ACTION_PLANS_PATH = join(process.cwd(), "src", "lib", "mock-data",
 
 export type PriorityTier = "priority" | "geographic" | "typical";
 
+/** One of five practical site types the Action Feasibility Guard classifies
+ * a priority tile into, from OSM road/building/parking/canopy geometry --
+ * see ml/src/serve/site_type.py. Determines which interventions are even
+ * physically plausible before the tile ever suggests one. */
+export type SiteType =
+  | "highway_dominated"
+  | "surface_parking"
+  | "building_dominated"
+  | "green_space"
+  | "residential_mixed"
+  | "mixed_unclassified";
+
+export type ExcludedAction = { action: string; reason: string };
+
 export type ActionPlanTile = {
   tileId: string;
   centroidLat: number;
@@ -29,6 +43,15 @@ export type ActionPlanTile = {
   priorityTier: PriorityTier;
   breakdown: BreakdownItem[];
   recommendation: string | null;
+  // Feasibility Guard fields -- present only for priority tiles that have
+  // been screened (ml/src/serve/export_site_types.py); undefined for
+  // geographic/typical tiles, or a priority tile screened before this
+  // feature existed / whose OSM fetch failed.
+  siteType?: SiteType;
+  siteTypeLabel?: string;
+  suitableActions?: string[];
+  excludedActions?: ExcludedAction[];
+  requiresFieldVerification?: string[];
 };
 
 type ClusterActionPlansData = {
@@ -41,6 +64,10 @@ type ClusterActionPlansData = {
   nGeographicTiles: number;
   nTypicalTiles: number;
   tiles: ActionPlanTile[];
+  // Set by ml/src/serve/export_site_types.py once it has run at least once
+  // against this file. Absent (undefined) on a fresh Tier-3 export that
+  // hasn't been screened yet.
+  hasFeasibilityScreen?: boolean;
 };
 
 let cached: ClusterActionPlansData | null | undefined;

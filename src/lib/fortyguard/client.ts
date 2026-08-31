@@ -18,10 +18,18 @@ function apiKey() {
   return key;
 }
 
-async function request(path: string, init?: RequestInit) {
+function trainingApiKey() {
+  const key = process.env.FORTYGUARD_TRAINING_API_KEY_3
+    ?? process.env.FORTYGUARD_TRAINING_API_KEY_2
+    ?? process.env.FORTYGUARD_TRAINING_API_KEY;
+  if (!key) throw new FortyGuardError("Missing FortyGuard training API key.");
+  return key;
+}
+
+async function request(path: string, init?: RequestInit, key = apiKey()) {
   const response = await fetch(`${API_ROOT}${path}`, {
     ...init,
-    headers: { "api-key": apiKey(), "content-type": "application/json", ...init?.headers },
+    headers: { "api-key": key, "content-type": "application/json", ...init?.headers },
     cache: "no-store",
   });
   const body = await response.json().catch(() => null);
@@ -40,6 +48,18 @@ export async function submitJob(path: string, payload: unknown) {
 
 export async function jobStatus(activityId: string) {
   return request(`/status/${encodeURIComponent(activityId)}`);
+}
+
+/** Paid collection path, isolated from the key used by the live app. */
+export async function submitTrainingJob(path: string, payload: unknown) {
+  const body = await request(path, { method: "POST", body: JSON.stringify(payload) }, trainingApiKey());
+  const activityId = body.data?.activity_id;
+  if (typeof activityId !== "string") throw new FortyGuardError("FortyGuard did not return an activity ID.");
+  return activityId;
+}
+
+export async function trainingJobStatus(activityId: string) {
+  return request(`/status/${encodeURIComponent(activityId)}`, undefined, trainingApiKey());
 }
 
 export function localAoi(latitude: number, longitude: number) {

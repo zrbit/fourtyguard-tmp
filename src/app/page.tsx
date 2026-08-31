@@ -129,28 +129,39 @@ function scheduledScanTimestamp(period: "day" | "night") {
   return new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short", timeZone: "UTC" }).format(timestamp) + " UTC";
 }
 
+// A user-searched area: a live scan of an arbitrary bbox instead of one of
+// the three fixed STUDY_AREAS. `bboxKey` is a stable string derived from
+// `bbox` so it can sit in a useEffect dependency array (arrays/objects can't).
+type CustomArea = { bbox: [number, number, number, number]; bboxKey: string; label: string; center: [number, number] };
+
 export default function Home() {
   const [city, setCity] = useState<City>("Los Angeles"); const [period, setPeriod] = useState<HeatPeriod>("day"); const [scans, setScans] = useState<Partial<Record<"day" | "night", BlockMetrics[]>>>({}); const [blocks, setBlocks] = useState<BlockMetrics[]>([]); const [selectedId, setSelectedId] = useState(""); const [manualSelection, setManualSelection] = useState(false); const [error, setError] = useState<string | null>(null); const [loading, setLoading] = useState(true); const [loadStatus, setLoadStatus] = useState("Submitting live heatmap…");
+  const [customArea, setCustomArea] = useState<CustomArea | null>(null);
   async function load() {
     if (period === "compare") return;
     setLoading(true); setLoadStatus("Loading cached live heatmap…"); setError(null); setBlocks([]); setManualSelection(false);
     // v4: bumped when the "Los Angeles" study area was widened west to pull
     // in the Sepulveda Basin/Lake Balboa vegetation, so no browser serves
     // the smaller, stale Van Nuys-only box under the same city name.
-    const cacheKey = `fortyguard-live-heatmap-v4:${city}:${period}`;
-    const jobKey = `fortyguard-live-job-v4:${city}:${period}`;
+    // Custom (user-searched) areas key on their own bbox instead of a city
+    // name, so two different searches -- and the fixed cities -- never share
+    // a cache slot or collide on a stale result.
+    const areaKey = customArea ? `custom:${customArea.bboxKey}` : city;
+    const cacheKey = `fortyguard-live-heatmap-v4:${areaKey}:${period}`;
+    const jobKey = `fortyguard-live-job-v4:${areaKey}:${period}`;
+    const requestBody = customArea ? { bbox: customArea.bbox, period } : { city, period };
     try { const cached = window.localStorage.getItem(cacheKey); if (cached) { const live = blocksFromHeatmap(cached, city); if (live.length) { setScans(current => ({ ...current, [period]: live })); setBlocks(live); setSelectedId(mostUnusualBlock(live).id); setLoading(false); return; } } } catch { /* Storage is an optional performance optimization. */ }
-    setLoadStatus("Submitting live heatmap…");
+    setLoadStatus(customArea ? `Scanning ${customArea.label}…` : "Submitting live heatmap…");
     try {
       let activityId = window.localStorage.getItem(jobKey);
       let resumed = Boolean(activityId);
-      if (!activityId) { const submit = await fetch("/api/fortyguard/heatmap", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ city, period }) }); const job = await submit.json(); if (!submit.ok || job.error) throw new Error(job.error ?? "Heatmap submission failed."); activityId = String(job.activityId); resumed = Boolean(job.reused); window.localStorage.setItem(jobKey, activityId); }
+      if (!activityId) { const submit = await fetch("/api/fortyguard/heatmap", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(requestBody) }); const job = await submit.json(); if (!submit.ok || job.error) throw new Error(job.error ?? "Heatmap submission failed."); activityId = String(job.activityId); resumed = Boolean(job.reused); window.localStorage.setItem(jobKey, activityId); }
       if (!activityId) throw new Error("Heatmap submission did not return an activity ID.");
       setLoadStatus(resumed ? "Resuming existing FortyGuard job…" : "FortyGuard is processing live tiles…");
       // FortyGuard's Quickstart recommends bounded polling at five-second
       // intervals. This allows ten minutes for a queued asynchronous job while
       // avoiding unnecessary status traffic.
-      for (let attempt = 0; attempt < 120; attempt += 1) { await new Promise(resolve => setTimeout(resolve, 5000)); const response = await fetch(`/api/fortyguard/status?kind=heatmap&activityId=${encodeURIComponent(activityId)}`); const state = await response.json(); if (!response.ok || state.error) throw new Error(state.error ?? "Status check failed."); if (state.status === "Completed") { const live = blocksFromHeatmap(state.result?.mapData, city); if (!live.length) { window.localStorage.removeItem(jobKey); window.localStorage.removeItem(cacheKey); setLoadStatus("Empty result detected; submitting restored larger area…"); const retry = await fetch("/api/fortyguard/heatmap", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ city, period }) }); const replacement = await retry.json(); if (!retry.ok || replacement.error) throw new Error(replacement.error ?? "Larger heatmap submission failed."); activityId = String(replacement.activityId); window.localStorage.setItem(jobKey, activityId); attempt = 0; continue; } try { window.localStorage.setItem(cacheKey, JSON.stringify(state.result?.mapData)); } catch { /* Rendering remains available even if storage is full. */ } window.localStorage.removeItem(jobKey); setLoadStatus(`Rendering ${live.length} live tiles…`); await new Promise(resolve => setTimeout(resolve, 250)); setScans(current => ({ ...current, [period]: live })); setBlocks(live); setSelectedId(mostUnusualBlock(live).id); return; } if (state.status === "Failed") { window.localStorage.removeItem(jobKey); throw new Error("FortyGuard heatmap generation failed."); } }
+      for (let attempt = 0; attempt < 120; attempt += 1) { await new Promise(resolve => setTimeout(resolve, 5000)); const response = await fetch(`/api/fortyguard/status?kind=heatmap&activityId=${encodeURIComponent(activityId)}`); const state = await response.json(); if (!response.ok || state.error) throw new Error(state.error ?? "Status check failed."); if (state.status === "Completed") { const live = blocksFromHeatmap(state.result?.mapData, city); if (!live.length) { window.localStorage.removeItem(jobKey); window.localStorage.removeItem(cacheKey); setLoadStatus("Empty result detected; submitting restored larger area…"); const retry = await fetch("/api/fortyguard/heatmap", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(requestBody) }); const replacement = await retry.json(); if (!retry.ok || replacement.error) throw new Error(replacement.error ?? "Larger heatmap submission failed."); activityId = String(replacement.activityId); window.localStorage.setItem(jobKey, activityId); attempt = 0; continue; } try { window.localStorage.setItem(cacheKey, JSON.stringify(state.result?.mapData)); } catch { /* Rendering remains available even if storage is full. */ } window.localStorage.removeItem(jobKey); setLoadStatus(`Rendering ${live.length} live tiles…`); await new Promise(resolve => setTimeout(resolve, 250)); setScans(current => ({ ...current, [period]: live })); setBlocks(live); setSelectedId(mostUnusualBlock(live).id); return; } if (state.status === "Failed") { window.localStorage.removeItem(jobKey); throw new Error("FortyGuard heatmap generation failed."); } }
       throw new Error("FortyGuard is still processing this heatmap after 10 minutes. Retry shortly; do not refresh while a scan is active.");
     } catch (cause) {
       // A stale/expired upstream activity ID should never trap every retry on
@@ -164,10 +175,10 @@ export default function Home() {
     if (period === "compare") return;
     const timer = window.setTimeout(() => void load(), 0);
     return () => window.clearTimeout(timer);
-    // `load` intentionally follows the selected city; making the entire
-    // polling workflow a callback dependency would restart active jobs.
+    // `load` intentionally follows the selected city/custom area; making the
+    // entire polling workflow a callback dependency would restart active jobs.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [city, period]);
+  }, [city, period, customArea?.bboxKey]);
   const visibleBlocks = useMemo(() => period === "compare" && scans.day && scans.night ? nightMinusDay(scans.day, scans.night) : blocks, [blocks, period, scans.day, scans.night]);
   const block = useMemo(() => visibleBlocks.find(item => item.id === selectedId) ?? visibleBlocks[0], [visibleBlocks, selectedId]);
   const anomaly = block ? block.temperature - block.nearbyAverage : 0;
@@ -177,16 +188,28 @@ export default function Home() {
   const dayTimestamp = scheduledScanTimestamp("day"); const nightTimestamp = scheduledScanTimestamp("night");
   return (
     <div className="flex h-dvh flex-col">
-      <TopBar city={city} onCityChange={(nextCity) => { setScans({}); setPeriod("day"); setCity(nextCity); }} period={period} onPeriodChange={setPeriod} comparisonAvailable={Boolean(scans.day && scans.night)} />
+      <TopBar city={city} onCityChange={(nextCity) => { setScans({}); setPeriod("day"); setCustomArea(null); setCity(nextCity); }} period={period} onPeriodChange={setPeriod} comparisonAvailable={Boolean(scans.day && scans.night)} />
       <main className="flex min-h-0 flex-1">
-        {loading ? <LiveMapLoading city={city} status={loadStatus} /> : error ? (
+        {loading ? <LiveMapLoading city={city} status={loadStatus} center={customArea?.center} /> : error ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-4 p-6 text-center">
             <AlertTriangle className="h-7 w-7 text-thermal-hot" />
             <p className="max-w-md text-sm text-ash">{error}</p>
             <button type="button" onClick={() => void load()} className="flex items-center gap-2 rounded border px-3 py-2 text-xs text-accent-strong" style={{ borderColor: "var(--accent-border)" }}><RefreshCw className="h-3.5 w-3.5" />Try the live map again</button>
           </div>
         ) : block ? <>
-          <MapView blocks={visibleBlocks} selectedId={block.id} onSelect={(id) => { setSelectedId(id); setManualSelection(true); }} legendLabel={period === "compare" ? "night − day" : undefined} comparison={period === "compare"} />
+          <MapView
+            blocks={visibleBlocks}
+            selectedId={block.id}
+            onSelect={(id) => { setSelectedId(id); setManualSelection(true); }}
+            legendLabel={period === "compare" ? "night − day" : undefined}
+            comparison={period === "compare"}
+            areaLabel={customArea?.label ?? null}
+            onAreaSearch={(area) => {
+              setScans({});
+              setPeriod(current => (current === "compare" ? "day" : current));
+              setCustomArea(area);
+            }}
+          />
           <aside className="hidden w-[420px] flex-none overflow-y-auto border-l lg:block" style={{ borderColor: "var(--border)", background: "var(--ground)" }}>
             <div className="p-5">
               <div className="flex items-center justify-between font-mono text-[11px] tracking-wider text-slate uppercase"><span>Selected place</span><span className="flex items-center gap-1 text-accent-strong"><Radio className="h-3 w-3" />{period === "compare" ? "Night − day" : period === "day" ? "Daytime" : "Nighttime"} scan</span></div>

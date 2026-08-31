@@ -1,4 +1,6 @@
+import { CircleCheck, CircleX, TriangleAlert } from "lucide-react";
 import type { ActionPlanTile } from "@/lib/reasoning/clusterActionPlans";
+import { ActionPlanImagery } from "./ActionPlanImagery";
 
 const CATEGORY_META: Record<string, { label: string; color: string }> = {
   actionable: { label: "Actionable", color: "var(--accent)" },
@@ -52,6 +54,8 @@ export function ActionPlanTileCard({ tile, rank }: { tile: ActionPlanTile; rank?
         </p>
       )}
 
+      {tile.siteType && <FeasibilityScreen tile={tile} />}
+
       <div className="mt-3 flex flex-col gap-1">
         {tile.breakdown.slice(0, 4).map((item) => (
           <div key={item.feature} className="flex items-center gap-2 text-[11px]">
@@ -64,6 +68,58 @@ export function ActionPlanTileCard({ tile, rank }: { tile: ActionPlanTile; rank?
           </div>
         ))}
       </div>
+
+      {tile.priorityTier === "priority" && <ActionPlanImagery tileId={tile.tileId} />}
+    </div>
+  );
+}
+
+/**
+ * Intervention suitability screening -- explicitly NOT a construction-ready
+ * feasibility study. Classifies the tile's dominant land use from OSM
+ * geometry (ml/src/serve/site_type.py) and shows which interventions are
+ * physically plausible here versus excluded, before any generic advice
+ * ("plant trees") gets suggested on a site where it can't apply (a highway
+ * shoulder, a rooftop-dominated block).
+ */
+function FeasibilityScreen({ tile }: { tile: ActionPlanTile }) {
+  return (
+    <div className="mt-3 rounded-md border px-3 py-2.5" style={{ borderColor: "var(--border)", background: "var(--surface-sunken)" }}>
+      <div className="flex items-center justify-between gap-2">
+        <span className="font-mono text-[9.5px] tracking-wide text-slate uppercase">Intervention suitability screening</span>
+        <span className="rounded-full border px-2 py-0.5 font-mono text-[10px] text-ash" style={{ borderColor: "var(--border-strong)" }}>{tile.siteTypeLabel}</span>
+      </div>
+
+      {!!tile.suitableActions?.length && (
+        <div className="mt-2 flex flex-col gap-1">
+          {tile.suitableActions.map((action) => (
+            <div key={action} className="flex items-start gap-1.5 text-[11.5px] text-ash">
+              <CircleCheck className="mt-0.5 h-3 w-3 shrink-0" style={{ color: "var(--accent)" }} />
+              <span>{action}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {!!tile.excludedActions?.length && (
+        <div className="mt-2 flex flex-col gap-1">
+          {tile.excludedActions.map((item) => (
+            <div key={item.action} className="flex items-start gap-1.5 text-[11px]">
+              <CircleX className="mt-0.5 h-3 w-3 shrink-0 text-slate" />
+              <span className="text-slate">
+                <span className="line-through decoration-[var(--border-strong)]">{item.action}</span> excluded — {item.reason}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {!!tile.requiresFieldVerification?.length && (
+        <div className="mt-2.5 flex items-start gap-1.5 border-t pt-2 text-[10.5px] leading-relaxed text-slate" style={{ borderColor: "var(--border)" }}>
+          <TriangleAlert className="mt-0.5 h-3 w-3 shrink-0 text-slate" />
+          <span>Screening only — still requires field verification: {tile.requiresFieldVerification.join(", ").toLowerCase()}.</span>
+        </div>
+      )}
     </div>
   );
 }

@@ -370,7 +370,29 @@
           "label": "Impervious surface, relative to this neighborhood"
         }
       ],
-      "recommendation": "Building density is a contributing factor here \u2014 harder to change directly, but worth pairing with canopy or surface-material interventions."
+      "recommendation": "Building density is a contributing factor here \u2014 harder to change directly, but worth pairing with canopy or surface-material interventions.",
+      "siteType": "residential_mixed",
+      "siteTypeLabel": "Residential or mixed street",
+      "suitableActions": [
+        "Street trees",
+        "Permeable paving for driveways/sidewalks",
+        "Cool pavement coating on local streets"
+      ],
+      "excludedActions": [],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 1158.3,
+        "minorRoadM2": 42713.0,
+        "pedestrianM2": 18817.5,
+        "buildingM2": 59081.7,
+        "parkingM2": 0.0,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8442_-24255",
@@ -888,7 +910,35 @@
           "label": "Building density"
         }
       ],
-      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention."
+      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention.",
+      "siteType": "building_dominated",
+      "siteTypeLabel": "Building / roof dominated",
+      "suitableActions": [
+        "Cool/reflective roofing",
+        "Rooftop solar",
+        "Green roofs where structurally feasible",
+        "Facade shading"
+      ],
+      "excludedActions": [
+        {
+          "action": "Street tree planting",
+          "reason": "Tile is dominated by building footprint, not open ground-level right-of-way -- canopy siting would need a parcel-by-parcel check, not a tile-level call."
+        }
+      ],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 4671.2,
+        "minorRoadM2": 44144.6,
+        "pedestrianM2": 16800.9,
+        "buildingM2": 68494.4,
+        "parkingM2": 0.0,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8448_-24294",
@@ -930,7 +980,35 @@
           "label": "Building density"
         }
       ],
-      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention."
+      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention.",
+      "siteType": "building_dominated",
+      "siteTypeLabel": "Building / roof dominated",
+      "suitableActions": [
+        "Cool/reflective roofing",
+        "Rooftop solar",
+        "Green roofs where structurally feasible",
+        "Facade shading"
+      ],
+      "excludedActions": [
+        {
+          "action": "Street tree planting",
+          "reason": "Tile is dominated by building footprint, not open ground-level right-of-way -- canopy siting would need a parcel-by-parcel check, not a tile-level call."
+        }
+      ],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 4969.2,
+        "minorRoadM2": 64068.9,
+        "pedestrianM2": 6606.1,
+        "buildingM2": 72662.5,
+        "parkingM2": 44019.1,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8457_-24312",
@@ -1014,7 +1092,35 @@
           "label": "Building density"
         }
       ],
-      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention."
+      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention.",
+      "siteType": "building_dominated",
+      "siteTypeLabel": "Building / roof dominated",
+      "suitableActions": [
+        "Cool/reflective roofing",
+        "Rooftop solar",
+        "Green roofs where structurally feasible",
+        "Facade shading"
+      ],
+      "excludedActions": [
+        {
+          "action": "Street tree planting",
+          "reason": "Tile is dominated by building footprint, not open ground-level right-of-way -- canopy siting would need a parcel-by-parcel check, not a tile-level call."
+        }
+      ],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 6192.3,
+        "minorRoadM2": 54717.0,
+        "pedestrianM2": 5844.6,
+        "buildingM2": 68066.4,
+        "parkingM2": 5349.8,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8448_-24293",
@@ -1056,7 +1162,35 @@
           "label": "Distance to coast, relative to this neighborhood"
         }
       ],
-      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention."
+      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention.",
+      "siteType": "building_dominated",
+      "siteTypeLabel": "Building / roof dominated",
+      "suitableActions": [
+        "Cool/reflective roofing",
+        "Rooftop solar",
+        "Green roofs where structurally feasible",
+        "Facade shading"
+      ],
+      "excludedActions": [
+        {
+          "action": "Street tree planting",
+          "reason": "Tile is dominated by building footprint, not open ground-level right-of-way -- canopy siting would need a parcel-by-parcel check, not a tile-level call."
+        }
+      ],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 8448.2,
+        "minorRoadM2": 63497.5,
+        "pedestrianM2": 10678.0,
+        "buildingM2": 70341.6,
+        "parkingM2": 38197.3,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8434_-24225",
@@ -1308,7 +1442,29 @@
           "label": "Impervious surface, relative to this neighborhood"
         }
       ],
-      "recommendation": "Building density is a contributing factor here \u2014 harder to change directly, but worth pairing with canopy or surface-material interventions."
+      "recommendation": "Building density is a contributing factor here \u2014 harder to change directly, but worth pairing with canopy or surface-material interventions.",
+      "siteType": "residential_mixed",
+      "siteTypeLabel": "Residential or mixed street",
+      "suitableActions": [
+        "Street trees",
+        "Permeable paving for driveways/sidewalks",
+        "Cool pavement coating on local streets"
+      ],
+      "excludedActions": [],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 5088.2,
+        "minorRoadM2": 104800.4,
+        "pedestrianM2": 0.0,
+        "buildingM2": 58288.2,
+        "parkingM2": 525.4,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8451_-24305",
@@ -1532,7 +1688,35 @@
           "label": "Building density"
         }
       ],
-      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention."
+      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention.",
+      "siteType": "building_dominated",
+      "siteTypeLabel": "Building / roof dominated",
+      "suitableActions": [
+        "Cool/reflective roofing",
+        "Rooftop solar",
+        "Green roofs where structurally feasible",
+        "Facade shading"
+      ],
+      "excludedActions": [
+        {
+          "action": "Street tree planting",
+          "reason": "Tile is dominated by building footprint, not open ground-level right-of-way -- canopy siting would need a parcel-by-parcel check, not a tile-level call."
+        }
+      ],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 22255.9,
+        "minorRoadM2": 51001.7,
+        "pedestrianM2": 10638.4,
+        "buildingM2": 86712.4,
+        "parkingM2": 42757.0,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8447_-24295",
@@ -1791,7 +1975,29 @@
           "label": "Building density"
         }
       ],
-      "recommendation": "This tile already has less impervious surface than its surrounding norm \u2014 a relative strength, not a gap to close."
+      "recommendation": "This tile already has less impervious surface than its surrounding norm \u2014 a relative strength, not a gap to close.",
+      "siteType": "residential_mixed",
+      "siteTypeLabel": "Residential or mixed street",
+      "suitableActions": [
+        "Street trees",
+        "Permeable paving for driveways/sidewalks",
+        "Cool pavement coating on local streets"
+      ],
+      "excludedActions": [],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 0.0,
+        "minorRoadM2": 39557.8,
+        "pedestrianM2": 8859.0,
+        "buildingM2": 52396.9,
+        "parkingM2": 0.0,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8450_-24294",
@@ -2267,7 +2473,29 @@
           "label": "Solar irradiance at reading time"
         }
       ],
-      "recommendation": "This tile already has less impervious surface than its surrounding norm \u2014 a relative strength, not a gap to close."
+      "recommendation": "This tile already has less impervious surface than its surrounding norm \u2014 a relative strength, not a gap to close.",
+      "siteType": "residential_mixed",
+      "siteTypeLabel": "Residential or mixed street",
+      "suitableActions": [
+        "Street trees",
+        "Permeable paving for driveways/sidewalks",
+        "Cool pavement coating on local streets"
+      ],
+      "excludedActions": [],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 0.0,
+        "minorRoadM2": 21715.0,
+        "pedestrianM2": 4747.9,
+        "buildingM2": 138.1,
+        "parkingM2": 1279.2,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8357_-24260",
@@ -2316,7 +2544,29 @@
           "label": "Solar irradiance at reading time"
         }
       ],
-      "recommendation": "This tile already has less impervious surface than its surrounding norm \u2014 a relative strength, not a gap to close."
+      "recommendation": "This tile already has less impervious surface than its surrounding norm \u2014 a relative strength, not a gap to close.",
+      "siteType": "residential_mixed",
+      "siteTypeLabel": "Residential or mixed street",
+      "suitableActions": [
+        "Street trees",
+        "Permeable paving for driveways/sidewalks",
+        "Cool pavement coating on local streets"
+      ],
+      "excludedActions": [],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 0.0,
+        "minorRoadM2": 7285.8,
+        "pedestrianM2": 6132.6,
+        "buildingM2": 5278.8,
+        "parkingM2": 2533.7,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8423_-24296",
@@ -2365,7 +2615,35 @@
           "label": "Solar irradiance at reading time"
         }
       ],
-      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention."
+      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention.",
+      "siteType": "building_dominated",
+      "siteTypeLabel": "Building / roof dominated",
+      "suitableActions": [
+        "Cool/reflective roofing",
+        "Rooftop solar",
+        "Green roofs where structurally feasible",
+        "Facade shading"
+      ],
+      "excludedActions": [
+        {
+          "action": "Street tree planting",
+          "reason": "Tile is dominated by building footprint, not open ground-level right-of-way -- canopy siting would need a parcel-by-parcel check, not a tile-level call."
+        }
+      ],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 0.0,
+        "minorRoadM2": 70306.3,
+        "pedestrianM2": 18922.6,
+        "buildingM2": 90925.0,
+        "parkingM2": 4803.8,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8440_-24253",
@@ -2575,7 +2853,29 @@
           "label": "Solar irradiance at reading time"
         }
       ],
-      "recommendation": "Lower building density here is a relative strength, not a gap to close."
+      "recommendation": "Lower building density here is a relative strength, not a gap to close.",
+      "siteType": "residential_mixed",
+      "siteTypeLabel": "Residential or mixed street",
+      "suitableActions": [
+        "Street trees",
+        "Permeable paving for driveways/sidewalks",
+        "Cool pavement coating on local streets"
+      ],
+      "excludedActions": [],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 19684.7,
+        "minorRoadM2": 31232.9,
+        "pedestrianM2": 3508.3,
+        "buildingM2": 1527.1,
+        "parkingM2": 0.0,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8449_-24294",
@@ -2617,7 +2917,29 @@
           "label": "Building density"
         }
       ],
-      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention."
+      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention.",
+      "siteType": "residential_mixed",
+      "siteTypeLabel": "Residential or mixed street",
+      "suitableActions": [
+        "Street trees",
+        "Permeable paving for driveways/sidewalks",
+        "Cool pavement coating on local streets"
+      ],
+      "excludedActions": [],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 19111.6,
+        "minorRoadM2": 38988.5,
+        "pedestrianM2": 1529.7,
+        "buildingM2": 48174.8,
+        "parkingM2": 0.0,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8456_-24311",
@@ -2715,7 +3037,29 @@
           "label": "Solar irradiance at reading time"
         }
       ],
-      "recommendation": "This tile already has less impervious surface than its surrounding norm \u2014 a relative strength, not a gap to close."
+      "recommendation": "This tile already has less impervious surface than its surrounding norm \u2014 a relative strength, not a gap to close.",
+      "siteType": "residential_mixed",
+      "siteTypeLabel": "Residential or mixed street",
+      "suitableActions": [
+        "Street trees",
+        "Permeable paving for driveways/sidewalks",
+        "Cool pavement coating on local streets"
+      ],
+      "excludedActions": [],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 0.0,
+        "minorRoadM2": 5792.0,
+        "pedestrianM2": 7111.9,
+        "buildingM2": 641.6,
+        "parkingM2": 4985.7,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8403_-24209",
@@ -2960,7 +3304,29 @@
           "label": "Building density"
         }
       ],
-      "recommendation": "This tile already has less impervious surface than its surrounding norm \u2014 a relative strength, not a gap to close."
+      "recommendation": "This tile already has less impervious surface than its surrounding norm \u2014 a relative strength, not a gap to close.",
+      "siteType": "residential_mixed",
+      "siteTypeLabel": "Residential or mixed street",
+      "suitableActions": [
+        "Street trees",
+        "Permeable paving for driveways/sidewalks",
+        "Cool pavement coating on local streets"
+      ],
+      "excludedActions": [],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 0.0,
+        "minorRoadM2": 50188.9,
+        "pedestrianM2": 6501.7,
+        "buildingM2": 45351.4,
+        "parkingM2": 0.0,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8435_-24225",
@@ -3093,7 +3459,35 @@
           "label": "Solar irradiance at reading time"
         }
       ],
-      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention."
+      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention.",
+      "siteType": "building_dominated",
+      "siteTypeLabel": "Building / roof dominated",
+      "suitableActions": [
+        "Cool/reflective roofing",
+        "Rooftop solar",
+        "Green roofs where structurally feasible",
+        "Facade shading"
+      ],
+      "excludedActions": [
+        {
+          "action": "Street tree planting",
+          "reason": "Tile is dominated by building footprint, not open ground-level right-of-way -- canopy siting would need a parcel-by-parcel check, not a tile-level call."
+        }
+      ],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 5243.9,
+        "minorRoadM2": 70458.4,
+        "pedestrianM2": 14364.7,
+        "buildingM2": 98589.8,
+        "parkingM2": 5890.1,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8403_-24206",
@@ -3191,7 +3585,29 @@
           "label": "Solar irradiance at reading time"
         }
       ],
-      "recommendation": "Lower building density here is a relative strength, not a gap to close."
+      "recommendation": "Lower building density here is a relative strength, not a gap to close.",
+      "siteType": "residential_mixed",
+      "siteTypeLabel": "Residential or mixed street",
+      "suitableActions": [
+        "Street trees",
+        "Permeable paving for driveways/sidewalks",
+        "Cool pavement coating on local streets"
+      ],
+      "excludedActions": [],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 0.0,
+        "minorRoadM2": 31954.2,
+        "pedestrianM2": 3693.9,
+        "buildingM2": 43813.2,
+        "parkingM2": 19301.4,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8450_-24292",
@@ -3282,7 +3698,35 @@
           "label": "Solar irradiance at reading time"
         }
       ],
-      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention."
+      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention.",
+      "siteType": "building_dominated",
+      "siteTypeLabel": "Building / roof dominated",
+      "suitableActions": [
+        "Cool/reflective roofing",
+        "Rooftop solar",
+        "Green roofs where structurally feasible",
+        "Facade shading"
+      ],
+      "excludedActions": [
+        {
+          "action": "Street tree planting",
+          "reason": "Tile is dominated by building footprint, not open ground-level right-of-way -- canopy siting would need a parcel-by-parcel check, not a tile-level call."
+        }
+      ],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 0.0,
+        "minorRoadM2": 71144.6,
+        "pedestrianM2": 14579.3,
+        "buildingM2": 74888.8,
+        "parkingM2": 5669.9,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8403_-24208",
@@ -3429,7 +3873,35 @@
           "label": "Building density"
         }
       ],
-      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention."
+      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention.",
+      "siteType": "building_dominated",
+      "siteTypeLabel": "Building / roof dominated",
+      "suitableActions": [
+        "Cool/reflective roofing",
+        "Rooftop solar",
+        "Green roofs where structurally feasible",
+        "Facade shading"
+      ],
+      "excludedActions": [
+        {
+          "action": "Street tree planting",
+          "reason": "Tile is dominated by building footprint, not open ground-level right-of-way -- canopy siting would need a parcel-by-parcel check, not a tile-level call."
+        }
+      ],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 5214.4,
+        "minorRoadM2": 46033.0,
+        "pedestrianM2": 7859.1,
+        "buildingM2": 63298.0,
+        "parkingM2": 31505.3,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8403_-24207",
@@ -3800,7 +4272,29 @@
           "label": "Building density"
         }
       ],
-      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention."
+      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention.",
+      "siteType": "residential_mixed",
+      "siteTypeLabel": "Residential or mixed street",
+      "suitableActions": [
+        "Street trees",
+        "Permeable paving for driveways/sidewalks",
+        "Cool pavement coating on local streets"
+      ],
+      "excludedActions": [],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 5471.4,
+        "minorRoadM2": 59219.6,
+        "pedestrianM2": 19467.4,
+        "buildingM2": 58893.5,
+        "parkingM2": 31808.9,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8424_-24296",
@@ -3849,7 +4343,35 @@
           "label": "Building density"
         }
       ],
-      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention."
+      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention.",
+      "siteType": "building_dominated",
+      "siteTypeLabel": "Building / roof dominated",
+      "suitableActions": [
+        "Cool/reflective roofing",
+        "Rooftop solar",
+        "Green roofs where structurally feasible",
+        "Facade shading"
+      ],
+      "excludedActions": [
+        {
+          "action": "Street tree planting",
+          "reason": "Tile is dominated by building footprint, not open ground-level right-of-way -- canopy siting would need a parcel-by-parcel check, not a tile-level call."
+        }
+      ],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 0.0,
+        "minorRoadM2": 77252.6,
+        "pedestrianM2": 14090.1,
+        "buildingM2": 88128.1,
+        "parkingM2": 13497.3,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8404_-24291",
@@ -4080,7 +4602,29 @@
           "label": "Solar irradiance at reading time"
         }
       ],
-      "recommendation": "This tile already has less impervious surface than its surrounding norm \u2014 a relative strength, not a gap to close."
+      "recommendation": "This tile already has less impervious surface than its surrounding norm \u2014 a relative strength, not a gap to close.",
+      "siteType": "residential_mixed",
+      "siteTypeLabel": "Residential or mixed street",
+      "suitableActions": [
+        "Street trees",
+        "Permeable paving for driveways/sidewalks",
+        "Cool pavement coating on local streets"
+      ],
+      "excludedActions": [],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 0.0,
+        "minorRoadM2": 20050.4,
+        "pedestrianM2": 3451.8,
+        "buildingM2": 7136.6,
+        "parkingM2": 3820.1,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8415_-24267",
@@ -4556,7 +5100,35 @@
           "label": "Wind speed at reading time"
         }
       ],
-      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention."
+      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention.",
+      "siteType": "building_dominated",
+      "siteTypeLabel": "Building / roof dominated",
+      "suitableActions": [
+        "Cool/reflective roofing",
+        "Rooftop solar",
+        "Green roofs where structurally feasible",
+        "Facade shading"
+      ],
+      "excludedActions": [
+        {
+          "action": "Street tree planting",
+          "reason": "Tile is dominated by building footprint, not open ground-level right-of-way -- canopy siting would need a parcel-by-parcel check, not a tile-level call."
+        }
+      ],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 23692.9,
+        "minorRoadM2": 84801.8,
+        "pedestrianM2": 1361.7,
+        "buildingM2": 65569.7,
+        "parkingM2": 19957.7,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8442_-24256",
@@ -4612,7 +5184,29 @@
           "label": "Elevation, relative to this neighborhood"
         }
       ],
-      "recommendation": "This tile already has less impervious surface than its surrounding norm \u2014 a relative strength, not a gap to close."
+      "recommendation": "This tile already has less impervious surface than its surrounding norm \u2014 a relative strength, not a gap to close.",
+      "siteType": "residential_mixed",
+      "siteTypeLabel": "Residential or mixed street",
+      "suitableActions": [
+        "Street trees",
+        "Permeable paving for driveways/sidewalks",
+        "Cool pavement coating on local streets"
+      ],
+      "excludedActions": [],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 0.0,
+        "minorRoadM2": 41502.9,
+        "pedestrianM2": 2580.5,
+        "buildingM2": 45453.7,
+        "parkingM2": 0.0,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8427_-24290",
@@ -4864,7 +5458,29 @@
           "label": "Solar irradiance at reading time"
         }
       ],
-      "recommendation": "Building density is a contributing factor here \u2014 harder to change directly, but worth pairing with canopy or surface-material interventions."
+      "recommendation": "Building density is a contributing factor here \u2014 harder to change directly, but worth pairing with canopy or surface-material interventions.",
+      "siteType": "residential_mixed",
+      "siteTypeLabel": "Residential or mixed street",
+      "suitableActions": [
+        "Street trees",
+        "Permeable paving for driveways/sidewalks",
+        "Cool pavement coating on local streets"
+      ],
+      "excludedActions": [],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 0.0,
+        "minorRoadM2": 49389.0,
+        "pedestrianM2": 0.0,
+        "buildingM2": 43584.2,
+        "parkingM2": 0.0,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8417_-24280",
@@ -5200,7 +5816,35 @@
           "label": "Solar irradiance at reading time"
         }
       ],
-      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention."
+      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention.",
+      "siteType": "building_dominated",
+      "siteTypeLabel": "Building / roof dominated",
+      "suitableActions": [
+        "Cool/reflective roofing",
+        "Rooftop solar",
+        "Green roofs where structurally feasible",
+        "Facade shading"
+      ],
+      "excludedActions": [
+        {
+          "action": "Street tree planting",
+          "reason": "Tile is dominated by building footprint, not open ground-level right-of-way -- canopy siting would need a parcel-by-parcel check, not a tile-level call."
+        }
+      ],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 12350.3,
+        "minorRoadM2": 48250.3,
+        "pedestrianM2": 11008.8,
+        "buildingM2": 71823.4,
+        "parkingM2": 459.8,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8414_-24266",
@@ -5389,7 +6033,29 @@
           "label": "Wind speed at reading time"
         }
       ],
-      "recommendation": "This tile already has less impervious surface than its surrounding norm \u2014 a relative strength, not a gap to close."
+      "recommendation": "This tile already has less impervious surface than its surrounding norm \u2014 a relative strength, not a gap to close.",
+      "siteType": "residential_mixed",
+      "siteTypeLabel": "Residential or mixed street",
+      "suitableActions": [
+        "Street trees",
+        "Permeable paving for driveways/sidewalks",
+        "Cool pavement coating on local streets"
+      ],
+      "excludedActions": [],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 10922.2,
+        "minorRoadM2": 35393.0,
+        "pedestrianM2": 5058.7,
+        "buildingM2": 25796.6,
+        "parkingM2": 0.0,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8413_-24266",
@@ -5578,7 +6244,29 @@
           "label": "Building density"
         }
       ],
-      "recommendation": "This tile already has less impervious surface than its surrounding norm \u2014 a relative strength, not a gap to close."
+      "recommendation": "This tile already has less impervious surface than its surrounding norm \u2014 a relative strength, not a gap to close.",
+      "siteType": "residential_mixed",
+      "siteTypeLabel": "Residential or mixed street",
+      "suitableActions": [
+        "Street trees",
+        "Permeable paving for driveways/sidewalks",
+        "Cool pavement coating on local streets"
+      ],
+      "excludedActions": [],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 0.0,
+        "minorRoadM2": 38617.4,
+        "pedestrianM2": 2226.1,
+        "buildingM2": 58671.5,
+        "parkingM2": 0.0,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8420_-24291",
@@ -5725,7 +6413,35 @@
           "label": "Solar irradiance at reading time"
         }
       ],
-      "recommendation": "Building density is a contributing factor here \u2014 harder to change directly, but worth pairing with canopy or surface-material interventions."
+      "recommendation": "Building density is a contributing factor here \u2014 harder to change directly, but worth pairing with canopy or surface-material interventions.",
+      "siteType": "building_dominated",
+      "siteTypeLabel": "Building / roof dominated",
+      "suitableActions": [
+        "Cool/reflective roofing",
+        "Rooftop solar",
+        "Green roofs where structurally feasible",
+        "Facade shading"
+      ],
+      "excludedActions": [
+        {
+          "action": "Street tree planting",
+          "reason": "Tile is dominated by building footprint, not open ground-level right-of-way -- canopy siting would need a parcel-by-parcel check, not a tile-level call."
+        }
+      ],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 0.0,
+        "minorRoadM2": 82550.3,
+        "pedestrianM2": 5094.0,
+        "buildingM2": 61746.1,
+        "parkingM2": 2238.5,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8352_-24255",
@@ -5865,7 +6581,29 @@
           "label": "Solar irradiance at reading time"
         }
       ],
-      "recommendation": "Building density is a contributing factor here \u2014 harder to change directly, but worth pairing with canopy or surface-material interventions."
+      "recommendation": "Building density is a contributing factor here \u2014 harder to change directly, but worth pairing with canopy or surface-material interventions.",
+      "siteType": "residential_mixed",
+      "siteTypeLabel": "Residential or mixed street",
+      "suitableActions": [
+        "Street trees",
+        "Permeable paving for driveways/sidewalks",
+        "Cool pavement coating on local streets"
+      ],
+      "excludedActions": [],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 0.0,
+        "minorRoadM2": 47656.9,
+        "pedestrianM2": 5410.6,
+        "buildingM2": 47592.2,
+        "parkingM2": 0.0,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8450_-24291",
@@ -5956,7 +6694,35 @@
           "label": "Solar irradiance at reading time"
         }
       ],
-      "recommendation": "Building density is a contributing factor here \u2014 harder to change directly, but worth pairing with canopy or surface-material interventions."
+      "recommendation": "Building density is a contributing factor here \u2014 harder to change directly, but worth pairing with canopy or surface-material interventions.",
+      "siteType": "building_dominated",
+      "siteTypeLabel": "Building / roof dominated",
+      "suitableActions": [
+        "Cool/reflective roofing",
+        "Rooftop solar",
+        "Green roofs where structurally feasible",
+        "Facade shading"
+      ],
+      "excludedActions": [
+        {
+          "action": "Street tree planting",
+          "reason": "Tile is dominated by building footprint, not open ground-level right-of-way -- canopy siting would need a parcel-by-parcel check, not a tile-level call."
+        }
+      ],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 0.0,
+        "minorRoadM2": 57247.2,
+        "pedestrianM2": 5039.0,
+        "buildingM2": 63450.7,
+        "parkingM2": 0.0,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8454_-24266",
@@ -6432,7 +7198,35 @@
           "label": "Solar irradiance at reading time"
         }
       ],
-      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention."
+      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention.",
+      "siteType": "building_dominated",
+      "siteTypeLabel": "Building / roof dominated",
+      "suitableActions": [
+        "Cool/reflective roofing",
+        "Rooftop solar",
+        "Green roofs where structurally feasible",
+        "Facade shading"
+      ],
+      "excludedActions": [
+        {
+          "action": "Street tree planting",
+          "reason": "Tile is dominated by building footprint, not open ground-level right-of-way -- canopy siting would need a parcel-by-parcel check, not a tile-level call."
+        }
+      ],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 6570.7,
+        "minorRoadM2": 42061.3,
+        "pedestrianM2": 2654.4,
+        "buildingM2": 69891.3,
+        "parkingM2": 4985.7,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8428_-24226",
@@ -6537,7 +7331,29 @@
           "label": "Solar irradiance at reading time"
         }
       ],
-      "recommendation": "This tile already has less impervious surface than its surrounding norm \u2014 a relative strength, not a gap to close."
+      "recommendation": "This tile already has less impervious surface than its surrounding norm \u2014 a relative strength, not a gap to close.",
+      "siteType": "residential_mixed",
+      "siteTypeLabel": "Residential or mixed street",
+      "suitableActions": [
+        "Street trees",
+        "Permeable paving for driveways/sidewalks",
+        "Cool pavement coating on local streets"
+      ],
+      "excludedActions": [],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 0.0,
+        "minorRoadM2": 2779.8,
+        "pedestrianM2": 5441.0,
+        "buildingM2": 0.0,
+        "parkingM2": 0.0,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8425_-24294",
@@ -6880,7 +7696,35 @@
           "label": "Building density"
         }
       ],
-      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention."
+      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention.",
+      "siteType": "building_dominated",
+      "siteTypeLabel": "Building / roof dominated",
+      "suitableActions": [
+        "Cool/reflective roofing",
+        "Rooftop solar",
+        "Green roofs where structurally feasible",
+        "Facade shading"
+      ],
+      "excludedActions": [
+        {
+          "action": "Street tree planting",
+          "reason": "Tile is dominated by building footprint, not open ground-level right-of-way -- canopy siting would need a parcel-by-parcel check, not a tile-level call."
+        }
+      ],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 0.0,
+        "minorRoadM2": 60726.9,
+        "pedestrianM2": 17171.9,
+        "buildingM2": 72864.5,
+        "parkingM2": 44979.8,
+        "canopyM2": 243.9
+      }
     },
     {
       "tileId": "8453_-24323",
@@ -7216,7 +8060,29 @@
           "label": "Wind speed at reading time"
         }
       ],
-      "recommendation": "This tile already has less impervious surface than its surrounding norm \u2014 a relative strength, not a gap to close."
+      "recommendation": "This tile already has less impervious surface than its surrounding norm \u2014 a relative strength, not a gap to close.",
+      "siteType": "residential_mixed",
+      "siteTypeLabel": "Residential or mixed street",
+      "suitableActions": [
+        "Street trees",
+        "Permeable paving for driveways/sidewalks",
+        "Cool pavement coating on local streets"
+      ],
+      "excludedActions": [],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 5415.0,
+        "minorRoadM2": 20900.6,
+        "pedestrianM2": 10960.9,
+        "buildingM2": 46388.3,
+        "parkingM2": 0.0,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8405_-24208",
@@ -7321,7 +8187,29 @@
           "label": "Solar irradiance at reading time"
         }
       ],
-      "recommendation": "Lower building density here is a relative strength, not a gap to close."
+      "recommendation": "Lower building density here is a relative strength, not a gap to close.",
+      "siteType": "residential_mixed",
+      "siteTypeLabel": "Residential or mixed street",
+      "suitableActions": [
+        "Street trees",
+        "Permeable paving for driveways/sidewalks",
+        "Cool pavement coating on local streets"
+      ],
+      "excludedActions": [],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 0.0,
+        "minorRoadM2": 39372.2,
+        "pedestrianM2": 0.0,
+        "buildingM2": 24207.5,
+        "parkingM2": 0.0,
+        "canopyM2": 22467.9
+      }
     },
     {
       "tileId": "8385_-24262",
@@ -8525,7 +9413,35 @@
           "label": "Solar irradiance at reading time"
         }
       ],
-      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention."
+      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention.",
+      "siteType": "building_dominated",
+      "siteTypeLabel": "Building / roof dominated",
+      "suitableActions": [
+        "Cool/reflective roofing",
+        "Rooftop solar",
+        "Green roofs where structurally feasible",
+        "Facade shading"
+      ],
+      "excludedActions": [
+        {
+          "action": "Street tree planting",
+          "reason": "Tile is dominated by building footprint, not open ground-level right-of-way -- canopy siting would need a parcel-by-parcel check, not a tile-level call."
+        }
+      ],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 9345.0,
+        "minorRoadM2": 67935.1,
+        "pedestrianM2": 20942.3,
+        "buildingM2": 73977.1,
+        "parkingM2": 29834.6,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8456_-24314",
@@ -8742,7 +9658,29 @@
           "label": "Building density"
         }
       ],
-      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention."
+      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention.",
+      "siteType": "residential_mixed",
+      "siteTypeLabel": "Residential or mixed street",
+      "suitableActions": [
+        "Street trees",
+        "Permeable paving for driveways/sidewalks",
+        "Cool pavement coating on local streets"
+      ],
+      "excludedActions": [],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 0.0,
+        "minorRoadM2": 31113.9,
+        "pedestrianM2": 21897.8,
+        "buildingM2": 53894.6,
+        "parkingM2": 19842.2,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8459_-24280",
@@ -9715,7 +10653,35 @@
           "label": "Wind speed at reading time"
         }
       ],
-      "recommendation": "Lower building density here is a relative strength, not a gap to close."
+      "recommendation": "Lower building density here is a relative strength, not a gap to close.",
+      "siteType": "surface_parking",
+      "siteTypeLabel": "Surface parking or paved open area",
+      "suitableActions": [
+        "Permeable paving",
+        "Cool pavement coating",
+        "Shade structures / solar canopies over stalls",
+        "Perimeter street trees"
+      ],
+      "excludedActions": [
+        {
+          "action": "Green roof",
+          "reason": "No roof structure present -- this tile is dominated by at-grade paved area, not buildings."
+        }
+      ],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 6700.9,
+        "minorRoadM2": 78543.1,
+        "pedestrianM2": 3997.2,
+        "buildingM2": 9521.5,
+        "parkingM2": 214610.1,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8485_-24290",
@@ -10359,7 +11325,29 @@
           "label": "Solar irradiance at reading time"
         }
       ],
-      "recommendation": "Building density is a contributing factor here \u2014 harder to change directly, but worth pairing with canopy or surface-material interventions."
+      "recommendation": "Building density is a contributing factor here \u2014 harder to change directly, but worth pairing with canopy or surface-material interventions.",
+      "siteType": "residential_mixed",
+      "siteTypeLabel": "Residential or mixed street",
+      "suitableActions": [
+        "Street trees",
+        "Permeable paving for driveways/sidewalks",
+        "Cool pavement coating on local streets"
+      ],
+      "excludedActions": [],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 7037.1,
+        "minorRoadM2": 28709.5,
+        "pedestrianM2": 6378.7,
+        "buildingM2": 40880.2,
+        "parkingM2": 0.0,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8424_-24224",
@@ -11171,7 +12159,35 @@
           "label": "Solar irradiance at reading time"
         }
       ],
-      "recommendation": "Building density is a contributing factor here \u2014 harder to change directly, but worth pairing with canopy or surface-material interventions."
+      "recommendation": "Building density is a contributing factor here \u2014 harder to change directly, but worth pairing with canopy or surface-material interventions.",
+      "siteType": "building_dominated",
+      "siteTypeLabel": "Building / roof dominated",
+      "suitableActions": [
+        "Cool/reflective roofing",
+        "Rooftop solar",
+        "Green roofs where structurally feasible",
+        "Facade shading"
+      ],
+      "excludedActions": [
+        {
+          "action": "Street tree planting",
+          "reason": "Tile is dominated by building footprint, not open ground-level right-of-way -- canopy siting would need a parcel-by-parcel check, not a tile-level call."
+        }
+      ],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 33998.2,
+        "minorRoadM2": 48633.9,
+        "pedestrianM2": 15456.0,
+        "buildingM2": 86718.6,
+        "parkingM2": 37300.4,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8473_-24320",
@@ -11542,7 +12558,35 @@
           "label": "Building density"
         }
       ],
-      "recommendation": "This tile already has less impervious surface than its surrounding norm \u2014 a relative strength, not a gap to close."
+      "recommendation": "This tile already has less impervious surface than its surrounding norm \u2014 a relative strength, not a gap to close.",
+      "siteType": "building_dominated",
+      "siteTypeLabel": "Building / roof dominated",
+      "suitableActions": [
+        "Cool/reflective roofing",
+        "Rooftop solar",
+        "Green roofs where structurally feasible",
+        "Facade shading"
+      ],
+      "excludedActions": [
+        {
+          "action": "Street tree planting",
+          "reason": "Tile is dominated by building footprint, not open ground-level right-of-way -- canopy siting would need a parcel-by-parcel check, not a tile-level call."
+        }
+      ],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 0.0,
+        "minorRoadM2": 60079.7,
+        "pedestrianM2": 1008.3,
+        "buildingM2": 61784.5,
+        "parkingM2": 0.0,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8402_-24272",
@@ -11738,7 +12782,29 @@
           "label": "Solar irradiance at reading time"
         }
       ],
-      "recommendation": "This tile already has less impervious surface than its surrounding norm \u2014 a relative strength, not a gap to close."
+      "recommendation": "This tile already has less impervious surface than its surrounding norm \u2014 a relative strength, not a gap to close.",
+      "siteType": "residential_mixed",
+      "siteTypeLabel": "Residential or mixed street",
+      "suitableActions": [
+        "Street trees",
+        "Permeable paving for driveways/sidewalks",
+        "Cool pavement coating on local streets"
+      ],
+      "excludedActions": [],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 25048.0,
+        "minorRoadM2": 36096.9,
+        "pedestrianM2": 7559.1,
+        "buildingM2": 16964.3,
+        "parkingM2": 0.0,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8458_-24278",
@@ -11836,7 +12902,29 @@
           "label": "Impervious surface, relative to this neighborhood"
         }
       ],
-      "recommendation": "Lower building density here is a relative strength, not a gap to close."
+      "recommendation": "Lower building density here is a relative strength, not a gap to close.",
+      "siteType": "residential_mixed",
+      "siteTypeLabel": "Residential or mixed street",
+      "suitableActions": [
+        "Street trees",
+        "Permeable paving for driveways/sidewalks",
+        "Cool pavement coating on local streets"
+      ],
+      "excludedActions": [],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 0.0,
+        "minorRoadM2": 18777.1,
+        "pedestrianM2": 5726.5,
+        "buildingM2": 13269.6,
+        "parkingM2": 1804.0,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8441_-24229",
@@ -11934,7 +13022,38 @@
           "label": "Solar irradiance at reading time"
         }
       ],
-      "recommendation": "Lower building density here is a relative strength, not a gap to close."
+      "recommendation": "Lower building density here is a relative strength, not a gap to close.",
+      "siteType": "highway_dominated",
+      "siteTypeLabel": "Highway / major-road dominated",
+      "suitableActions": [
+        "Cool/reflective pavement coating",
+        "Solar canopies over shoulders or medians",
+        "Sound-wall greening (vines, not canopy trees)"
+      ],
+      "excludedActions": [
+        {
+          "action": "Street tree planting",
+          "reason": "Tile is dominated by limited-access roadway -- no planting strip, and canopy near live traffic lanes is a sightline/safety hazard."
+        },
+        {
+          "action": "Ground-level permeable paving",
+          "reason": "Live roadway surface; repaving requires a full traffic-engineering closure, not a screening-level recommendation."
+        }
+      ],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 46651.3,
+        "minorRoadM2": 42070.8,
+        "pedestrianM2": 450.5,
+        "buildingM2": 52633.3,
+        "parkingM2": 3393.9,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8473_-24319",
@@ -12025,7 +13144,29 @@
           "label": "Solar irradiance at reading time"
         }
       ],
-      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention."
+      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention.",
+      "siteType": "residential_mixed",
+      "siteTypeLabel": "Residential or mixed street",
+      "suitableActions": [
+        "Street trees",
+        "Permeable paving for driveways/sidewalks",
+        "Cool pavement coating on local streets"
+      ],
+      "excludedActions": [],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 7670.9,
+        "minorRoadM2": 36097.7,
+        "pedestrianM2": 4838.5,
+        "buildingM2": 55071.9,
+        "parkingM2": 16298.2,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8372_-24279",
@@ -12312,7 +13453,29 @@
           "label": "Relative humidity at reading time"
         }
       ],
-      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention."
+      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention.",
+      "siteType": "residential_mixed",
+      "siteTypeLabel": "Residential or mixed street",
+      "suitableActions": [
+        "Street trees",
+        "Permeable paving for driveways/sidewalks",
+        "Cool pavement coating on local streets"
+      ],
+      "excludedActions": [],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 9350.8,
+        "minorRoadM2": 67058.9,
+        "pedestrianM2": 8256.4,
+        "buildingM2": 56644.3,
+        "parkingM2": 0.0,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8368_-24269",
@@ -12858,7 +14021,29 @@
           "label": "Wind speed at reading time"
         }
       ],
-      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention."
+      "recommendation": "Highest-impact lever: this tile has more paved/impervious surface than its surrounding norm \u2014 reducing impervious coverage (permeable paving, unpaving surplus lots) is the most direct intervention.",
+      "siteType": "residential_mixed",
+      "siteTypeLabel": "Residential or mixed street",
+      "suitableActions": [
+        "Street trees",
+        "Permeable paving for driveways/sidewalks",
+        "Cool pavement coating on local streets"
+      ],
+      "excludedActions": [],
+      "requiresFieldVerification": [
+        "Sidewalk / shoulder width",
+        "Underground and overhead utilities",
+        "Parcel ownership and right-of-way",
+        "Traffic engineering sign-off (for anything near a live roadway)"
+      ],
+      "coverage": {
+        "majorRoadM2": 16324.3,
+        "minorRoadM2": 52240.2,
+        "pedestrianM2": 2061.3,
+        "buildingM2": 56340.4,
+        "parkingM2": 2603.6,
+        "canopyM2": 0.0
+      }
     },
     {
       "tileId": "8474_-24319",
@@ -82475,5 +83660,6 @@
       ],
       "recommendation": null
     }
-  ]
+  ],
+  "hasFeasibilityScreen": true
 }

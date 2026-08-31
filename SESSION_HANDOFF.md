@@ -1,9 +1,20 @@
 # Session handoff — FortyGuard Thermal Reasoning Agent
 
-Last updated: 2026-08-30
+Last updated: 2026-08-31
 
 This is the canonical continuity record for `C:\Fortyguard_batra`. Read it
 before collecting data, training, or altering the app.
+
+**2026-08-31:** This session (separate from the 08-30 entries below) built
+the Action Feasibility Guard, removed a confirmed-broken Tier 1 live lookup,
+and added live address search. Full detail in "Action Plans / Feasibility
+Guard work (2026-08-31)" further down. **A Street View imagery task for
+action-plan tiles is now authorized and assigned to Codex** (see that same
+section for the exact spec) — as of this writing no imagery-related files
+exist yet (`git status` checked clean of them). Any other session picking
+this repo up should NOT start imagery/Street View work on action-plan tiles
+without checking current git status first, to avoid duplicating Codex's
+in-flight work.
 
 **2026-08-30, later same day:** the user confirmed `C:\Fortyguard_batra`
 replaces `D:\Fortyguard_batra` going forward for the web app. The D: copy's
@@ -95,6 +106,231 @@ locations, then suggests feasible heat interventions.
   live component. `AnalysisPanel.tsx` is not the place to wire new work.
 - `/training-data` visualizes training coverage. `/action-plans` consumes the
   cluster-plan export.
+
+## Action Plans / Feasibility Guard work (2026-08-31)
+
+New work this session, on top of everything above (which still stands).
+
+**Action Feasibility Guard — built and verified.** Classifies each of the 48
+priority tiles into a practical site type from real OSM geometry (roads,
+buildings, parking, canopy), then shows which interventions are physically
+plausible before any generic advice (e.g. "plant trees") is suggested
+somewhere it can't apply (a highway shoulder, a rooftop-dominated block).
+
+- New files: `ml/src/collect/fetch_osm_sitetype.py` (per-tile Overpass fetch,
+  cached, retries across a mirror — the free public instance is flaky, saw
+  real 504s), `ml/src/serve/site_type.py` (the rule engine), `ml/src/serve/
+  export_site_types.py` (standalone augmenter — reads/writes
+  `cluster-action-plans.json` directly, does NOT re-run
+  `export_clusters_for_app.py`'s pandas/numpy/xgboost pipeline, so it works
+  even when that stack breaks — see below).
+- `classify_site_type()` checks major-road coverage FIRST as a deliberate
+  safety-priority override (not a dominance comparison — even a mostly-
+  building tile gets flagged highway_dominated if it also carries meaningful
+  live-road frontage), then picks whichever of {parking, building, green}
+  has the actually-largest share among those crossing their own threshold.
+  **A real bug was caught and fixed here**: the first version checked
+  parking before building in fixed order regardless of actual size: a tile
+  43% building / 21% parking was wrongly called "surface parking." Verify
+  this class of bug doesn't creep back in if this file is touched again.
+- `cluster-action-plans.json` now carries `siteType`/`siteTypeLabel`/
+  `suitableActions`/`excludedActions`/`requiresFieldVerification` on all 48
+  priority tiles (`hasFeasibilityScreen: true` at the top level), rendered
+  in `ActionPlanTileCard.tsx`'s new `FeasibilityScreen` sub-component.
+- `ActionPlanTile` type in `src/lib/reasoning/clusterActionPlans.ts` extended
+  with these fields, all optional.
+- venv note: hit the numpy/pandas incompatibility live this session
+  (`numpy.core._multiarray_umath` missing under Python 3.14, then a broken
+  `pandas._libs.pandas_parser` after upgrading numpy to 2.5.2). Upgrading
+  numpy alone did NOT fully fix the venv — pandas is still suspect. This is
+  exactly why `export_site_types.py` was deliberately kept independent of
+  pandas/numpy/xgboost (uses only `requests` + stdlib json).
+
+**Tier 1 (`MlAttribution`) removed from the live per-cell view.** Confirmed a
+real bug, not a misread: `getMlEvidenceNearestTo()` in `mlExplain.ts` does
+nearest-AOI lookup with no timestamp tie-break. Van Nuys has 5 liveGrid
+records at the identical lat/lng (different `date_time`s), with predicted
+anomalies ranging +2.22°F to +11.15°F — the code silently always returned
+whichever sorted first, unrelated to what the live scan actually shows.
+Removed the `<MlAttribution>` block from `LiveThermalReasoning.tsx` (left a
+comment explaining why). The component/route/`mlExplain.ts` are UNTOUCHED
+and still valid for `AnalysisPanel.tsx`'s `blockId` lookup mode (exact, not
+nearest-neighbor) — but `AnalysisPanel.tsx` is dead code (see ml/
+SESSION_HANDOFF.md), so this path currently has no live caller. Tier 2's
+`CellAttributionSection` (uses the selected cell's own features, no
+nearest-neighbor) is unaffected and still renders on the live map.
+
+**Address search added to the live map.** `src/components/map/
+AddressSearch.tsx` + server-side `/api/geocode` (proxies Nominatim, proper
+User-Agent per its usage policy, submit-triggered not per-keystroke).
+`ThermalMap.tsx` gained an `onMapReady` prop so a sibling overlay can drive
+`flyTo`; `MapView.tsx` wires it. In-bounds results fly + auto-select the
+nearest cell; out-of-bounds results fly there anyway but explicitly decline
+to fabricate a cell selection ("outside today's scan area").
+
+**Tier A: live heatmap for an arbitrary searched address + size, built.**
+`/api/fortyguard/heatmap` now accepts either `{city, period}` (unchanged,
+the 3 fixed STUDY_AREAS) or `{bbox: [w,s,e,n], period}` (new: any address,
+server-validated size/continental-US bounds — `bboxError()` in that route).
+`AddressSearch.tsx` was redesigned: address input + a direct numeric
+"block size" input (meters, user-typed, not presets -- clamped client-side
+in `clampSize()` to 200-2000m, a hard ceiling computed to stay inside the
+route's own MAX_BOX_DEG even at the northern edge of the allowed
+continental-US range) + an explicit "Scan" button, replacing its old
+fly-to-nearest-existing-cell behavior entirely — every search now triggers
+a genuinely new FortyGuard call for that exact spot (real credits spent per
+search, on `FORTYGUARD_API_KEY` -- the same key Codex's Street View task
+will likely use too, see the shared-budget note earlier in this doc).
+`page.tsx` gained `customArea` state; switching back to a named city clears
+it. Explicitly **out of scope for Tier A** (per the user, discussed
+separately): live model attribution or action plans for a searched area --
+those stay on the existing precomputed 80-AOI pipeline.
+
+Two real, previously-latent bugs were caught and fixed live while building
+this (both would eventually have hit the fixed cities too, just less
+likely to trigger there):
+1. `thermalColorExpression()` in `ThermalMap.tsx` used the raw
+   `maxTemperature` as its last color-stop while computing the middle stops
+   from an artificially-widened `range` -- any scan with a real range under
+   0.01°F (confirmed live: a small custom-area search came back with all 15
+   cells at exactly 80.0°F) produced non-ascending stops, which MapLibre
+   rejects outright, silently failing to add the whole color layer. Fixed
+   by deriving every stop from `minTemperature + range` consistently.
+2. `page.tsx`'s `load()` calls `setLoading(true)` then, on a localStorage
+   cache hit, `setLoading(false)` with no `await` in between -- React
+   batches this, so the intermediate loading state never actually renders,
+   `<ThermalMap>` never unmounts/remounts, and its mount-once `fitBounds`
+   never re-runs for the new area (data/colors update fine via the reactive
+   effect; the viewport just silently stays wherever it was). Same root
+   cause, same fix shape as the original day/night bug fixed earlier this
+   session. Fixed by moving `fitBounds` into the reactive effect too, keyed
+   off `blocks` changing (harmless no-op-looking snap when blocks represent
+   the same area, e.g. a day/night toggle).
+
+**Action Plans map view, built as an opt-in toggle.** `/action-plans` now has
+a List/Map switch (`ActionPlansView.tsx`, defaults to List -- today's
+behavior is unchanged unless a viewer clicks Map). The map
+(`ActionPlansMap.tsx`) plots priority tiles (colored by site type from the
+Feasibility Guard) and geography-driven tiles (muted, toggleable) as fixed-
+pixel circle markers -- NOT geo-sized polygons, deliberately: priority tiles
+are genuinely scattered across all of LA county, and a fitBounds wide enough
+to show all 48 shrinks a real 450m square to sub-pixel/invisible. Same
+problem, same fix already established for the live map's wide-zoom marker
+layer (see `blockGeometry.ts`'s `blocksToPointFeatureCollection`). Clicking/
+hovering a tile syncs to a sidebar showing the same `ActionPlanTileCard`
+used in the list (Codex's Street View imagery included, whatever's landed).
+Deliberately no "static"/"precomputed"/timestamp language anywhere in this
+UI, per explicit user instruction -- viewers shouldn't be able to tell this
+map isn't live.
+
+Hit a genuinely unusual dev-environment issue building this, worth flagging
+for whoever touches this file next: **brand-new Tailwind utility classes in
+a newly-created file took multiple save/reload cycles to actually appear in
+the compiled CSS under this project's Turbopack setup** -- not just
+arbitrary values (`w-[380px]` silently produced no rule at all, confirmed by
+checking `document.styleSheets` directly), but at least one completely
+standard utility too (`top-4`, despite being already used and working in
+`AddressSearch.tsx`) computed to a bogus value on first use in this file.
+Diagnosed via direct `getBoundingClientRect()`/`getComputedStyle()`
+inspection in the browser, not by reasoning about the CSS alone -- the
+symptom (child of a properly-sized flex/grid parent measuring 0) looks
+identical to a real flexbox/grid layout bug, so don't assume a Tailwind
+class silently failing to compile is impossible just because the class name
+looks right in the source. If a brand-new file's layout looks broken in a
+way that defies the CSS logic, check the compiled stylesheet before
+assuming the JSX/className is wrong. Worked around here by using inline
+`style` for the handful of positioning-critical values instead of chasing
+the compiler.
+
+**`InterventionSimulator.tsx` confirmed as genuine dead code** — defined,
+never imported anywhere (`grep` verified). Its formula (`canopy*0.045 +
+pavement*0.025`) is also just made up, not model-derived. If someone wires
+it in, do NOT do it naively on live-map cells (same nearest-AOI credibility
+problem as the Tier 1 bug above). The scoped, low-risk way to do this: for
+each of the 48 priority tiles, offline-precompute a few real perturbed-
+feature-vector predictions (canopy +10/20/30pp, impervious -10/20/30pp,
+albedo +0.1/0.2) by reusing the model already loaded in
+`export_clusters_for_app.py`, store them per tile, and gate which sliders
+show by that tile's `suitableActions` from the Feasibility Guard above so
+the two features don't contradict each other. Not started — an estimate
+only, given to the user, not yet authorized as a task.
+
+### Authorized, assigned to Codex: action-plan Street View evidence
+
+The user authorized adding representative Street View evidence to the fixed
+~450m action-plan tiles. As of this entry, not started (no imagery files in
+git status). Implementation rules given to Codex, recorded verbatim so
+anyone picking this up mid-flight has the real spec:
+
+- The geographic grid is deterministic. Cache imagery by stable `tileId`; a
+  later model export may change a tile's priority/rank but not its boundary.
+- Fetch imagery **on demand** from a priority tile card. Do not prefetch all
+  48 priority tiles and do not fetch imagery for geography/typical tiles.
+- One FortyGuard Street View request uses the tile's representative
+  coordinate with `back_view: true`, yielding front and optional back
+  views. Maximum cost if all current priority tiles are inspected is
+  48 x 8,600 = 412,800 credits; cached tiles must spend no credits on repeat
+  views.
+- Store the original and segmented images in a separate server-side cache.
+  Never embed Base64 imagery in `cluster-action-plans.json`, which would
+  make the static action-plan export unmanageably large.
+- The UI must label this as a **representative street-level inspection
+  within the tile**, not complete coverage of the entire 450m area. It may
+  identify candidate planting constraints/opportunities from segmentation,
+  but must not claim shovel-ready planting coordinates.
+- Keep this path isolated from the generic live-investigation status route,
+  which deliberately strips imagery. Validate submitted `tileId` and
+  coordinates against the exported priority-tile list so the endpoint
+  cannot become an unrestricted paid-call proxy.
+- Work carefully around the separate Action Feasibility Guard changes
+  (above). Prefer new imagery-specific modules and make only the smallest
+  integration change to `ActionPlanTileCard.tsx`.
+
+**Deployed to Vercel (2026-08-31, later same day).** Live at
+`https://heatlens-fortyguard.vercel.app` (project `x-rugved/heatlens-fortyguard`,
+not yet connected to GitHub -- `vercel deploy` failed to auto-link because
+the account has no GitHub login connection; deployed straight from the CLI
+instead, works fine, just means it won't auto-redeploy on push). Real
+FortyGuard/geocode/static-JSON pages all verified live and working (`/`,
+`/action-plans`, `/training-data` -- zero console errors, real heatmap data
+rendered). `FORTYGUARD_API_KEY`, `FORTYGUARD_TRAINING_API_KEY`, `_2`, `_3`
+are set as Vercel Secrets on both Production and Preview (values never
+printed anywhere, piped directly from local `.env.local`). `GROQ_API_KEY`/
+`GROQ_MODEL` (referenced in code, presumably Codex's work) are NOT set on
+Vercel because they don't exist in local `.env.local` either -- whatever
+uses them may not be live yet; check before assuming that path works
+deployed.
+
+Two things fixed/created to make this deploy possible, both worth knowing
+about if redeploying:
+- **`.vercelignore` added** (didn't exist before). Without it, `vercel
+  deploy` tried to upload the entire working directory including
+  `ml/data/raw/` (~1.46GB, 1,590+ files) and failed with a cascading
+  "Upload aborted" error on the first attempt. `ml/` is entirely excluded
+  now -- nothing under it is needed at runtime, only the small static
+  exports already inside `src/lib/mock-data/`.
+- **`jobStore.ts` made Vercel-safe** (this session, same as the entry
+  below) -- its filesystem writes are now wrapped in try/catch so a
+  read-only serverless filesystem degrades to "no dedup cache" instead of
+  throwing and breaking heatmap submission.
+
+**Vercel deploy note (2026-08-31, later):** `actionPlanImageryStore.ts`
+(Codex's -- writes to `ml/data/live-cache/action-plan-streetview/`, plus a
+file-based lock to prevent double-purchasing the same tile's imagery) is
+broken on Vercel: the deployed filesystem is read-only and never
+shared/persistent across serverless invocations, so the cache never
+actually caches and the double-purchase lock won't reliably hold either.
+Same root problem as `jobStore.ts` (already made Vercel-safe with a
+try/catch, see above) but higher stakes here -- this store exists
+specifically to protect a real 8,600-credit-per-pull budget. **Explicit
+user decision: deploy anyway, known-broken, for demo purposes** -- every
+tile's imagery view on the deployed site may silently re-purchase instead
+of hitting cache. Fix properly (move to Vercel KV/Upstash Redis or similar)
+before this deployment sees real/sustained traffic, not just before judging.
+
+**Do not duplicate this work from another session.** Check `git status` for
+imagery/Street-View-related new files before starting anything in this
+area.
 
 ## Free-data enrichment: decisions and status
 
@@ -253,3 +489,28 @@ project. Read `ml/cooling_deficit/README.md` before a new collector launch.
 4. Preserve the shared daytime cache; never delete/re-fetch paid raw data just
    to regenerate a model.
 5. When the cooling run finishes, sync its finalized data to C separately.
+6. Codex is implementing action-plan Street View evidence (see "Action
+   Plans / Feasibility Guard work" above for the full spec) - don't start
+   overlapping work on `ActionPlanTileCard.tsx` imagery/photo features
+   without checking git status first.
+
+## Action-plan Street View implementation
+
+Implemented in the canonical `C:\Fortyguard_batra` app:
+
+- Priority cards fetch one representative FortyGuard Street View request on
+  demand using their stable fixed-grid `tileId`; there is no bulk prefetch.
+- Submission and polling prefer `FORTYGUARD_TRAINING_API_KEY_3`, with older
+  training-key variables as fallbacks. The live-app key is not used.
+- A per-tile atomic lock prevents duplicate simultaneous purchases. Completed
+  original and segmented front/back images are cached beneath
+  `ml/data/live-cache/action-plan-streetview/` and reused.
+- The server accepts only exported priority tile IDs and gets coordinates from
+  the trusted export rather than accepting arbitrary browser coordinates.
+- The UI presents original and segmented images plus a conservative planting
+  assessment, labelled as one representative location rather than complete
+  ~450m tile coverage or a construction-ready plan.
+- All 48 priority tiles would cost at most 412,800 credits, but each 8,600-credit
+  call occurs only when that card is inspected for the first time.
+- `C:\Fortyguard_batra` is the sole working copy for future changes. Do not
+  implement further work in the retired D-drive copy.

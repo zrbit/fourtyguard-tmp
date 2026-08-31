@@ -12,21 +12,23 @@ const CENTERS: Record<City, [number, number]> = {
 };
 const BASEMAP_STYLE = "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json";
 
-export default function LiveMapLoading({ city, status }: { city: City; status: string }) {
+export default function LiveMapLoading({ city, status, center: centerOverride }: { city: City; status: string; center?: [number, number] }) {
   const element = useRef<HTMLDivElement>(null);
   const [elapsed, setElapsed] = useState(0);
+  const center = centerOverride ?? CENTERS[city];
   useEffect(() => {
     if (!element.current) return;
     const map = new MaplibreMap({
       container: element.current,
       style: BASEMAP_STYLE,
-      center: CENTERS[city],
-      zoom: 14,
+      center,
+      zoom: centerOverride ? 15.5 : 14,
       attributionControl: { compact: true },
     });
     map.addControl(new NavigationControl({ showCompass: false }), "top-right");
     return () => map.remove();
-  }, [city]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [city, center[0], center[1]]);
   useEffect(() => {
     const reset = window.setTimeout(() => setElapsed(0), 0);
     const timer = window.setInterval(() => setElapsed(value => value + 1), 1000);

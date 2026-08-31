@@ -36,6 +36,8 @@ export type Evidence = {
   source: string;
   provenance: Provenance;
   strength: Strength;
+  /** Signed SHAP contribution when this evidence came from the model. */
+  shapValue?: number;
   explanation: string;
 };
 

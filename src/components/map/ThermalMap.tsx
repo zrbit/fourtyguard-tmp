@@ -40,6 +40,14 @@ function thermalColorExpression(minTemperature: number, maxTemperature: number, 
   const colors = theme === "light"
     ? ["#136fa9", "#5aaed5", "#dbcab9", "#e46f5c", "#b93730"]
     : ["#2677bf", "#61addb", "#50636c", "#e76e5a", "#bd3d35"];
+  // All five stops are derived from minTemperature + this same clamped
+  // range, never from the raw maxTemperature directly -- guarantees strictly
+  // ascending stops by construction. Using raw maxTemperature as the last
+  // stop while the middle stops come from the clamped range broke this for
+  // any scan with real range under 0.01°F (a small, thermally uniform
+  // custom-area search can genuinely hit this): the last stop could land
+  // BELOW the second-to-last, which MapLibre rejects outright, silently
+  // failing to add the whole color layer.
   const range = Math.max(0.01, maxTemperature - minTemperature);
   return [
     "interpolate",
@@ -53,7 +61,7 @@ function thermalColorExpression(minTemperature: number, maxTemperature: number, 
     colors[2],
     minTemperature + range * 0.75,
     colors[3],
-    maxTemperature,
+    minTemperature + range,
     colors[4],
   ];
 }
@@ -159,10 +167,10 @@ export function ThermalMap({
   }, [theme]);
 
   // Refresh the rendered tiles whenever the data actually changes (e.g.
-  // switching day/night/compare period). The map itself is only built once
-  // per theme, so without this the source data and color scale would stay
-  // frozen on whatever `blocks` happened to be in scope the last time the
-  // mount effect ran.
+  // switching day/night/compare period, or a brand-new area search). The map
+  // itself is only built once per theme, so without this the source data
+  // and color scale would stay frozen on whatever `blocks` happened to be in
+  // scope the last time the mount effect ran.
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -179,6 +187,15 @@ export function ThermalMap({
           thermalColorExpression(minTemperature, maxTemperature, theme) as any,
         );
       }
+      // Re-fit the viewport too, not just repaint the data. Needed because
+      // a page.tsx load() that resolves synchronously (a localStorage cache
+      // hit -- no `await` before setLoading(false)) never actually renders
+      // an intermediate loading state React can observe, so ThermalMap never
+      // unmounts/remounts for a brand-new area search -- only this reactive
+      // effect fires, not the mount-once effect that sets initial bounds.
+      // Harmless no-op-looking snap when blocks represent the same area
+      // (a day/night toggle, or a compare recompute).
+      if (blocks.length) map.fitBounds(boundsOf(blocks), { padding: 80 });
     };
     if (map.isStyleLoaded()) apply();
     else map.once("load", apply);

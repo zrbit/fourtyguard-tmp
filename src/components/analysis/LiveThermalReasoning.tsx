@@ -2,7 +2,6 @@ import { BrainCircuit, CircleHelp, Crosshair, Sparkles } from "lucide-react";
 import type { BlockMetrics } from "@/types/thermal";
 import { formatSigned } from "@/lib/utils";
 import { LiveInvestigation } from "@/components/analysis/LiveInvestigation";
-import { MlAttribution } from "@/components/analysis/MlAttribution";
 import { CellAttributionSection } from "@/components/analysis/CellAttributionSection";
 import { HistoricalComparison } from "@/components/analysis/HistoricalComparison";
 import { ChronicHeatCheck } from "@/components/analysis/ChronicHeatCheck";
@@ -54,7 +53,15 @@ export function LiveThermalReasoning({ block, allBlocks, onSelect }: { block: Bl
     <LiveInvestigation key={block.id} block={block} />
     <ChronicHeatCheck key={`chronic-${block.id}`} block={block} />
     <HistoricalComparison key={`history-${block.id}`} block={block} />
-    <MlAttribution key={`ml-${block.id}`} lookup={{ lat: block.lat, lng: block.lng }} active />
+    {/* Tier 1 (MlAttribution) removed from the live per-cell flow (2026-08-31):
+        its nearest-AOI lookup has no timestamp tie-break, so with multiple
+        historical records at the same AOI coordinates (verified: Van Nuys has
+        5, predictions ranging +2.22°F to +11.15°F) it silently shows whichever
+        one happens to sort first -- unrelated to what the live scan is
+        actually showing. Tier 2 (CellAttributionSection below) uses the
+        current cell's own features and doesn't have this problem; Tier 1
+        stays valid on the neighborhood/training-data views (AnalysisPanel),
+        where blockId lookup is exact, not nearest-neighbor. */}
     <CellAttributionSection key={`cell-${block.id}`} lat={block.lat} lng={block.lng} active />
   </section>;
 }
