@@ -69,7 +69,24 @@ export function ActionPlanTileCard({ tile, rank }: { tile: ActionPlanTile; rank?
         ))}
       </div>
 
-      {tile.priorityTier === "priority" && <ActionPlanImagery tileId={tile.tileId} />}
+      {tile.priorityTier === "priority" && (
+        <>
+          <div
+            role="note"
+            className="mt-3 flex items-start gap-2 rounded-md border px-3 py-2.5"
+            style={{ borderColor: "rgba(201,151,79,0.45)", background: "rgba(201,151,79,0.08)" }}
+          >
+            <TriangleAlert className="mt-0.5 h-3.5 w-3.5 shrink-0" style={{ color: "#c9974f" }} aria-hidden />
+            <div>
+              <div className="font-mono text-[9.5px] font-semibold tracking-wide text-ash uppercase">Street View coverage limit</div>
+              <p className="mt-1 text-[10.5px] leading-relaxed text-slate">
+                Street View samples one representative point at {tile.centroidLat.toFixed(5)}, {tile.centroidLng.toFixed(5)}—the current centre of this ~450m action-plan tile. The plan aggregates {tile.nCells} analyzed 100m {tile.nCells === 1 ? "cell" : "cells"}; the imagery does not inspect {tile.nCells === 1 ? "the complete cell area" : `all ${tile.nCells} cells`}. Additional locations were not queried to conserve limited FortyGuard API credits.
+              </p>
+            </div>
+          </div>
+          <ActionPlanImagery tileId={tile.tileId} />
+        </>
+      )}
     </div>
   );
 }
