@@ -5,6 +5,11 @@ real FortyGuard data plus free supplementary sources. Standalone from the
 Next.js app: this directory produces static JSON artifacts the app reads —
 see `../.claude/plans` (or ask Claude) for the full plan this implements.
 
+Every external data source this pipeline calls (FortyGuard, OpenStreetMap
+Overpass, Sentinel-2, NLCD, Open-Elevation, Open-Meteo, and the bundled
+coastline geometry) is documented, with what each is used for, in the
+"ML pipeline data sources" section of the root [`../README.md`](../README.md).
+
 ## Setup
 
 ```
