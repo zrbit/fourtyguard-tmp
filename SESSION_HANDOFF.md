@@ -223,6 +223,59 @@ Deliberately no "static"/"precomputed"/timestamp language anywhere in this
 UI, per explicit user instruction -- viewers shouldn't be able to tell this
 map isn't live.
 
+**Follow-up fix (2026-08-31, later, caught on the deployed Vercel site):**
+Map mode rendered correctly at a large viewport (1920x1080) but the map
+shrank to a thin strip at a laptop-sized one (1366x768) -- reproduced
+directly against the live URL, not a guess. Root cause wasn't a CSS
+mechanism bug this time: `/action-plans` carries a long intro paragraph + 3
+stat cards + a footer disclaimer that neither the live map page nor
+`/training-data` burdens their own map with, and on a shorter viewport that
+fixed text ate most of the available height before the map's `flex-1` ever
+got real space to grow into. Fixed by moving that intro/stats/footer block
+inside `ActionPlansView.tsx` and hiding it specifically in Map mode (a
+compact one-line header + the tier counts replaces it there); List mode is
+untouched. Verified against the deployed site at both viewport sizes plus a
+List-mode regression check, not just locally.
+
+**Markers changed from circles to squares (2026-08-31, later still).**
+Circles were deliberately chosen over real geo-sized squares to fix a real
+sub-pixel-at-wide-zoom bug (see the block below) -- switching back to
+squares had to preserve that fixed-pixel-size property, not just look
+different. MapLibre's `circle` layer type has no square equivalent. First
+attempt used a `symbol` layer with a "■" text glyph -- rendered nothing,
+even though network inspection confirmed the basemap's font server returned
+the correct glyph range (200 OK); apparently that glyph just isn't
+rasterized reliably by that font server. Second attempt (what's live now)
+sidesteps the basemap's font server entirely: `registerSquareIcon()`
+draws a plain filled square on a client-side `<canvas>` once and registers
+it via `map.addImage(..., {sdf: true})`, then the layer uses `icon-image` +
+`icon-color` (recolored per-feature same as circle-color/text-color was) +
+`icon-halo-color`/`icon-halo-width` for the hover/selected rings. Verified
+working with real colored squares, click-to-select, and hover, both locally
+and on the deployed Vercel site. If a future map on this project ever needs
+a custom marker shape again, start with the SDF-icon approach directly --
+the text-glyph path already burned a round-trip here.
+
+**Geographic + typical tiles made visible by default (2026-08-31, later
+still), per explicit user request.** Previously geographic tiles were
+hidden behind an unchecked "Show 225 geography-driven tiles" checkbox and
+typical tiles (1,433 of them) were never drawn on the map at all -- user
+feedback: this read as "we only screened 48 spots," when actually all
+1,706 were screened, most just didn't turn up a strong actionable lever.
+Now `ActionPlansMap` receives `typicalTiles` too (page.tsx fetches it via
+`getActionPlanTilesByTier("typical")`, threaded through `ActionPlansView`),
+and every tile renders: priority still colored by site type at full
+opacity/size, geographic+typical both drawn as small grey squares at low
+opacity (0.32) as a permanent backdrop -- no toggle any more, the checkbox
+was removed. The `featureCollection` array deliberately lists grey tiles
+BEFORE priority ones (later features paint on top in a single symbol
+layer), so the 48 priority squares can never end up visually buried under
+the ~1,658 grey ones. Initial `fitBounds` now covers `allTiles` (previously
+priority-only) so the full screened footprint is visible by default.
+Verified: renders correctly with no performance issues at 1,706 markers,
+click-to-select works on both a priority tile and a grey one, both locally
+and on the deployed Vercel site.
+
 Hit a genuinely unusual dev-environment issue building this, worth flagging
 for whoever touches this file next: **brand-new Tailwind utility classes in
 a newly-created file took multiple save/reload cycles to actually appear in

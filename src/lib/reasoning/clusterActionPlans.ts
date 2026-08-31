@@ -88,6 +88,7 @@ export function getClusterActionPlanMeta() {
   const { tiles: _tiles, ...meta } = data;
   return meta;
 }
+export type ClusterActionPlanMeta = NonNullable<ReturnType<typeof getClusterActionPlanMeta>>;
 
 /** All tiles, sorted hottest-first (already sorted this way in the export,
  * re-sorted here defensively in case that ever changes). */
